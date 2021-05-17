@@ -27,8 +27,12 @@ body {
   border: #5abf71 !important;
 }
 
-.btn-primary:hover,
-.btn-primary:active {
+.btn-primary:hover {
   background-color: #40a558 !important;
   border: #40a558 !important;
+}
+
+.btn-primary:active {
+  background-color: #328044 !important;
+  border: #328044 !important;
 }
