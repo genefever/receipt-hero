@@ -1,0 +1,34 @@
+body {
+  background-color: #f5eaea;
+  font-family: "Montserrat", sans-serif;
+}
+
+/* Containers */
+
+.container-fluid {
+  padding: 0 3%;
+}
+
+/* Navigation Bar */
+
+.navbar {
+  background-color: #5b5656;
+}
+
+.navbar-brand {
+  font-family: Josefin Sans;
+  font-size: 2.5rem;
+}
+
+/* Button */
+.btn-primary,
+.btn-primary:visited {
+  background-color: #5abf71 !important;
+  border: #5abf71 !important;
+}
+
+.btn-primary:hover,
+.btn-primary:active {
+  background-color: #40a558 !important;
+  border: #40a558 !important;
+}
