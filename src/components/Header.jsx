@@ -5,7 +5,7 @@ function Header() {
     <nav className="navbar navbar-expand-md navbar-dark">
       <div className="container-fluid">
         <button
-          className="navbar-toggler"
+          className="navbar-toggler p-0 border-0"
           type="button"
           data-bs-toggle="collapse"
           data-bs-target="#navbarToggle"
