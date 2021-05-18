@@ -1,6 +1,7 @@
 body {
   background-color: #f5eaea;
   font-family: "Montserrat", sans-serif;
+  padding-top: 70px;
 }
 
 h1,
@@ -13,15 +14,12 @@ h6 {
   font-weight: bold;
 }
 
-/* Containers */
-
-.container-fluid {
-  padding: 0 3%;
+.btn {
+  font-size: 1rem;
 }
 
 /* Button */
-.btn-primary,
-.btn-primary:visited {
+.btn-primary {
   background-color: #5abf71 !important;
   border: #5abf71 !important;
 }

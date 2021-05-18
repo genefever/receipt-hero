@@ -1,68 +1,74 @@
 import React from "react";
 import "./Login.css";
+import logo from "../../logo.svg";
 
 function Login() {
   return (
-    <div className="container">
-      <div className="row">
-        <div className="col-9 col-sm-9 col-md-6 col-lg-5 col-xl-4 mx-auto">
-          <div className="card card-signin my-5">
-            <div className="card-body">
-              <h5 className="card-title text-center">Log In</h5>
-              <form className="form-signin">
-                <div className="form-label-group">
-                  <input
-                    type="email"
-                    id="inputEmail"
-                    className="form-control"
-                    placeholder="Email address"
-                    required
-                    autoFocus
-                  />
-                  <label htmlFor="inputEmail">Email address</label>
-                </div>
-
-                <div className="form-label-group">
-                  <input
-                    type="password"
-                    id="inputPassword"
-                    className="form-control"
-                    placeholder="Password"
-                    required
-                  />
-                  <label htmlFor="inputPassword">Password</label>
-                </div>
-
-                <div className="form-check mb-3">
-                  <input
-                    type="checkbox"
-                    className="form-check-input"
-                    id="flexCheckDefault"
-                    value=""
-                  />
-                  <label
-                    className="form-check-label"
-                    htmlFor="flexCheckDefault"
-                  >
-                    Remember me
-                  </label>
-                </div>
-                <button className="btn btn-primary col-12" type="submit">
-                  Log in
-                </button>
-                <hr className="my-4" />
-                <button className="btn btn-google col-12 mb-3" type="submit">
-                  <i className="fab fa-google"></i> Log in with Google
-                </button>
-                <button className="btn btn-facebook col-12" type="submit">
-                  <i className="fab fa-facebook-f"></i> Log in with Facebook
-                </button>
-              </form>
+    <main className="form-signin">
+      <div className="card-body">
+        <img
+          className="mx-auto d-block mb-3"
+          src={logo}
+          width="72"
+          height="72"
+        />
+        {/* Social buttons */}
+        <button
+          className="w-100 btn btn-lg btn-google btn-block mb-3"
+          type="submit"
+        >
+          <i className="fab fa-google"></i> Log in with Google
+        </button>
+        <button
+          className="w-100 btn btn-lg btn-facebook btn-block"
+          type="submit"
+        >
+          <i className="fab fa-facebook-square"></i> Log in with Facebook
+        </button>
+        <div className="separator  my-3">or</div>
+        <div className="card-signin">
+          <form>
+            {/* Email input */}
+            <div className="form-floating mb-3">
+              <input
+                type="email"
+                className="form-control"
+                id="floatingInput"
+                placeholder="name@example.com"
+              />
+              <label htmlFor="floatingInput">Email address</label>
             </div>
-          </div>
+
+            {/* Password input */}
+            <div className="form-floating">
+              <input
+                type="password"
+                className="form-control"
+                id="floatingPassword"
+                placeholder="Password"
+              />
+              <label htmlFor="floatingPassword">Password</label>
+            </div>
+
+            {/* Forgot password link */}
+            <div className="col mb-3 mt-1">
+              <a href="#!">Forgot password?</a>
+            </div>
+
+            {/* Log in button */}
+            <button className="w-100 btn btn-lg btn-primary" type="submit">
+              Log in
+            </button>
+          </form>
+        </div>
+        {/* Sign up button */}
+        <div className="text-center mt-4">
+          <p>
+            Don't have an account? <a href="#!">Sign up</a>
+          </p>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
 
