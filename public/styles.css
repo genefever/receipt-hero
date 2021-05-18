@@ -3,24 +3,20 @@ body {
   font-family: "Montserrat", sans-serif;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Montserrat";
+  font-weight: bold;
+}
+
 /* Containers */
 
 .container-fluid {
   padding: 0 3%;
-}
-
-/* Navigation Bar */
-
-.navbar {
-  background-color: #5b5656;
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
-  line-height: 2rem;
-}
-
-.navbar-brand {
-  font-family: Josefin Sans;
-  font-size: 2rem;
 }
 
 /* Button */
