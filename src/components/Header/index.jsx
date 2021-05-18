@@ -5,7 +5,7 @@ import logo from "../../logo.svg";
 function Header() {
   return (
     <nav className="navbar fixed-top navbar-expand-md navbar-dark">
-      <div className="container">
+      <div className="container-fluid">
         <button
           className="navbar-toggler p-0 border-0"
           type="button"
@@ -19,7 +19,7 @@ function Header() {
         </button>
 
         <a className="navbar-brand" href="/">
-          <img src={logo} width="40" height="40" />
+          <img src={logo} width="40" height="40" alt="logo" />
           receipt hero
         </a>
         <div className="collapse navbar-collapse" id="navbarToggle">

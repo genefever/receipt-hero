@@ -11,6 +11,7 @@ function Login() {
           src={logo}
           width="72"
           height="72"
+          alt="logo"
         />
         {/* Social buttons */}
         <button
