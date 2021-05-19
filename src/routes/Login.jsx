@@ -8,7 +8,7 @@ import { StyledButton } from "../components/Button";
 import logo from "../assets/logo.svg";
 import { Link } from "react-router-dom";
 
-function SignUp() {
+function Login() {
   return (
     <SignInContainer>
       <Card.Body>
@@ -23,10 +23,10 @@ function SignUp() {
         {/* Social buttons */}
 
         <StyledButton $google className="w-100 btn-lg btn-block mb-3">
-          <i className="fab fa-google"></i> Sign up with Google
+          <i className="fab fa-google"></i> Log in with Google
         </StyledButton>
         <StyledButton $facebook className="w-100 btn-lg btn-block">
-          <i className="fab fa-facebook-square"></i> Sign up with Facebook
+          <i className="fab fa-facebook-square"></i> Log in with Facebook
         </StyledButton>
 
         <Separator className="my-3">or</Separator>
@@ -42,12 +42,17 @@ function SignUp() {
             {/* Password */}
             <Form.Group controlId="formBasicPassword">
               <Form.Label>Password</Form.Label>
+
+              <Link className="float-right" to="/signup">
+                Forgot password?
+              </Link>
+
               <Form.Control required type="password" />
             </Form.Group>
 
-            {/* Sign up button */}
+            {/* Log in button */}
             <StyledButton $primary className="w-100 btn-lg" type="submit">
-              Sign up
+              Log in
             </StyledButton>
           </Form>
         </SignInCard>
@@ -55,11 +60,11 @@ function SignUp() {
 
       <div className="text-center mt-2">
         <p>
-          Already have an account? <Link to="/login">Log in</Link>
+          Don't have an account? <Link to="/signup">Sign up</Link>
         </p>
       </div>
     </SignInContainer>
   );
 }
 
-export default SignUp;
+export default Login;

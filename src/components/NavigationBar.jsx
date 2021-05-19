@@ -1,6 +1,7 @@
 import React from "react";
 import logo from "../assets/logo.svg";
 import { LinkContainer } from "react-router-bootstrap";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
@@ -45,10 +46,15 @@ function NavigationBar() {
       </StyledNavbar.Collapse>
 
       {/* Buttons */}
-      <StyledButton variant="outline-light" className="ml-auto mr-2">
-        Log in
-      </StyledButton>
-      <StyledButton $primary>Sign up</StyledButton>
+      <Link to="/login">
+        <StyledButton variant="outline-light" className="ml-auto mr-2">
+          Log in
+        </StyledButton>
+      </Link>
+
+      <Link to="/signup">
+        <StyledButton $primary>Sign up</StyledButton>
+      </Link>
     </StyledNavbar>
   );
 }

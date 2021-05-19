@@ -1,4 +1,3 @@
-import React from "react";
 import styled from "styled-components";
 
 export const SignInContainer = styled.div`
@@ -6,7 +5,4 @@ export const SignInContainer = styled.div`
   max-width: 400px;
   padding: 15px;
   margin: auto;
-  &.form-floating:focus-within {
-    z-index: 2;
-  }
 `;
