@@ -19,26 +19,6 @@
   z-index: 2;
 }
 
-.btn-google {
-  color: white;
-  background-color: #ea4335;
-}
-
-.btn-google:hover {
-  color: white;
-  background-color: #d33c30;
-}
-
-.btn-facebook {
-  color: white;
-  background-color: #3b5998;
-}
-
-.btn-facebook:hover {
-  color: white;
-  background-color: #355089;
-}
-
 .separator {
   display: flex;
   align-items: center;

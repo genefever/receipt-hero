@@ -1,6 +1,7 @@
 body {
   background-color: #f5eaea;
   font-family: "Montserrat", sans-serif;
+  /* padding-top: 70px; */
 }
 
 h1,
@@ -11,24 +12,4 @@ h5,
 h6 {
   font-family: "Montserrat";
   font-weight: bold;
-}
-
-.btn {
-  font-size: 1rem;
-}
-
-/* Button */
-.btn-primary {
-  background-color: #5abf71 !important;
-  border: #5abf71 !important;
-}
-
-.btn-primary:hover {
-  background-color: #40a558 !important;
-  border: #40a558 !important;
-}
-
-.btn-primary:active {
-  background-color: #328044 !important;
-  border: #328044 !important;
 }

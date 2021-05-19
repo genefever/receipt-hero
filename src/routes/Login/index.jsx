@@ -1,6 +1,7 @@
 import React from "react";
 import "./Login.css";
 import logo from "../../logo.svg";
+import { StyledButton } from "../../components/Button";
 
 function Login() {
   return (
@@ -13,19 +14,16 @@ function Login() {
           height="72"
           alt="logo"
         />
+
         {/* Social buttons */}
-        <button
-          className="w-100 btn btn-lg btn-google btn-block mb-3"
-          type="submit"
-        >
+
+        <StyledButton $google className="w-100 btn-lg btn-block mb-3">
           <i className="fab fa-google"></i> Log in with Google
-        </button>
-        <button
-          className="w-100 btn btn-lg btn-facebook btn-block"
-          type="submit"
-        >
+        </StyledButton>
+        <StyledButton $facebook className="w-100 btn-lg btn-block">
           <i className="fab fa-facebook-square"></i> Log in with Facebook
-        </button>
+        </StyledButton>
+
         <div className="separator  my-3">or</div>
         <div className="card-signin">
           <form>
@@ -57,9 +55,9 @@ function Login() {
             </div>
 
             {/* Log in button */}
-            <button className="w-100 btn btn-lg btn-primary" type="submit">
+            <StyledButton $primary className="w-100 btn-lg" type="submit">
               Log in
-            </button>
+            </StyledButton>
           </form>
         </div>
         {/* Sign up button */}
