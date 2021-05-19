@@ -1,7 +1,13 @@
 import React from "react";
+import Table from "../components/Table";
+import { TableContainer } from "../components/Container";
 
 function Home() {
-  return <h1>Home</h1>;
+  return (
+    <TableContainer>
+      <Table></Table>
+    </TableContainer>
+  );
 }
 
 export default Home;

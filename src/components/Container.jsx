@@ -6,3 +6,8 @@ export const SignInContainer = styled.div`
   padding: 15px;
   margin: auto;
 `;
+
+export const TableContainer = styled.div`
+  padding: 15px;
+  margin: auto;
+`;
