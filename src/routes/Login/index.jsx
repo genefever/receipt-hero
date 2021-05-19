@@ -1,6 +1,6 @@
 import React from "react";
 import "./Login.css";
-import logo from "../../logo.svg";
+import logo from "../../assets/logo.svg";
 import { StyledButton } from "../../components/Button";
 
 function Login() {

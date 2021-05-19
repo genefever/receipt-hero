@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "../../logo.svg";
+import logo from "../../assets/logo.svg";
 import { LinkContainer } from "react-router-bootstrap";
 import styled from "styled-components";
 import Navbar from "react-bootstrap/Navbar";
