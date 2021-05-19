@@ -4,6 +4,7 @@ import styled from "styled-components";
 export const StyledButton = styled(Button)`
   font-size: 1rem;
 
+  // Primary button
   ${(props) =>
     props.$primary &&
     `
@@ -19,6 +20,7 @@ export const StyledButton = styled(Button)`
     }
     `}
 
+  // Google button
   ${(props) =>
     props.$google &&
     `
@@ -32,6 +34,7 @@ export const StyledButton = styled(Button)`
     }
     `}
 
+  // Facebook button
   ${(props) =>
     props.$facebook &&
     `

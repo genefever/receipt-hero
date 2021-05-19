@@ -1,6 +1,12 @@
 import React from "react";
-import Card from "react-bootstrap/Card";
+import styled from "styled-components";
 
-function Card() {}
-
-export default Card;
+export const SignInCard = styled.div`
+  padding: 1.75rem;
+  margin-right: 0;
+  margin-left: 0;
+  border-width: 1px;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.1);
+  background-color: white;
+`;

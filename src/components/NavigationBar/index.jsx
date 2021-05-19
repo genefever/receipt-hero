@@ -26,7 +26,6 @@ function NavigationBar() {
         className="border-0 p-0"
         aria-controls="basic-navbar-nav"
       />
-
       <StyledNavbarBrand href="#home">
         <img
           alt="logo"
@@ -37,7 +36,6 @@ function NavigationBar() {
         />{" "}
         receipt hero
       </StyledNavbarBrand>
-
       <StyledNavbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
           <LinkContainer to="/">
@@ -46,6 +44,7 @@ function NavigationBar() {
         </Nav>
       </StyledNavbar.Collapse>
 
+      {/* Buttons */}
       <StyledButton variant="outline-light" className="ml-auto mr-2">
         Log in
       </StyledButton>

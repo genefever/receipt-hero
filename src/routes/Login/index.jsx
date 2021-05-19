@@ -50,7 +50,7 @@ function Login() {
             </div>
 
             {/* Forgot password link */}
-            <div className="col mb-3 mt-1">
+            <div className="mb-3 mt-1">
               <a href="#!">Forgot password?</a>
             </div>
 
