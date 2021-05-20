@@ -9,7 +9,7 @@ const columns = [
   },
   {
     dataField: "name",
-    text: "Product Name",
+    text: "Store Name",
   },
   {
     dataField: "price",

@@ -1,12 +1,26 @@
 import React from "react";
+import Calculator from "../components/Calculator";
 import Table from "../components/Table";
-import { TableContainer } from "../components/Container";
+import { StyledCard } from "../components/Card";
+import Col from "react-bootstrap/Col";
+import Row from "react-bootstrap/Row";
 
 function Home() {
   return (
-    <TableContainer>
-      <Table></Table>
-    </TableContainer>
+    <div className="mt-4">
+      <Row>
+        <Col md={4}>
+          <StyledCard $main>
+            <Calculator />
+          </StyledCard>
+        </Col>
+        <Col md={8}>
+          <StyledCard $main>
+            <Table></Table>
+          </StyledCard>
+        </Col>
+      </Row>
+    </div>
   );
 }
 

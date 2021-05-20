@@ -10,6 +10,7 @@ export const StyledButton = styled(Button)`
     `
     background-color: #5abf71 !important;
     border-color: #5abf71;
+
     &:hover {
       background-color: #40a558 !important;
       border-color: #40a558;
@@ -24,9 +25,10 @@ export const StyledButton = styled(Button)`
   ${(props) =>
     props.$google &&
     `
+    background-color: #ea4335;
     border-color: #ea4335;
     color: white;
-    background-color: #ea4335;
+
     &:hover {
       color: white;
       background-color: #d33c30;

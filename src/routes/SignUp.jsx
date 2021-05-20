@@ -3,7 +3,7 @@ import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 import { Separator } from "../components/Separator";
 import { SignInContainer } from "../components/Container";
-import { SignInCard } from "../components/Card";
+import { StyledCard } from "../components/Card";
 import { StyledButton } from "../components/Button";
 import logo from "../assets/logo.svg";
 import { Link } from "react-router-dom";
@@ -22,16 +22,16 @@ function SignUp() {
 
         {/* Social buttons */}
 
-        <StyledButton $google className="w-100 btn-lg btn-block mb-3">
+        <StyledButton $google size="lg" block className="mb-3">
           <i className="fab fa-google"></i> Sign up with Google
         </StyledButton>
-        <StyledButton $facebook className="w-100 btn-lg btn-block">
+        <StyledButton $facebook size="lg" block>
           <i className="fab fa-facebook-square"></i> Sign up with Facebook
         </StyledButton>
 
         <Separator className="my-3">or</Separator>
 
-        <SignInCard>
+        <StyledCard>
           <Form>
             {/* Email */}
             <Form.Group controlId="formBasicEmail">
@@ -46,11 +46,11 @@ function SignUp() {
             </Form.Group>
 
             {/* Sign up button */}
-            <StyledButton $primary className="w-100 btn-lg" type="submit">
+            <StyledButton $primary type="submit" size="lg" block>
               Sign up
             </StyledButton>
           </Form>
-        </SignInCard>
+        </StyledCard>
       </Card.Body>
 
       <div className="text-center mt-2">
