@@ -8,6 +8,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 
 function Calculator(props) {
   const defaultReceiptState = {
+    id: 0,
     purchaseDate: "",
     storeName: "",
     total: 0,

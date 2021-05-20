@@ -10,8 +10,8 @@ function Home() {
 
   function addReceipt(newReceipt) {
     setReceipts((prevReceipts) => {
-      let updatedList = [...prevReceipts, newReceipt];
-      console.log(updatedList);
+      console.log(newReceipt);
+      newReceipt.id = prevReceipts.length + 1;
       return [...prevReceipts, newReceipt];
     });
   }
@@ -26,7 +26,7 @@ function Home() {
         </Col>
         <Col md={8}>
           <StyledCard $main>
-            <Table />
+            <Table receipts={receipts} />
           </StyledCard>
         </Col>
       </Row>

@@ -5,21 +5,15 @@ import paginationFactory from "react-bootstrap-table2-paginator";
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
 import "react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css";
 
+const cellEdit = cellEditFactory({
+  mode: "click",
+});
+
 const pagination = paginationFactory({
   hideSizePerPage: true,
   sizePerPage: 10,
 });
 
-const products = [
-  {
-    id: 1,
-    purchaseDate: "12/01/2020",
-    storeName: "Raley's",
-    buyer: "Me",
-    total: "$12.20",
-    balanceOwed: 5.0,
-  },
-];
 const columns = [
   {
     dataField: "id",
@@ -57,8 +51,9 @@ const columns = [
     editor: {
       type: Type.SELECT,
       options: [
-        { value: "me", label: "Me" },
-        { value: "other", label: "Other" },
+        // TODO: Figure out how to change numbers to "Me" or "Other".
+        { value: 1, label: "Me" },
+        { value: 2, label: "Other" },
       ],
     },
   },
@@ -74,15 +69,15 @@ const columns = [
   },
 ];
 
-function Table() {
+function Table(props) {
   return (
     <BootstrapTable
       keyField="id"
       bootstrap4
-      data={products}
+      data={props.receipts}
       columns={columns}
       pagination={pagination}
-      cellEdit={cellEditFactory({ mode: "click" })}
+      cellEdit={cellEdit}
     />
   );
 }
