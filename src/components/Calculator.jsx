@@ -47,11 +47,13 @@ function Calculator() {
             <InputGroup.Text>$</InputGroup.Text>
           </InputGroup.Prepend>
           <Form.Control type="number" />
-          <StyledButton variant="outline-dark">Add</StyledButton>
+          <InputGroup.Append>
+            <StyledButton variant="outline-secondary">Add</StyledButton>
+          </InputGroup.Append>
         </InputGroup>
 
         <Form.Text className="text-muted">
-          Enter prices of items you bought for yourself.
+          Deduct any personal item costs from the shared receipt.
         </Form.Text>
       </Form.Group>
 
@@ -62,10 +64,12 @@ function Calculator() {
             <InputGroup.Text>$</InputGroup.Text>
           </InputGroup.Prepend>
           <Form.Control type="number" />
-          <StyledButton variant="outline-dark">Add</StyledButton>
+          <InputGroup.Append>
+            <StyledButton variant="outline-secondary">Add</StyledButton>
+          </InputGroup.Append>
         </InputGroup>
         <Form.Text className="text-muted">
-          Enter prices of items bought for the other person.
+          Deduct other person's personal item costs.
         </Form.Text>
       </Form.Group>
 

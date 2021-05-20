@@ -33,6 +33,12 @@ function SignUp() {
 
         <StyledCard>
           <Form>
+            {/* Name */}
+            <Form.Group controlId="formBasicEmail">
+              <Form.Label>Name</Form.Label>
+              <Form.Control required type="text" />
+            </Form.Group>
+
             {/* Email */}
             <Form.Group controlId="formBasicEmail">
               <Form.Label>Email address</Form.Label>

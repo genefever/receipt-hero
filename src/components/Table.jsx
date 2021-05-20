@@ -9,7 +9,7 @@ const products = [
     storeName: "Raley's",
     buyer: "Me",
     total: "$12.20",
-    balanceDue: 5.0,
+    balanceOwed: 5.0,
   },
 ];
 const columns = [
@@ -34,8 +34,8 @@ const columns = [
     text: "Receipt Total",
   },
   {
-    dataField: "balanceDue",
-    text: "Balance Due",
+    dataField: "balanceOwed",
+    text: "Balance Owed",
   },
 ];
 

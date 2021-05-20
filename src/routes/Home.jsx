@@ -16,7 +16,7 @@ function Home() {
         </Col>
         <Col md={8}>
           <StyledCard $main>
-            <Table></Table>
+            <Table />
           </StyledCard>
         </Col>
       </Row>
