@@ -13,7 +13,7 @@ const pagination = paginationFactory({
 const products = [
   {
     id: 1,
-    date: "12/01/2020",
+    purchaseDate: "12/01/2020",
     storeName: "Raley's",
     buyer: "Me",
     total: "$12.20",
@@ -28,7 +28,7 @@ const columns = [
     sort: true,
   },
   {
-    dataField: "date",
+    dataField: "purchaseDate",
     text: "Purchase Date",
     type: "date",
     sort: true,
