@@ -4,6 +4,7 @@ import NavigationBar from "./NavigationBar";
 import Home from "../routes/Home";
 import Login from "../routes/Login";
 import SignUp from "../routes/SignUp";
+import NoMatch from "../routes/NoMatch";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { createGlobalStyle } from "styled-components";
 
@@ -14,12 +15,12 @@ const GlobalStyle = createGlobalStyle`
 
     body {
       background-color: #f5f2f0; /* #f5eaea */
-      font-family: "Roboto", sans-serif;
+      font-family: "Montserrat", sans-serif;
     }
 
     h1,h2,h3,h4,h5,h6 {
-      font-family: "Roboto";
-      font-weight: bold;
+      font-family: "Montserrat";
+      font-weight: 500;
     }
 
 `;
@@ -35,7 +36,7 @@ function App() {
             <Route path="/" exact component={Home} />
             <Route path="/login" component={Login} />
             <Route path="/signup" component={SignUp} />
-            {/* <Route component={NoMatch} /> */}
+            <Route component={NoMatch} />
           </Switch>
         </MainContainer>
       </Router>

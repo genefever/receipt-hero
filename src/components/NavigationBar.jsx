@@ -27,20 +27,22 @@ function NavigationBar() {
         className="border-0 p-0"
         aria-controls="basic-navbar-nav"
       />
-      <StyledNavbarBrand href="#home">
-        <img
-          alt="logo"
-          src={logo}
-          width="30"
-          height="30"
-          className="d-inline-block align-top ml-2"
-        />{" "}
-        receipt hero
-      </StyledNavbarBrand>
+      <LinkContainer to="/">
+        <StyledNavbarBrand>
+          <img
+            alt="logo"
+            src={logo}
+            width="30"
+            height="30"
+            className="d-inline-block align-top ml-2"
+          />{" "}
+          receipt hero
+        </StyledNavbarBrand>
+      </LinkContainer>
       <StyledNavbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
           <LinkContainer to="/">
-            <Nav.Link href="#">Home</Nav.Link>
+            <Nav.Link>Home</Nav.Link>
           </LinkContainer>
         </Nav>
       </StyledNavbar.Collapse>
