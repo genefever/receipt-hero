@@ -5,15 +5,27 @@ const products = ["apple", "pear", "banana"];
 const columns = [
   {
     dataField: "id",
-    text: "Product ID",
+    text: "ID",
   },
   {
-    dataField: "name",
+    dataField: "date",
+    text: "Purchase Date",
+  },
+  {
+    dataField: "storeName",
     text: "Store Name",
   },
   {
-    dataField: "price",
-    text: "Product Price",
+    dataField: "buyer",
+    text: "Buyer",
+  },
+  {
+    dataField: "total",
+    text: "Receipt Total",
+  },
+  {
+    dataField: "balanceDue",
+    text: "Balance Due",
   },
 ];
 
