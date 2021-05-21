@@ -61,11 +61,13 @@ const columns = [
     dataField: "total",
     text: "Receipt Total",
     type: "number",
+    sort: true,
   },
   {
     dataField: "balanceOwed",
     text: "Balance Owed",
     type: "number",
+    sort: true,
   },
 ];
 

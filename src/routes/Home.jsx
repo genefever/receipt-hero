@@ -10,7 +10,7 @@ function Home() {
 
   function addReceipt(newReceipt) {
     setReceipts((prevReceipts) => {
-      console.log(newReceipt);
+      console.log("receipts Called");
       newReceipt.id = prevReceipts.length + 1;
       return [...prevReceipts, newReceipt];
     });
