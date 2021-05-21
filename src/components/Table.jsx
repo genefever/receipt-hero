@@ -2,10 +2,13 @@ import React from "react";
 import BootstrapTable from "react-bootstrap-table-next";
 import cellEditFactory, { Type } from "react-bootstrap-table2-editor";
 import paginationFactory from "react-bootstrap-table2-paginator";
+import ToolkitProvider from "react-bootstrap-table2-toolkit";
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
 import "react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css";
-import { FaTrashAlt } from "react-icons/fa";
+import "react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit.min.css";
+import { FaTrashAlt, FaFileCsv } from "react-icons/fa";
 import { StyledButton } from "../components/Button";
+import Container from "react-bootstrap/Container";
 
 function Table(props) {
   const cellStyle = {
@@ -67,9 +70,6 @@ function Table(props) {
           { value: 2, label: "Other" },
         ],
       },
-      formatter: (cellContent) => {
-        return cellContent === 1 ? "Me" : "Other";
-      },
       // headerStyle: (colum, colIndex) => {
       //   return { width: "90px" };
       // },
@@ -122,8 +122,19 @@ function Table(props) {
     },
   ];
 
+  const ExportCSVButton = (props) => {
+    const handleClick = () => {
+      props.onExport();
+    };
+    return (
+      <StyledButton variant="link" className="btn-sm" onClick={handleClick}>
+        <FaFileCsv /> Export
+      </StyledButton>
+    );
+  };
+
   return (
-    <BootstrapTable
+    <ToolkitProvider
       keyField="id"
       bootstrap4
       data={props.receipts}
@@ -131,7 +142,22 @@ function Table(props) {
       pagination={pagination}
       cellEdit={cellEdit}
       hover
-    />
+      exportCSV
+      search
+    >
+      {(props) => (
+        <div>
+          <div className="d-flex justify-content-between">
+            <h3>Title</h3>
+            <ExportCSVButton {...props.csvProps} />
+          </div>
+
+          <hr style={{ marginTop: "0", marginBottom: "0.75rem" }} />
+
+          <BootstrapTable {...props.baseProps} />
+        </div>
+      )}
+    </ToolkitProvider>
   );
 }
 

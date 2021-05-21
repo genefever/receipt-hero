@@ -1,7 +1,7 @@
 export const TestTableData = [
   {
     balanceOwed: "5.00",
-    buyer: 1,
+    buyer: "Me",
     id: 1,
     otherDeduction: 5,
     otherDeductionsList: [],
@@ -13,7 +13,7 @@ export const TestTableData = [
   },
   {
     balanceOwed: "3.00",
-    buyer: 2,
+    buyer: "Me",
     id: 2,
     otherDeduction: 4,
     otherDeductionsList: [],
@@ -25,7 +25,7 @@ export const TestTableData = [
   },
   {
     balanceOwed: "4.50",
-    buyer: 3,
+    buyer: "Other",
     id: 3,
     otherDeduction: 0,
     otherDeductionsList: [3],
@@ -37,14 +37,14 @@ export const TestTableData = [
   },
   {
     balanceOwed: "4.50",
-    buyer: 3,
-    id: 3,
+    buyer: "Other",
+    id: 4,
     otherDeduction: 0,
     otherDeductionsList: [3],
     personalDeduction: 0,
     personalDeductionsList: [2],
     purchaseDate: "2021-05-03",
-    storeName: "Trader asfasdfasdfsaJoe's",
+    storeName: "Trader Joe's",
     total: "100000000000.00",
   },
 ];

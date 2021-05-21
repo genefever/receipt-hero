@@ -12,7 +12,7 @@ function Calculator(props) {
     purchaseDate: "",
     storeName: "",
     total: 0,
-    buyer: 1,
+    buyer: "Me",
     personalDeduction: 0,
     otherDeduction: 0,
     personalDeductionsList: [],
@@ -175,10 +175,10 @@ function Calculator(props) {
             value={receipt.buyer}
             onChange={handleBuyerButtonChange}
           >
-            <ToggleButton value={1} variant="outline-dark">
+            <ToggleButton value={"Me"} variant="outline-dark">
               Me
             </ToggleButton>
-            <ToggleButton value={2} variant="outline-dark">
+            <ToggleButton value={"Other"} variant="outline-dark">
               Other Person
             </ToggleButton>
           </ToggleButtonGroup>
