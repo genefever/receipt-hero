@@ -11,11 +11,11 @@ export const StyledButton = styled(Button)`
     background-color: #5abf71 !important;
     border-color: #5abf71;
 
-    &:hover {
+    &:hover, &:visited {
       background-color: #40a558 !important;
       border-color: #40a558;
     }
-    &:active {
+    &:active, &:focus {
       background-color: #328044 !important;
       border-color: #328044;
     }
@@ -25,15 +25,16 @@ export const StyledButton = styled(Button)`
   ${(props) =>
     props.$google &&
     `
-    background-color: #ea4335;
+    background-color: #ea4335 !important;
     border-color: #ea4335;
     color: white;
 
-    &:hover {
+    &:active, &:hover, &:focus, &:visited {
       color: white;
-      background-color: #d33c30;
+      background-color: #d33c30 !important;
       border-color: #d33c30;
     }
+
     `}
 
   // Facebook button
@@ -42,10 +43,10 @@ export const StyledButton = styled(Button)`
     `
     border-color: #3b5998;
     color: white;
-    background-color: #3b5998;
-    &:hover {
+    background-color: #3b5998 !important;
+    &:active, &:hover, &:focus, &:visited {
       color: white;
-      background-color: #355089;
+      background-color: #355089 !important;
       border-color: #355089;
     }
     `}
