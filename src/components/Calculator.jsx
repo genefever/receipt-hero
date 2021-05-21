@@ -159,6 +159,7 @@ function Calculator(props) {
             min="0.01"
             step="0.01"
             required
+            placeholder="0.00"
           />
         </InputGroup>
       </Form.Group>
@@ -198,6 +199,7 @@ function Calculator(props) {
             type="number"
             min="0"
             step="0.01"
+            placeholder="0.00"
           />
           <InputGroup.Append>
             <StyledButton
@@ -232,6 +234,7 @@ function Calculator(props) {
             type="number"
             min="0"
             step="0.01"
+            placeholder="0.00"
           />
           <InputGroup.Append>
             <StyledButton

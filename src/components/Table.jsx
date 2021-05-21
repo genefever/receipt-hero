@@ -8,6 +8,12 @@ import { FaTrashAlt } from "react-icons/fa";
 import { StyledButton } from "../components/Button";
 
 function Table(props) {
+  const cellStyle = {
+    whiteSpace: "nowrap",
+    textOverflow: "ellipsis",
+    overflow: "hidden",
+  };
+
   const cellEdit = cellEditFactory({
     mode: "click",
   });
@@ -21,8 +27,8 @@ function Table(props) {
     {
       dataField: "purchaseDate",
       text: "Purchase Date",
-      align: "right",
       type: "date",
+      style: cellStyle,
       sort: true,
       formatter: (cell) => {
         let dateObj = cell;
@@ -36,17 +42,23 @@ function Table(props) {
       editor: {
         type: Type.DATE,
       },
+      // headerStyle: (colum, colIndex) => {
+      //   return { width: "110px" };
+      // },
     },
     {
       dataField: "storeName",
       text: "Store Name",
-      align: "right",
+      style: cellStyle,
       sort: true,
+      // headerStyle: (colum, colIndex) => {
+      //   return { width: "110px" };
+      // },
     },
     {
       dataField: "buyer",
       text: "Buyer",
-      align: "right",
+      style: cellStyle,
       sort: true,
       editor: {
         type: Type.SELECT,
@@ -58,30 +70,39 @@ function Table(props) {
       formatter: (cellContent) => {
         return cellContent === 1 ? "Me" : "Other";
       },
+      // headerStyle: (colum, colIndex) => {
+      //   return { width: "90px" };
+      // },
     },
     {
       dataField: "total",
       text: "Receipt Total",
       type: "number",
-      align: "right",
       sort: true,
+      style: cellStyle,
       formatter: (cellContent) => {
         return "$ " + cellContent;
       },
+      // headerStyle: (colum, colIndex) => {
+      //   return { width: "110px" };
+      // },
     },
     {
       dataField: "balanceOwed",
       text: "Balance Owed",
       type: "number",
-      align: "right",
       sort: true,
+      style: cellStyle,
       formatter: (cellContent) => {
         return "$ " + cellContent;
       },
+      // headerStyle: (colum, colIndex) => {
+      //   return { width: "110px" };
+      // },
     },
     {
       dataField: "id",
-      text: "Remove",
+      text: "",
       align: "center",
       editable: false,
       formatter: (cellContent, row) => {
@@ -94,6 +115,9 @@ function Table(props) {
             <FaTrashAlt />
           </StyledButton>
         );
+      },
+      headerStyle: (colum, colIndex) => {
+        return { width: "60px" };
       },
     },
   ];

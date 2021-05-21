@@ -24,7 +24,6 @@ export const TestTableData = [
     total: "12.00",
   },
   {
-    // TODO: Math for splitting receipt is wrong. balanceOwed should be 5.00.
     balanceOwed: "4.50",
     buyer: 3,
     id: 3,
@@ -35,5 +34,17 @@ export const TestTableData = [
     purchaseDate: "2021-05-03",
     storeName: "efg",
     total: "9.00",
+  },
+  {
+    balanceOwed: "4.50",
+    buyer: 3,
+    id: 3,
+    otherDeduction: 0,
+    otherDeductionsList: [3],
+    personalDeduction: 0,
+    personalDeductionsList: [2],
+    purchaseDate: "2021-05-03",
+    storeName: "Trader asfasdfasdfsaJoe's",
+    total: "100000000000.00",
   },
 ];
