@@ -42,11 +42,12 @@ function Calculator(props) {
       // console.log("sharedCost: " + sharedCost);
       const splitReceiptCost = sharedCost / 2;
       // console.log("splitReceiptCost: " + splitReceiptCost);
-      const calculatedBalanceOwed = splitReceiptCost + deductionSumToInclude;
+      const calculatedBalanceOwed = (
+        splitReceiptCost + deductionSumToInclude
+      ).toFixed(2);
       // console.log("calculatedBalanceOwed: " + calculatedBalanceOwed);
 
       setReceipt((prevValue) => {
-        console.log("cancel Called");
         return { ...prevValue, balanceOwed: calculatedBalanceOwed };
       });
     }
@@ -60,10 +61,23 @@ function Calculator(props) {
   ]);
 
   function handleInputChange(event) {
-    const { name, value } = event.target;
+    const { name, value, type } = event.target;
 
     setReceipt((prevValue) => {
-      return { ...prevValue, [name]: value };
+      if (type === "number") {
+        let formattedFloat =
+          value.indexOf(".") >= 0
+            ? value.substr(0, value.indexOf(".")) +
+              value.substr(value.indexOf("."), 3)
+            : value;
+
+        return {
+          ...prevValue,
+          [name]: formattedFloat < 0 ? formattedFloat * -1 : formattedFloat,
+        };
+      } else {
+        return { ...prevValue, [name]: value };
+      }
     });
   }
 
@@ -140,8 +154,10 @@ function Calculator(props) {
           <Form.Control
             name="total"
             onChange={handleInputChange}
-            value={receipt.total}
+            value={receipt.total || ""}
             type="number"
+            min="0.01"
+            step="0.01"
             required
           />
         </InputGroup>
@@ -178,8 +194,10 @@ function Calculator(props) {
           <Form.Control
             name="personalDeduction"
             onChange={handleInputChange}
-            value={receipt.personalDeduction}
+            value={receipt.personalDeduction || ""}
             type="number"
+            min="0"
+            step="0.01"
           />
           <InputGroup.Append>
             <StyledButton
@@ -210,8 +228,10 @@ function Calculator(props) {
           <Form.Control
             name="otherDeduction"
             onChange={handleInputChange}
-            value={receipt.otherDeduction}
+            value={receipt.otherDeduction || ""}
             type="number"
+            min="0"
+            step="0.01"
           />
           <InputGroup.Append>
             <StyledButton
