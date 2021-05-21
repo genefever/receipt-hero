@@ -21,6 +21,7 @@ function Table(props) {
     {
       dataField: "purchaseDate",
       text: "Purchase Date",
+      align: "right",
       type: "date",
       sort: true,
       formatter: (cell) => {
@@ -39,36 +40,49 @@ function Table(props) {
     {
       dataField: "storeName",
       text: "Store Name",
+      align: "right",
       sort: true,
     },
     {
       dataField: "buyer",
       text: "Buyer",
+      align: "right",
       sort: true,
       editor: {
         type: Type.SELECT,
         options: [
-          // TODO: Figure out how to change numbers to "Me" or "Other".
           { value: 1, label: "Me" },
           { value: 2, label: "Other" },
         ],
+      },
+      formatter: (cellContent) => {
+        return cellContent === 1 ? "Me" : "Other";
       },
     },
     {
       dataField: "total",
       text: "Receipt Total",
       type: "number",
+      align: "right",
       sort: true,
+      formatter: (cellContent) => {
+        return "$ " + cellContent;
+      },
     },
     {
       dataField: "balanceOwed",
       text: "Balance Owed",
       type: "number",
+      align: "right",
       sort: true,
+      formatter: (cellContent) => {
+        return "$ " + cellContent;
+      },
     },
     {
       dataField: "id",
       text: "Remove",
+      align: "center",
       editable: false,
       formatter: (cellContent, row) => {
         return (

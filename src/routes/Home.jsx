@@ -11,11 +11,11 @@ function Home() {
 
   function addReceipt(newReceipt) {
     setReceipts((prevReceipts) => {
-      if (newReceipt.personalDeduction !== 0) {
+      if (newReceipt.personalDeduction) {
         newReceipt.personalDeductionsList.push(newReceipt.personalDeduction);
         newReceipt.personalDeduction = 0;
       }
-      if (newReceipt.otherDeduction !== 0) {
+      if (newReceipt.otherDeduction) {
         newReceipt.otherDeductionsList.push(newReceipt.otherDeduction);
         newReceipt.otherDeduction = 0;
       }
