@@ -8,7 +8,6 @@ import "react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.m
 import "react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit.min.css";
 import { FaTrashAlt, FaFileCsv } from "react-icons/fa";
 import { StyledButton } from "../components/Button";
-import Container from "react-bootstrap/Container";
 
 function Table(props) {
   const cellStyle = {
@@ -139,9 +138,6 @@ function Table(props) {
       bootstrap4
       data={props.receipts}
       columns={columns}
-      pagination={pagination}
-      cellEdit={cellEdit}
-      hover
       exportCSV
       search
     >
@@ -154,7 +150,12 @@ function Table(props) {
 
           <hr style={{ marginTop: "0", marginBottom: "0.75rem" }} />
 
-          <BootstrapTable {...props.baseProps} />
+          <BootstrapTable
+            {...props.baseProps}
+            hover
+            pagination={pagination}
+            cellEdit={cellEdit}
+          />
         </div>
       )}
     </ToolkitProvider>
