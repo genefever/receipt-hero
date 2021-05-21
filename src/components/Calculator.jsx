@@ -73,7 +73,7 @@ function Calculator(props) {
 
         return {
           ...prevValue,
-          [name]: formattedFloat < 0 ? formattedFloat * -1 : formattedFloat,
+          [name]: formattedFloat < 0 ? formattedFloat * -1 : formattedFloat * 1,
         };
       } else {
         return { ...prevValue, [name]: value };

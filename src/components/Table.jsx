@@ -80,6 +80,7 @@ function Table(props) {
       columns={columns}
       pagination={pagination}
       cellEdit={cellEdit}
+      hover
     />
   );
 }

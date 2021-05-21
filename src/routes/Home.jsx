@@ -10,6 +10,7 @@ function Home() {
 
   function addReceipt(newReceipt) {
     setReceipts((prevReceipts) => {
+      newReceipt.total = parseFloat(newReceipt.total).toFixed(2);
       newReceipt.id = prevReceipts.length + 1;
       return [...prevReceipts, newReceipt];
     });
