@@ -2,7 +2,7 @@ import React from "react";
 import BootstrapTable from "react-bootstrap-table-next";
 import cellEditFactory, { Type } from "react-bootstrap-table2-editor";
 import paginationFactory from "react-bootstrap-table2-paginator";
-import ToolkitProvider from "react-bootstrap-table2-toolkit";
+import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
 import "react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css";
 import "react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit.min.css";
@@ -20,10 +20,54 @@ function Table(props) {
     mode: "click",
   });
 
+  // const pagination = paginationFactory({
+  //   hideSizePerPage: true,
+  //   sizePerPage: 10,
+  // });
+
   const pagination = paginationFactory({
-    hideSizePerPage: true,
-    sizePerPage: 10,
+    page: 1,
+    alwaysShowAllBtns: true,
+    showTotal: true,
+    withFirstAndLast: false,
+    sizePerPageRenderer: ({
+      options,
+      currSizePerPage,
+      onSizePerPageChange,
+    }) => (
+      <div className="dataTables_length" id="datatable-basic_length">
+        <label>
+          Show{" "}
+          {
+            <select
+              name="datatable-basic_length"
+              aria-controls="datatable-basic"
+              className="form-control form-control-sm"
+              onChange={(e) => onSizePerPageChange(e.target.value)}
+            >
+              <option value="10">10</option>
+              <option value="25">25</option>
+              <option value={props.receipts.length}>All</option>
+            </select>
+          }{" "}
+          entries.
+        </label>
+      </div>
+    ),
   });
+
+  const { SearchBar } = Search;
+
+  const ExportCSVButton = (props) => {
+    const handleClick = () => {
+      props.onExport();
+    };
+    return (
+      <StyledButton variant="link" className="btn-sm" onClick={handleClick}>
+        <FaFileCsv /> Export
+      </StyledButton>
+    );
+  };
 
   const columns = [
     {
@@ -121,21 +165,10 @@ function Table(props) {
     },
   ];
 
-  const ExportCSVButton = (props) => {
-    const handleClick = () => {
-      props.onExport();
-    };
-    return (
-      <StyledButton variant="link" className="btn-sm" onClick={handleClick}>
-        <FaFileCsv /> Export
-      </StyledButton>
-    );
-  };
-
   return (
     <ToolkitProvider
       keyField="id"
-      bootstrap4
+      bootstrap4={true}
       data={props.receipts}
       columns={columns}
       exportCSV
@@ -143,8 +176,16 @@ function Table(props) {
     >
       {(props) => (
         <div>
-          <div className="d-flex justify-content-between">
-            <h3>Title</h3>
+          <h3>Title</h3>
+          <div className="d-flex justify-content-between pb-1">
+            <label>
+              Search:
+              <SearchBar
+                className="form-control-sm"
+                placeholder=""
+                {...props.searchProps}
+              />
+            </label>
             <ExportCSVButton {...props.csvProps} />
           </div>
 
@@ -155,6 +196,7 @@ function Table(props) {
             hover
             pagination={pagination}
             cellEdit={cellEdit}
+            bordered={false}
           />
         </div>
       )}
