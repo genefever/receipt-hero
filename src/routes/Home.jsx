@@ -35,7 +35,7 @@ function Home() {
           </StyledCard>
         </Col>
         <Col md={8}>
-          <StyledCard $main>
+          <StyledCard $main className="pb-3">
             <Table receipts={receipts} onDelete={deleteReceipt} />
           </StyledCard>
         </Col>

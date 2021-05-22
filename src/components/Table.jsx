@@ -213,7 +213,7 @@ function Table(props) {
       columns={columns}
       exportCSV={{
         fileName: "title.csv", // TODO: Pass in dynamic dashboard title,
-        ignoreFooter: false,
+        // ignoreFooter: false, // TODO: Activate once footer is set
       }}
       search
       columnToggle
