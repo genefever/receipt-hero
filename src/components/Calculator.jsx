@@ -2,12 +2,15 @@ import React, { useState, useEffect } from "react";
 import { StyledButton } from "../components/Button";
 import ButtonToolbar from "react-bootstrap/ButtonToolbar";
 import Col from "react-bootstrap/Col";
+import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Row from "react-bootstrap/Row";
 import ToggleButton from "react-bootstrap/ToggleButton";
 import ToggleButtonGroup from "react-bootstrap/ToggleButtonGroup";
 import Tooltip from "react-bootstrap/Tooltip";
+import { Separator } from "./Separator";
 
 function Calculator(props) {
   const defaultReceiptState = {
@@ -281,6 +284,58 @@ function Calculator(props) {
 
       <hr />
 
+      <div>
+        <h6>Calculation:</h6>
+        <Container>
+          <Row>
+            <Col md={5}>
+              <small>Receipt total:</small>
+            </Col>
+            <Col md={7} className="text-right">
+              $ {receipt.total}
+            </Col>
+          </Row>
+          <Row>
+            <Col md={4}>
+              <small>Personal deductions:</small>
+            </Col>
+            <Col md={8} className="text-right">
+              - ${" "}
+              <StyledButton size="sm" variant="link" className="px-0">
+                personalDeduction
+              </StyledButton>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={5}>
+              <small>Other person's deductions:</small>
+            </Col>
+            <Col md={7} className="text-right">
+              - ${" "}
+              <StyledButton size="sm" variant="link" className="px-0">
+                otherDeduction
+              </StyledButton>
+            </Col>
+          </Row>
+          <Separator className="my-2" />
+          <Row>
+            <Col md={6}>
+              <small>Shared cost (split): </small>
+            </Col>
+            <Col className="text-right" md={6}>
+              $ {receipt.balanceOwed}
+            </Col>
+          </Row>
+          <Row>
+            <Col md={6}>
+              <small>Other person's deductions: </small>
+            </Col>
+            <Col className="text-right" md={6}>
+              $ {receipt.balanceOwed}
+            </Col>
+          </Row>
+        </Container>
+      </div>
       <div className="d-flex justify-content-between">
         {/* Submit Button */}
         <StyledButton $primary type="submit">
