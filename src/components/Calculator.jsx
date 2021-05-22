@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { StyledButton } from "../components/Button";
-import ToggleButton from "react-bootstrap/ToggleButton";
-import ToggleButtonGroup from "react-bootstrap/ToggleButtonGroup";
 import ButtonToolbar from "react-bootstrap/ButtonToolbar";
+import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import ToggleButton from "react-bootstrap/ToggleButton";
+import ToggleButtonGroup from "react-bootstrap/ToggleButtonGroup";
+import Tooltip from "react-bootstrap/Tooltip";
 
 function Calculator(props) {
   const defaultReceiptState = {
@@ -121,142 +124,163 @@ function Calculator(props) {
         setReceipt(defaultReceiptState);
       }}
     >
-      {/* Date of Purchase */}
-      <Form.Group>
-        <Form.Label>Date of Purchase</Form.Label>
-        <Form.Control
-          name="purchaseDate"
-          onChange={handleInputChange}
-          value={receipt.purchaseDate}
-          type="date"
-          required
-        />
-      </Form.Group>
-
-      {/* Store Name */}
-      <Form.Group>
-        <Form.Label>Store Name</Form.Label>
-        <Form.Control
-          name="storeName"
-          onChange={handleInputChange}
-          value={receipt.storeName}
-          required
-        />
-      </Form.Group>
-
-      {/* Receipt Total */}
-      <Form.Group>
-        <Form.Label>Receipt Total</Form.Label>
-        <InputGroup>
-          <InputGroup.Prepend>
-            <InputGroup.Text>$</InputGroup.Text>
-          </InputGroup.Prepend>
+      <Form.Row>
+        {/* Date of Purchase */}
+        <Form.Group as={Col} lg="6">
+          <Form.Label>Purchase Date</Form.Label>
           <Form.Control
-            name="total"
+            name="purchaseDate"
             onChange={handleInputChange}
-            value={receipt.total || ""}
-            type="number"
-            min="0.01"
-            step="0.01"
+            value={receipt.purchaseDate}
+            type="date"
             required
-            placeholder="0.00"
+            size="sm"
           />
-        </InputGroup>
-      </Form.Group>
+        </Form.Group>
 
-      {/* Buyer */}
-      <Form.Group>
-        <ButtonToolbar className="justify-content-between">
-          <Form.Label>Who Paid?</Form.Label>
-          <ToggleButtonGroup
-            type="radio"
-            name="buyer"
-            defaultValue={receipt.buyer}
-            value={receipt.buyer}
-            onChange={handleBuyerButtonChange}
+        {/* Store Name */}
+        <Form.Group as={Col} lg="6">
+          <Form.Label>Store Name</Form.Label>
+          <Form.Control
+            name="storeName"
+            onChange={handleInputChange}
+            value={receipt.storeName}
+            required
+            size="sm"
+          />
+        </Form.Group>
+      </Form.Row>
+
+      <Form.Row>
+        {/* Receipt Total */}
+        <Form.Group as={Col} lg="6">
+          <Form.Label>Receipt Total</Form.Label>
+          <InputGroup size="sm">
+            <InputGroup.Prepend>
+              <InputGroup.Text>$</InputGroup.Text>
+            </InputGroup.Prepend>
+            <Form.Control
+              name="total"
+              onChange={handleInputChange}
+              value={receipt.total || ""}
+              type="number"
+              min="0.01"
+              step="0.01"
+              required
+              placeholder="0.00"
+            />
+          </InputGroup>
+        </Form.Group>
+
+        {/* Buyer */}
+        <Form.Group as={Col} lg="6">
+          <ButtonToolbar className="justify-content-between">
+            <Form.Label>Who Paid?</Form.Label>
+            <ToggleButtonGroup
+              type="radio"
+              name="buyer"
+              defaultValue={receipt.buyer}
+              value={receipt.buyer}
+              onChange={handleBuyerButtonChange}
+            >
+              <ToggleButton value={"Me"} variant="outline-dark" size="sm">
+                Me
+              </ToggleButton>
+              <ToggleButton value={"Other"} variant="outline-dark" size="sm">
+                Other Person
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </ButtonToolbar>
+        </Form.Group>
+      </Form.Row>
+
+      <Form.Row>
+        {/* Personal Deductions */}
+        <Form.Group as={Col} lg="6">
+          <Form.Label>Personal Deductions</Form.Label>
+          <OverlayTrigger
+            placement="bottom"
+            delay={{ show: 150, hide: 150 }}
+            overlay={
+              <Tooltip>
+                Deduct any personal item costs from the shared receipt.
+              </Tooltip>
+            }
           >
-            <ToggleButton value={"Me"} variant="outline-dark">
-              Me
-            </ToggleButton>
-            <ToggleButton value={"Other"} variant="outline-dark">
-              Other Person
-            </ToggleButton>
-          </ToggleButtonGroup>
-        </ButtonToolbar>
-      </Form.Group>
+            <InputGroup size="sm">
+              <InputGroup.Prepend>
+                <InputGroup.Text>$</InputGroup.Text>
+              </InputGroup.Prepend>
+              <Form.Control
+                name="personalDeduction"
+                onChange={handleInputChange}
+                value={receipt.personalDeduction || ""}
+                type="number"
+                min="0"
+                step="0.01"
+                placeholder="0.00"
+              />
+              <InputGroup.Append>
+                <StyledButton
+                  name="personalDeductionsList"
+                  value={receipt.personalDeduction}
+                  variant="outline-dark"
+                  onClick={(event) => {
+                    onDeductionAdd(event);
+                    resetPersonalDeduction();
+                  }}
+                >
+                  Add
+                </StyledButton>
+              </InputGroup.Append>
+            </InputGroup>
+          </OverlayTrigger>
+        </Form.Group>
 
-      {/* Personal Deductions */}
-      <Form.Group>
-        <Form.Label>Personal Deductions</Form.Label>
-        <InputGroup>
-          <InputGroup.Prepend>
-            <InputGroup.Text>$</InputGroup.Text>
-          </InputGroup.Prepend>
-          <Form.Control
-            name="personalDeduction"
-            onChange={handleInputChange}
-            value={receipt.personalDeduction || ""}
-            type="number"
-            min="0"
-            step="0.01"
-            placeholder="0.00"
-          />
-          <InputGroup.Append>
-            <StyledButton
-              name="personalDeductionsList"
-              value={receipt.personalDeduction}
-              variant="outline-dark"
-              onClick={(event) => {
-                onDeductionAdd(event);
-                resetPersonalDeduction();
-              }}
-            >
-              Add
-            </StyledButton>
-          </InputGroup.Append>
-        </InputGroup>
-        <Form.Text className="text-muted">
-          Deduct any personal item costs from the shared receipt.
-        </Form.Text>
-      </Form.Group>
-
-      {/* Other Person's Deductions */}
-      <Form.Group>
-        <Form.Label>Other Person's Deductions</Form.Label>
-        <InputGroup>
-          <InputGroup.Prepend>
-            <InputGroup.Text>$</InputGroup.Text>
-          </InputGroup.Prepend>
-          <Form.Control
-            name="otherDeduction"
-            onChange={handleInputChange}
-            value={receipt.otherDeduction || ""}
-            type="number"
-            min="0"
-            step="0.01"
-            placeholder="0.00"
-          />
-          <InputGroup.Append>
-            <StyledButton
-              name="otherDeductionsList"
-              value={receipt.otherDeduction}
-              variant="outline-dark"
-              onClick={(event) => {
-                onDeductionAdd(event);
-                resetOtherDeduction();
-              }}
-            >
-              Add
-            </StyledButton>
-          </InputGroup.Append>
-        </InputGroup>
-        <Form.Text className="text-muted">
-          Deduct other person's personal item costs.
-        </Form.Text>
-      </Form.Group>
+        {/* Other Person's Deductions */}
+        <Form.Group as={Col} lg="6">
+          <Form.Label>Other Person's Deductions</Form.Label>
+          <OverlayTrigger
+            placement="bottom"
+            delay={{ show: 150, hide: 150 }}
+            overlay={
+              <Tooltip>Deduct other person's personal item costs.</Tooltip>
+            }
+          >
+            <InputGroup size="sm">
+              <InputGroup.Prepend>
+                <InputGroup.Text>$</InputGroup.Text>
+              </InputGroup.Prepend>
+              <Form.Control
+                name="otherDeduction"
+                onChange={handleInputChange}
+                value={receipt.otherDeduction || ""}
+                type="number"
+                min="0"
+                step="0.01"
+                placeholder="0.00"
+                size="sm"
+              />
+              <InputGroup.Append>
+                <StyledButton
+                  name="otherDeductionsList"
+                  value={receipt.otherDeduction}
+                  variant="outline-dark"
+                  onClick={(event) => {
+                    onDeductionAdd(event);
+                    resetOtherDeduction();
+                  }}
+                >
+                  Add
+                </StyledButton>
+              </InputGroup.Append>
+            </InputGroup>
+          </OverlayTrigger>
+        </Form.Group>
+      </Form.Row>
 
       {/* Submit Button */}
-      <StyledButton $primary type="submit" size="lg" block>
+      <StyledButton $primary type="submit" size="sm" block>
         Submit
       </StyledButton>
     </Form>
