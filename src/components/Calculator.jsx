@@ -114,6 +114,10 @@ function Calculator(props) {
     });
   }
 
+  const reincludeDeductions =
+    (receipt.buyer === "Me" && receipt.theirDeductionsList.length) ||
+    (receipt.buyer === "Them" && receipt.myDeductionsList.length);
+
   return (
     <Form
       onSubmit={(event) => {
@@ -184,7 +188,7 @@ function Calculator(props) {
               <ToggleButton value={"Me"} variant="outline-dark" size="sm">
                 Me
               </ToggleButton>
-              <ToggleButton value={"Their"} variant="outline-dark" size="sm">
+              <ToggleButton value={"Them"} variant="outline-dark" size="sm">
                 Them
               </ToggleButton>
             </ToggleButtonGroup>
@@ -290,29 +294,39 @@ function Calculator(props) {
               $ {receipt.total}
             </Col>
           </Row>
-          <Row>
-            <Col md={5}>
-              <small>My deductions:</small>
-            </Col>
-            <Col md={7} className="text-right">
-              - ${" "}
-              <StyledButton size="sm" variant="link" className="px-0">
-                myDeduction
-              </StyledButton>
-            </Col>
-          </Row>
-          <Row>
-            <Col md={5}>
-              <small>Their deductions:</small>
-            </Col>
-            <Col md={7} className="text-right">
-              - ${" "}
-              <StyledButton size="sm" variant="link" className="px-0">
-                theirDeduction
-              </StyledButton>
-            </Col>
-          </Row>
+
+          {/* Show / hide myDeductions */}
+          {receipt.myDeductionsList.length > 0 ? (
+            <Row>
+              <Col md={5}>
+                <small>My deductions:</small>
+              </Col>
+              <Col md={7} className="text-right">
+                - ${" "}
+                <StyledButton size="sm" variant="link" className="px-0">
+                  myDeduction
+                </StyledButton>
+              </Col>
+            </Row>
+          ) : null}
+
+          {/* Show / hide otherDeductions */}
+          {receipt.theirDeductionsList.length > 0 ? (
+            <Row>
+              <Col md={5}>
+                <small>Their deductions:</small>
+              </Col>
+              <Col md={7} className="text-right">
+                - ${" "}
+                <StyledButton size="sm" variant="link" className="px-0">
+                  theirDeduction
+                </StyledButton>
+              </Col>
+            </Row>
+          ) : null}
+
           <Separator className="my-2" />
+
           <Row>
             <Col md={6}>
               <small>Shared cost (split): </small>
@@ -321,17 +335,22 @@ function Calculator(props) {
               $ {receipt.balanceOwed}
             </Col>
           </Row>
-          <Row>
-            <Col md={6}>
-              <small>
-                {receipt.buyer === "Me" ? "Their" : "My"} deductions:{" "}
-              </small>
-            </Col>
-            <Col className="text-right" md={6}>
-              + $ {receipt.balanceOwed}
-            </Col>
-          </Row>
-          <Separator className="my-3" />
+
+          {reincludeDeductions ? (
+            <Row>
+              <Col md={6}>
+                <small>
+                  {receipt.buyer === "Me" ? "Their" : "My"} deductions:{" "}
+                </small>
+              </Col>
+              <Col className="text-right" md={6}>
+                + $ {receipt.balanceOwed}
+              </Col>
+            </Row>
+          ) : null}
+
+          <Separator className="mt-2 mb-3" />
+
           <Row>
             <Col md={6}>
               {receipt.buyer === "Me" ? "They owe you" : "You owe them"} :{" "}
