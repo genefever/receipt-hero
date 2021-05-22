@@ -279,10 +279,15 @@ function Calculator(props) {
         </Form.Group>
       </Form.Row>
 
-      {/* Submit Button */}
-      <StyledButton $primary type="submit" size="sm" block>
-        Submit
-      </StyledButton>
+      <hr />
+
+      <div className="d-flex justify-content-between">
+        {/* Submit Button */}
+        <StyledButton $primary type="submit">
+          Submit
+        </StyledButton>
+        <h3>{"$" + receipt.balanceOwed}</h3>
+      </div>
     </Form>
   );
 }
