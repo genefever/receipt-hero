@@ -19,10 +19,10 @@ function Calculator(props) {
     storeName: "",
     total: 0,
     buyer: "Me",
-    personalDeduction: 0,
-    otherDeduction: 0,
-    personalDeductionsList: [],
-    otherDeductionsList: [],
+    myDeduction: 0,
+    theirDeduction: 0,
+    myDeductionsList: [],
+    theirDeductionsList: [],
     balanceOwed: 0,
   };
 
@@ -30,21 +30,20 @@ function Calculator(props) {
 
   useEffect(() => {
     function calculateBalanceOwed() {
-      const personalDeductionsSum = receipt.personalDeductionsList.reduce(
+      const myDeductionsSum = receipt.myDeductionsList.reduce(
         (a, b) => a * 1 + b * 1,
         0
       );
-      const otherDeductionsSum = receipt.otherDeductionsList.reduce(
+      const theirDeductionsSum = receipt.theirDeductionsList.reduce(
         (a, b) => a * 1 + b * 1,
         0
       );
-      // console.log("personalDeductionsSum: " + personalDeductionsSum);
-      // console.log("otherDeductionsSum: " + otherDeductionsSum);
+      // console.log("myDeductionsSum: " + myDeductionsSum);
+      // console.log("theirDeductionsSum: " + theirDeductionsSum);
       const deductionSumToInclude =
-        receipt.buyer === 1 ? otherDeductionsSum : personalDeductionsSum;
+        receipt.buyer === 1 ? theirDeductionsSum : myDeductionsSum;
       // console.log("deductionSumToInclude: " + deductionSumToInclude);
-      const sharedCost =
-        receipt.total - personalDeductionsSum - otherDeductionsSum;
+      const sharedCost = receipt.total - myDeductionsSum - theirDeductionsSum;
       // console.log("sharedCost: " + sharedCost);
       const splitReceiptCost = sharedCost / 2;
       // console.log("splitReceiptCost: " + splitReceiptCost);
@@ -60,11 +59,7 @@ function Calculator(props) {
 
     calculateBalanceOwed();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    receipt.otherDeductionsList,
-    receipt.total,
-    receipt.personalDeductionsList,
-  ]);
+  }, [receipt.theirDeductionsList, receipt.total, receipt.myDeductionsList]);
 
   function handleInputChange(event) {
     const { name, value, type } = event.target;
@@ -107,15 +102,15 @@ function Calculator(props) {
     });
   }
 
-  function resetPersonalDeduction() {
+  function resetMyDeduction() {
     setReceipt((prevValue) => {
-      return { ...prevValue, personalDeduction: 0 };
+      return { ...prevValue, myDeduction: 0 };
     });
   }
 
-  function resetOtherDeduction() {
+  function resetTheirDeduction() {
     setReceipt((prevValue) => {
-      return { ...prevValue, otherDeduction: 0 };
+      return { ...prevValue, theirDeduction: 0 };
     });
   }
 
@@ -177,7 +172,7 @@ function Calculator(props) {
 
         {/* Buyer */}
         <Form.Group as={Col} lg="6">
-          <ButtonToolbar className="justify-content-between">
+          <ButtonToolbar className="d-flex flex-column">
             <Form.Label>Who Paid?</Form.Label>
             <ToggleButtonGroup
               type="radio"
@@ -189,8 +184,8 @@ function Calculator(props) {
               <ToggleButton value={"Me"} variant="outline-dark" size="sm">
                 Me
               </ToggleButton>
-              <ToggleButton value={"Other"} variant="outline-dark" size="sm">
-                Other Person
+              <ToggleButton value={"Their"} variant="outline-dark" size="sm">
+                Them
               </ToggleButton>
             </ToggleButtonGroup>
           </ButtonToolbar>
@@ -200,7 +195,7 @@ function Calculator(props) {
       <Form.Row>
         {/* Personal Deductions */}
         <Form.Group as={Col} lg="6">
-          <Form.Label>Personal Deductions</Form.Label>
+          <Form.Label>My Deductions</Form.Label>
           <OverlayTrigger
             placement="bottom"
             delay={{ show: 150, hide: 150 }}
@@ -215,9 +210,9 @@ function Calculator(props) {
                 <InputGroup.Text>$</InputGroup.Text>
               </InputGroup.Prepend>
               <Form.Control
-                name="personalDeduction"
+                name="myDeduction"
                 onChange={handleInputChange}
-                value={receipt.personalDeduction || ""}
+                value={receipt.myDeduction || ""}
                 type="number"
                 min="0"
                 step="0.01"
@@ -225,12 +220,12 @@ function Calculator(props) {
               />
               <InputGroup.Append>
                 <StyledButton
-                  name="personalDeductionsList"
-                  value={receipt.personalDeduction}
+                  name="myDeductionsList"
+                  value={receipt.myDeduction}
                   variant="outline-dark"
                   onClick={(event) => {
                     onDeductionAdd(event);
-                    resetPersonalDeduction();
+                    resetMyDeduction();
                   }}
                 >
                   Add
@@ -240,14 +235,14 @@ function Calculator(props) {
           </OverlayTrigger>
         </Form.Group>
 
-        {/* Other Person's Deductions */}
+        {/* Their Deductions */}
         <Form.Group as={Col} lg="6">
-          <Form.Label>Other Person's Deductions</Form.Label>
+          <Form.Label>Their Deductions</Form.Label>
           <OverlayTrigger
             placement="bottom"
             delay={{ show: 150, hide: 150 }}
             overlay={
-              <Tooltip>Deduct other person's personal item costs.</Tooltip>
+              <Tooltip>Deduct the other person's personal item costs.</Tooltip>
             }
           >
             <InputGroup size="sm">
@@ -255,9 +250,9 @@ function Calculator(props) {
                 <InputGroup.Text>$</InputGroup.Text>
               </InputGroup.Prepend>
               <Form.Control
-                name="otherDeduction"
+                name="theirDeduction"
                 onChange={handleInputChange}
-                value={receipt.otherDeduction || ""}
+                value={receipt.theirDeduction || ""}
                 type="number"
                 min="0"
                 step="0.01"
@@ -266,12 +261,12 @@ function Calculator(props) {
               />
               <InputGroup.Append>
                 <StyledButton
-                  name="otherDeductionsList"
-                  value={receipt.otherDeduction}
+                  name="theirDeductionsList"
+                  value={receipt.theirDeduction}
                   variant="outline-dark"
                   onClick={(event) => {
                     onDeductionAdd(event);
-                    resetOtherDeduction();
+                    resetTheirDeduction();
                   }}
                 >
                   Add
@@ -286,7 +281,7 @@ function Calculator(props) {
 
       <div>
         <h6>Calculation:</h6>
-        <Container>
+        <Container fluid>
           <Row>
             <Col md={5}>
               <small>Receipt total:</small>
@@ -296,24 +291,24 @@ function Calculator(props) {
             </Col>
           </Row>
           <Row>
-            <Col md={4}>
-              <small>Personal deductions:</small>
+            <Col md={5}>
+              <small>My deductions:</small>
             </Col>
-            <Col md={8} className="text-right">
+            <Col md={7} className="text-right">
               - ${" "}
               <StyledButton size="sm" variant="link" className="px-0">
-                personalDeduction
+                myDeduction
               </StyledButton>
             </Col>
           </Row>
           <Row>
             <Col md={5}>
-              <small>Other person's deductions:</small>
+              <small>Their deductions:</small>
             </Col>
             <Col md={7} className="text-right">
               - ${" "}
               <StyledButton size="sm" variant="link" className="px-0">
-                otherDeduction
+                theirDeduction
               </StyledButton>
             </Col>
           </Row>
@@ -328,20 +323,28 @@ function Calculator(props) {
           </Row>
           <Row>
             <Col md={6}>
-              <small>Other person's deductions: </small>
+              <small>
+                {receipt.buyer === "Me" ? "Their" : "My"} deductions:{" "}
+              </small>
             </Col>
             <Col className="text-right" md={6}>
-              $ {receipt.balanceOwed}
+              + $ {receipt.balanceOwed}
+            </Col>
+          </Row>
+          <Separator className="my-3" />
+          <Row>
+            <Col md={6}>
+              {receipt.buyer === "Me" ? "They owe you" : "You owe them"} :{" "}
+            </Col>
+            <Col className="text-right" md={6}>
+              <h4>$ {receipt.balanceOwed}</h4>
             </Col>
           </Row>
         </Container>
-      </div>
-      <div className="d-flex justify-content-between">
         {/* Submit Button */}
-        <StyledButton $primary type="submit">
+        <StyledButton $primary type="submit" block size="sm" className="mt-2">
           Submit
         </StyledButton>
-        <h3>{"$" + receipt.balanceOwed}</h3>
       </div>
     </Form>
   );
