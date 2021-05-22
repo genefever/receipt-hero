@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import BootstrapTable from "react-bootstrap-table-next";
 import cellEditFactory, { Type } from "react-bootstrap-table2-editor";
 import paginationFactory from "react-bootstrap-table2-paginator";
@@ -14,7 +14,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
 function Table(props) {
-  const printComponentRef = useRef();
+  const { SearchBar } = Search;
 
   const cellStyle = {
     whiteSpace: "nowrap",
@@ -36,7 +36,7 @@ function Table(props) {
       currSizePerPage,
       onSizePerPageChange,
     }) => (
-      <div className="form-inline">
+      <div className="form-inline hide-on-print">
         <div className="form-group">
           <label className="d-inline-block">
             Show{" "}
@@ -57,8 +57,6 @@ function Table(props) {
     ),
   });
 
-  const { SearchBar } = Search;
-
   const ExportCSVButton = (props) => {
     const handleClick = () => {
       props.onExport();
@@ -70,7 +68,7 @@ function Table(props) {
     );
   };
 
-  const columns = [
+  const columnSettings = [
     {
       dataField: "purchaseDate",
       text: "Purchase Date",
@@ -78,6 +76,15 @@ function Table(props) {
       style: cellStyle,
       sort: true,
       formatter: (cell) => {
+        let dateObj = cell;
+        if (typeof cell !== "object") {
+          dateObj = new Date(cell);
+        }
+        return `${("0" + (dateObj.getUTCMonth() + 1)).slice(-2)}/${(
+          "0" + dateObj.getUTCDate()
+        ).slice(-2)}/${dateObj.getUTCFullYear()}`;
+      },
+      csvFormatter: (cell) => {
         let dateObj = cell;
         if (typeof cell !== "object") {
           dateObj = new Date(cell);
@@ -121,6 +128,10 @@ function Table(props) {
       formatter: (cellContent) => {
         return "$ " + cellContent;
       },
+      csvFormatter: (cellContent) => {
+        return "$ " + cellContent;
+      },
+      csvType: Number,
     },
     {
       dataField: "balanceOwed",
@@ -131,17 +142,22 @@ function Table(props) {
       formatter: (cellContent) => {
         return "$ " + cellContent;
       },
+      csvFormatter: (cellContent) => {
+        return "$ " + cellContent;
+      },
+      csvType: Number,
     },
     {
       dataField: "id",
       text: "",
       align: "center",
       editable: false,
+      csvExport: false,
       formatter: (cellContent, row) => {
         return (
           <StyledButton
             $google
-            className="btn-sm"
+            className="btn-sm py-0 px-1 pb-1"
             onClick={() => props.onDelete(row.id)}
           >
             <FaTrashAlt />
@@ -154,19 +170,58 @@ function Table(props) {
     },
   ];
 
+  const [columns, setColumns] = useState(columnSettings);
+  const printComponentRef = useRef();
+
+  const toggleDeleteColumn = () => {
+    const newColumns = columns.map((column) => {
+      if (column.dataField !== "id") return column;
+      return { ...column, hidden: !column.hidden };
+    });
+
+    setColumns(newColumns);
+  };
+
+  const printPageStyle = `
+  @page {
+    margin: 10%;
+  }
+
+  @media all {
+    .pagebreak {
+      display: none;
+    }
+  }
+
+  @media print {
+    .pagebreak {
+      page-break-before: always;
+    }
+
+    .hide-on-print, .react-bootstrap-table-page-btns-ul{
+      display: none;
+      visibility: hidden;
+    }
+  }
+`;
+
   return (
     <ToolkitProvider
       keyField="id"
       bootstrap4={true}
       data={props.receipts}
       columns={columns}
-      exportCSV
+      exportCSV={{
+        fileName: "title.csv", // TODO: Pass in dynamic dashboard title,
+        ignoreFooter: false,
+      }}
       search
+      columnToggle
     >
       {(props) => (
-        <div>
+        <div ref={printComponentRef}>
           <h3>Title</h3>
-          <Container fluid className="px-0 mb-2">
+          <Container fluid className="px-0 mb-2 hide-on-print">
             <Row className="align-items-end">
               <Col xs={12} sm={6}>
                 <div className="form-inline">
@@ -188,6 +243,10 @@ function Table(props) {
                       </StyledButton>
                     )}
                     content={() => printComponentRef.current}
+                    documentTitle={"Title"} // TODO: replace with dynamic title
+                    onBeforeGetContent={() => toggleDeleteColumn()}
+                    onAfterPrint={() => toggleDeleteColumn()}
+                    pageStyle={printPageStyle}
                   />
                 </div>
               </Col>
@@ -200,7 +259,13 @@ function Table(props) {
             pagination={pagination}
             cellEdit={cellEdit}
             bordered={false}
-            ref={printComponentRef}
+            condensed
+            // ref={printComponentRef}
+            // rowStyle={(row, rowIndex) =>
+            //   row.buyer === "Me"
+            //     ? { backgroundColor: "green" }
+            //     : { backgroundColor: "red" }
+            // }
           />
         </div>
       )}
