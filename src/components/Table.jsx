@@ -10,8 +10,6 @@ import { FaTrashAlt, FaFileCsv, FaPrint } from "react-icons/fa";
 import { StyledButton } from "../components/Button";
 import ReactToPrint from "react-to-print";
 import Container from "react-bootstrap/Container";
-
-import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
@@ -28,38 +26,33 @@ function Table(props) {
     mode: "click",
   });
 
-  // const pagination = paginationFactory({
-  //   hideSizePerPage: true,
-  //   sizePerPage: 10,
-  // });
-
   const pagination = paginationFactory({
     page: 1,
     alwaysShowAllBtns: true,
-    showTotal: true,
+    sizePerPage: 10,
     withFirstAndLast: false,
     sizePerPageRenderer: ({
       options,
       currSizePerPage,
       onSizePerPageChange,
     }) => (
-      <div className="dataTables_length" id="datatable-basic_length">
-        <label>
-          Show{" "}
-          {
-            <select
-              name="datatable-basic_length"
-              aria-controls="datatable-basic"
-              className="form-control form-control-sm"
-              onChange={(e) => onSizePerPageChange(e.target.value)}
-            >
-              <option value="10">10</option>
-              <option value="25">25</option>
-              <option value={props.receipts.length}>All</option>
-            </select>
-          }{" "}
-          entries.
-        </label>
+      <div className="form-inline">
+        <div className="form-group">
+          <label className="d-inline-block">
+            Show{" "}
+            {
+              <select
+                className="form-control form-control-sm d-inline-block"
+                onChange={(e) => onSizePerPageChange(e.target.value)}
+              >
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value={props.receipts.length}>All</option>
+              </select>
+            }{" "}
+            entries.
+          </label>
+        </div>
       </div>
     ),
   });
@@ -71,7 +64,7 @@ function Table(props) {
       props.onExport();
     };
     return (
-      <StyledButton className="btn-sm" onClick={handleClick}>
+      <StyledButton className="btn-sm" variant="link" onClick={handleClick}>
         <FaFileCsv /> Export
       </StyledButton>
     );
@@ -105,9 +98,6 @@ function Table(props) {
       text: "Store Name",
       style: cellStyle,
       sort: true,
-      // headerStyle: (colum, colIndex) => {
-      //   return { width: "110px" };
-      // },
     },
     {
       dataField: "buyer",
@@ -121,9 +111,6 @@ function Table(props) {
           { value: 2, label: "Other" },
         ],
       },
-      // headerStyle: (colum, colIndex) => {
-      //   return { width: "90px" };
-      // },
     },
     {
       dataField: "total",
@@ -134,9 +121,6 @@ function Table(props) {
       formatter: (cellContent) => {
         return "$ " + cellContent;
       },
-      // headerStyle: (colum, colIndex) => {
-      //   return { width: "110px" };
-      // },
     },
     {
       dataField: "balanceOwed",
@@ -147,9 +131,6 @@ function Table(props) {
       formatter: (cellContent) => {
         return "$ " + cellContent;
       },
-      // headerStyle: (colum, colIndex) => {
-      //   return { width: "110px" };
-      // },
     },
     {
       dataField: "id",
@@ -185,30 +166,29 @@ function Table(props) {
       {(props) => (
         <div>
           <h3>Title</h3>
-          <Container fluid>
-            <Row>
+          <Container fluid className="px-0 mb-2">
+            <Row className="align-items-end">
               <Col xs={12} sm={6}>
-                <ButtonGroup>
+                <div className="form-inline">
+                  <div className="form-group">
+                    <SearchBar
+                      className="form-control-sm"
+                      {...props.searchProps}
+                    />
+                  </div>
+                </div>
+              </Col>
+              <Col xs={12} sm={6}>
+                <div className="float-right">
                   <ExportCSVButton {...props.csvProps} />
                   <ReactToPrint
                     trigger={() => (
-                      <StyledButton size="sm">
+                      <StyledButton size="sm" variant="link">
                         <FaPrint /> Print
                       </StyledButton>
                     )}
                     content={() => printComponentRef.current}
                   />
-                </ButtonGroup>
-              </Col>
-              <Col xs={12} sm={6}>
-                <div className="float-right">
-                  <label>
-                    Search:
-                    <SearchBar
-                      className="form-control-sm"
-                      {...props.searchProps}
-                    />
-                  </label>
                 </div>
               </Col>
             </Row>

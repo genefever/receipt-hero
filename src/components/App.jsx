@@ -22,7 +22,6 @@ const GlobalStyle = createGlobalStyle`
       font-family: "Montserrat";
       font-weight: 500;
     }
-
 `;
 
 function App() {
