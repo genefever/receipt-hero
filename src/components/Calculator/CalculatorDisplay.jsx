@@ -3,6 +3,8 @@ import { StyledButton } from "../../components/Button";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
+import Tooltip from "react-bootstrap/Tooltip";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import { Separator } from "../Separator";
 
 function CalculatorDisplay(props) {
@@ -33,9 +35,15 @@ function CalculatorDisplay(props) {
             </Col>
             <Col md={7} className="text-right">
               - ${" "}
-              <StyledButton size="sm" variant="link" className="px-0">
-                {props.receipt.myDeductions.sum.toFixed(2)}
-              </StyledButton>
+              <OverlayTrigger
+                placement="bottom"
+                delay={{ show: 0, hide: 0 }}
+                overlay={<Tooltip>Edit</Tooltip>}
+              >
+                <StyledButton size="sm" variant="link" className="px-0">
+                  {props.receipt.myDeductions.sum.toFixed(2)}
+                </StyledButton>
+              </OverlayTrigger>
             </Col>
           </Row>
         ) : null}
@@ -48,9 +56,15 @@ function CalculatorDisplay(props) {
             </Col>
             <Col md={7} className="text-right">
               - ${" "}
-              <StyledButton size="sm" variant="link" className="px-0">
-                {props.receipt.theirDeductions.sum.toFixed(2)}
-              </StyledButton>
+              <OverlayTrigger
+                placement="bottom"
+                delay={{ show: 0, hide: 0 }}
+                overlay={<Tooltip>Edit</Tooltip>}
+              >
+                <StyledButton size="sm" variant="link" className="px-0">
+                  {props.receipt.theirDeductions.sum.toFixed(2)}
+                </StyledButton>
+              </OverlayTrigger>
             </Col>
           </Row>
         ) : null}

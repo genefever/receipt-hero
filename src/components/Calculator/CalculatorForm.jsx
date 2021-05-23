@@ -88,7 +88,7 @@ function CalculatorForm(props) {
           <Form.Label>My Deductions</Form.Label>
           <OverlayTrigger
             placement="bottom"
-            delay={{ show: 50, hide: 50 }}
+            delay={{ show: 0, hide: 0 }}
             overlay={
               <Tooltip>
                 Deduct any personal item costs from the shared receipt.
@@ -129,7 +129,7 @@ function CalculatorForm(props) {
           <Form.Label>Their Deductions</Form.Label>
           <OverlayTrigger
             placement="bottom"
-            delay={{ show: 150, hide: 150 }}
+            delay={{ show: 0, hide: 0 }}
             overlay={
               <Tooltip>Deduct the other person's personal item costs.</Tooltip>
             }
