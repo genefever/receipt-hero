@@ -26,10 +26,14 @@ function Calculator(props) {
 
   const [receipt, setReceipt] = useState(defaultReceiptState);
 
+  function calculateListSum(list) {
+    return list.reduce((a, b) => a * 1 + b * 1, 0);
+  }
+
   useEffect(() => {
     function calculateBalanceOwed() {
-      const myDeductionsSum = receipt.myDeductions.sum;
-      const theirDeductionsSum = receipt.theirDeductions.sum;
+      const myDeductionsSum = calculateListSum(receipt.myDeductions.list);
+      const theirDeductionsSum = calculateListSum(receipt.theirDeductions.list);
       // console.log("myDeductionsSum: " + myDeductionsSum);
       // console.log("theirDeductionsSum: " + theirDeductionsSum);
       const deductionSumToInclude =
@@ -45,7 +49,15 @@ function Calculator(props) {
       // console.log("calculatedBalanceOwed: " + calculatedBalanceOwed);
 
       setReceipt((prevValue) => {
-        return { ...prevValue, balanceOwed: calculatedBalanceOwed };
+        return {
+          ...prevValue,
+          balanceOwed: calculatedBalanceOwed,
+          myDeductions: { ...prevValue["myDeductions"], sum: myDeductionsSum },
+          theirDeductions: {
+            ...prevValue["theirDeductions"],
+            sum: theirDeductionsSum,
+          },
+        };
       });
     }
 
@@ -113,16 +125,23 @@ function Calculator(props) {
     setReceipt((prevValue) => {
       const deductionsObj = prevValue[[name]];
       const deductionsList = deductionsObj.list;
-      const deductionsSum =
-        deductionsList.reduce((a, b) => a * 1 + b * 1, 0) + floatValue * 1;
 
       return {
         ...prevValue,
         [name]: {
+          ...prevValue[name],
           list: [...deductionsList, floatValue],
           inputValue: 0,
-          sum: deductionsSum,
         },
+      };
+    });
+  }
+
+  function handleDeductionsListChange(name, updatedList) {
+    setReceipt((prevValue) => {
+      return {
+        ...prevValue,
+        [name]: { ...prevValue[name], list: updatedList },
       };
     });
   }
@@ -144,7 +163,10 @@ function Calculator(props) {
 
       <hr />
 
-      <CalculatorDisplay receipt={receipt} />
+      <CalculatorDisplay
+        receipt={receipt}
+        onDeductionsListChange={handleDeductionsListChange}
+      />
 
       {/* Submit Button */}
       <StyledButton $primary type="submit" block className="mt-2">

@@ -8,20 +8,24 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Row from "react-bootstrap/Row";
 import Tooltip from "react-bootstrap/Tooltip";
 import { Separator } from "../Separator";
+import { FaTrashAlt } from "react-icons/fa";
 
 function CalculatorDisplay(props) {
   const [showModal, setShowModal] = useState(false);
 
   const [deductionModalItem, setDeductionModalItem] = useState({
-    name: "",
+    name: "", // variable name
     list: [],
+    title: "", // modal title display name
   });
   const handleShowModal = (deductionItem) => {
     setDeductionModalItem(deductionItem);
     setShowModal(true);
   };
 
-  const handleCloseModal = () => setShowModal(false);
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
 
   const deleteDeductionFromModal = (indexToRemove) => {
     setDeductionModalItem((prevValue) => {
@@ -76,7 +80,8 @@ function CalculatorDisplay(props) {
                   className="px-0"
                   onClick={() =>
                     handleShowModal({
-                      name: "My",
+                      name: "myDeductions",
+                      title: "My",
                       list: props.receipt.myDeductions.list,
                     })
                   }
@@ -107,7 +112,8 @@ function CalculatorDisplay(props) {
                   className="px-0"
                   onClick={() =>
                     handleShowModal({
-                      name: "Their",
+                      name: "theirDeductions",
+                      title: "Their",
                       list: props.receipt.theirDeductions.list,
                     })
                   }
@@ -161,7 +167,7 @@ function CalculatorDisplay(props) {
       {/* Modal - Edit deduction */}
       <Modal show={showModal} onHide={handleCloseModal} size="sm">
         <Modal.Header closeButton>
-          <Modal.Title>{deductionModalItem.name} deductions</Modal.Title>
+          <Modal.Title>{deductionModalItem.title} deductions</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <ListGroup variant="flush">
@@ -169,12 +175,13 @@ function CalculatorDisplay(props) {
               <ListGroup.Item key={index} action>
                 <div>
                   $ {item}
-                  <button
-                    className="float-right"
+                  <span
+                    className="float-right btn btn-default py-0 px-0"
+                    role="button"
                     onClick={() => deleteDeductionFromModal(index)}
                   >
-                    X
-                  </button>
+                    <FaTrashAlt />
+                  </span>
                 </div>
               </ListGroup.Item>
             ))}
@@ -184,7 +191,16 @@ function CalculatorDisplay(props) {
           <StyledButton variant="outline-secondary" onClick={handleCloseModal}>
             Cancel
           </StyledButton>
-          <StyledButton $primary onClick={handleCloseModal}>
+          <StyledButton
+            $primary
+            onClick={() => {
+              props.onDeductionsListChange(
+                deductionModalItem.name,
+                deductionModalItem.list
+              );
+              handleCloseModal();
+            }}
+          >
             Save Changes
           </StyledButton>
         </Modal.Footer>
