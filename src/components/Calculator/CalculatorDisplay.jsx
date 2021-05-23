@@ -21,7 +21,7 @@ function CalculatorDisplay(props) {
             <small>Receipt total:</small>
           </Col>
           <Col md={7} className="text-right">
-            $ {props.receipt.total}
+            $ {props.receipt.total.toFixed(2)}
           </Col>
         </Row>
 
@@ -34,7 +34,7 @@ function CalculatorDisplay(props) {
             <Col md={7} className="text-right">
               - ${" "}
               <StyledButton size="sm" variant="link" className="px-0">
-                myDeduction
+                {props.receipt.myDeductions.sum.toFixed(2)}
               </StyledButton>
             </Col>
           </Row>
@@ -49,7 +49,7 @@ function CalculatorDisplay(props) {
             <Col md={7} className="text-right">
               - ${" "}
               <StyledButton size="sm" variant="link" className="px-0">
-                theirDeduction
+                {props.receipt.theirDeductions.sum.toFixed(2)}
               </StyledButton>
             </Col>
           </Row>
@@ -62,7 +62,7 @@ function CalculatorDisplay(props) {
             <small>Shared cost (split): </small>
           </Col>
           <Col className="text-right" md={6}>
-            $ {props.receipt.balanceOwed}
+            $ {(props.receipt.total / 2).toFixed(2)}
           </Col>
         </Row>
 
@@ -74,7 +74,10 @@ function CalculatorDisplay(props) {
               </small>
             </Col>
             <Col className="text-right" md={6}>
-              + $ {props.receipt.balanceOwed}
+              + ${" "}
+              {props.receipt.buyer === "Me"
+                ? props.receipt.theirDeductions.sum.toFixed(2)
+                : props.receipt.myDeductions.sum.toFixed(2)}
             </Col>
           </Row>
         ) : null}

@@ -33,7 +33,7 @@ function Calculator(props) {
       // console.log("myDeductionsSum: " + myDeductionsSum);
       // console.log("theirDeductionsSum: " + theirDeductionsSum);
       const deductionSumToInclude =
-        receipt.buyer === 1 ? theirDeductionsSum : myDeductionsSum;
+        receipt.buyer === "Me" ? theirDeductionsSum : myDeductionsSum;
       // console.log("deductionSumToInclude: " + deductionSumToInclude);
       const sharedCost = receipt.total - myDeductionsSum - theirDeductionsSum;
       // console.log("sharedCost: " + sharedCost);
@@ -51,7 +51,12 @@ function Calculator(props) {
 
     calculateBalanceOwed();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [receipt.theirDeductions.list, receipt.total, receipt.myDeductions.list]);
+  }, [
+    receipt.theirDeductions.list,
+    receipt.total,
+    receipt.myDeductions.list,
+    receipt.buyer,
+  ]);
 
   function handleInputChange(event, isDeductionInputChange = false) {
     const { name, value, type } = event.target;
@@ -122,19 +127,6 @@ function Calculator(props) {
     });
   }
 
-  /*
-  function resetMyDeduction() {
-    setReceipt((prevValue) => {
-      return { ...prevValue, myDeduction: 0 };
-    });
-  }
-
-  function resetTheirDeduction() {
-    setReceipt((prevValue) => {
-      return { ...prevValue, theirDeduction: 0 };
-    });
-  }
-*/
   return (
     <Form
       onSubmit={(event) => {
@@ -155,7 +147,14 @@ function Calculator(props) {
       <CalculatorDisplay receipt={receipt} />
 
       {/* Submit Button */}
-      <StyledButton $primary type="submit" block size="sm" className="mt-2">
+      <StyledButton
+        $primary
+        type="submit"
+        block
+        size="sm"
+        className="mt-2"
+        onClick={console.log(receipt)}
+      >
         Submit
       </StyledButton>
     </Form>
