@@ -1,20 +1,50 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyledButton } from "../../components/Button";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
+import ListGroup from "react-bootstrap/ListGroup";
+import Modal from "react-bootstrap/Modal";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Row from "react-bootstrap/Row";
 import Tooltip from "react-bootstrap/Tooltip";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import { Separator } from "../Separator";
 
 function CalculatorDisplay(props) {
+  const [showModal, setShowModal] = useState(false);
+
+  const [deductionModalItem, setDeductionModalItem] = useState({
+    name: "",
+    list: [],
+  });
+  const handleShowModal = (deductionItem) => {
+    setDeductionModalItem(deductionItem);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => setShowModal(false);
+
+  const deleteDeductionFromModal = (indexToRemove) => {
+    setDeductionModalItem((prevValue) => {
+      const updatedList = prevValue["list"].filter((item, index) => {
+        return index !== indexToRemove;
+      });
+      return { ...prevValue, list: updatedList };
+    });
+  };
+
   const reincludeDeductions =
     (props.receipt.buyer === "Me" &&
       props.receipt.theirDeductions.list.length) ||
     (props.receipt.buyer === "Them" && props.receipt.myDeductions.list.length);
+  const sharedSplitCost = (
+    (props.receipt.total -
+      props.receipt.myDeductions.sum -
+      props.receipt.theirDeductions.sum) /
+    2
+  ).toFixed(2);
 
   return (
-    <div>
+    <>
       <h6>Calculation:</h6>
 
       <Container fluid>
@@ -40,7 +70,17 @@ function CalculatorDisplay(props) {
                 delay={{ show: 0, hide: 0 }}
                 overlay={<Tooltip>Edit</Tooltip>}
               >
-                <StyledButton size="sm" variant="link" className="px-0">
+                <StyledButton
+                  size="sm"
+                  variant="link"
+                  className="px-0"
+                  onClick={() =>
+                    handleShowModal({
+                      name: "My",
+                      list: props.receipt.myDeductions.list,
+                    })
+                  }
+                >
                   {props.receipt.myDeductions.sum.toFixed(2)}
                 </StyledButton>
               </OverlayTrigger>
@@ -61,7 +101,17 @@ function CalculatorDisplay(props) {
                 delay={{ show: 0, hide: 0 }}
                 overlay={<Tooltip>Edit</Tooltip>}
               >
-                <StyledButton size="sm" variant="link" className="px-0">
+                <StyledButton
+                  size="sm"
+                  variant="link"
+                  className="px-0"
+                  onClick={() =>
+                    handleShowModal({
+                      name: "Their",
+                      list: props.receipt.theirDeductions.list,
+                    })
+                  }
+                >
                   {props.receipt.theirDeductions.sum.toFixed(2)}
                 </StyledButton>
               </OverlayTrigger>
@@ -76,7 +126,7 @@ function CalculatorDisplay(props) {
             <small>Shared cost (split): </small>
           </Col>
           <Col className="text-right" md={6}>
-            $ {(props.receipt.total / 2).toFixed(2)}
+            $ {sharedSplitCost}
           </Col>
         </Row>
 
@@ -107,7 +157,39 @@ function CalculatorDisplay(props) {
           </Col>
         </Row>
       </Container>
-    </div>
+
+      {/* Modal - Edit deduction */}
+      <Modal show={showModal} onHide={handleCloseModal} size="sm">
+        <Modal.Header closeButton>
+          <Modal.Title>{deductionModalItem.name} deductions</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <ListGroup variant="flush">
+            {deductionModalItem.list.map((item, index) => (
+              <ListGroup.Item key={index} action>
+                <div>
+                  $ {item}
+                  <button
+                    className="float-right"
+                    onClick={() => deleteDeductionFromModal(index)}
+                  >
+                    X
+                  </button>
+                </div>
+              </ListGroup.Item>
+            ))}
+          </ListGroup>
+        </Modal.Body>
+        <Modal.Footer>
+          <StyledButton variant="outline-secondary" onClick={handleCloseModal}>
+            Cancel
+          </StyledButton>
+          <StyledButton $primary onClick={handleCloseModal}>
+            Save Changes
+          </StyledButton>
+        </Modal.Footer>
+      </Modal>
+    </>
   );
 }
 

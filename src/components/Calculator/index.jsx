@@ -147,14 +147,7 @@ function Calculator(props) {
       <CalculatorDisplay receipt={receipt} />
 
       {/* Submit Button */}
-      <StyledButton
-        $primary
-        type="submit"
-        block
-        size="sm"
-        className="mt-2"
-        onClick={console.log(receipt)}
-      >
+      <StyledButton $primary type="submit" block className="mt-2">
         Submit
       </StyledButton>
     </Form>
