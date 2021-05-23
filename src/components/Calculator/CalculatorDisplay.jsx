@@ -8,8 +8,8 @@ import { Separator } from "../Separator";
 function CalculatorDisplay(props) {
   const reincludeDeductions =
     (props.receipt.buyer === "Me" &&
-      props.receipt.theirDeductionsList.length) ||
-    (props.receipt.buyer === "Them" && props.receipt.myDeductionsList.length);
+      props.receipt.theirDeductions.list.length) ||
+    (props.receipt.buyer === "Them" && props.receipt.myDeductions.list.length);
 
   return (
     <div>
@@ -26,7 +26,7 @@ function CalculatorDisplay(props) {
         </Row>
 
         {/* Show / hide myDeductions */}
-        {props.receipt.myDeductionsList.length > 0 ? (
+        {props.receipt.myDeductions.list.length > 0 ? (
           <Row>
             <Col md={5}>
               <small>My deductions:</small>
@@ -41,7 +41,7 @@ function CalculatorDisplay(props) {
         ) : null}
 
         {/* Show / hide otherDeductions */}
-        {props.receipt.theirDeductionsList.length > 0 ? (
+        {props.receipt.theirDeductions.list.length > 0 ? (
           <Row>
             <Col md={5}>
               <small>Their deductions:</small>

@@ -11,7 +11,7 @@ import { StyledButton } from "../../components/Button";
 
 function CalculatorForm(props) {
   return (
-    <Form>
+    <>
       <Form.Row>
         {/* Date of Purchase */}
         <Form.Group as={Col} lg="6">
@@ -100,9 +100,9 @@ function CalculatorForm(props) {
                 <InputGroup.Text>$</InputGroup.Text>
               </InputGroup.Prepend>
               <Form.Control
-                name="myDeduction"
-                onChange={(event) => props.onInputChange(event)}
-                value={props.receipt.myDeduction || ""}
+                name="myDeductions"
+                onChange={(event) => props.onInputChange(event, true)}
+                value={props.receipt.myDeductions.inputValue || ""}
                 type="number"
                 min="0"
                 step="0.01"
@@ -110,12 +110,11 @@ function CalculatorForm(props) {
               />
               <InputGroup.Append>
                 <StyledButton
-                  name="myDeductionsList"
-                  value={props.receipt.myDeduction}
+                  name="myDeductions"
+                  value={props.receipt.myDeductions.inputValue}
                   variant="outline-dark"
                   onClick={(event) => {
                     props.onDeductionAdd(event);
-                    // resetMyDeduction();
                   }}
                 >
                   Add
@@ -140,9 +139,9 @@ function CalculatorForm(props) {
                 <InputGroup.Text>$</InputGroup.Text>
               </InputGroup.Prepend>
               <Form.Control
-                name="theirDeduction"
-                onChange={(event) => props.onInputChange(event)}
-                value={props.receipt.theirDeduction || ""}
+                name="theirDeductions"
+                onChange={(event) => props.onInputChange(event, true)}
+                value={props.receipt.theirDeductions.inputValue || ""}
                 type="number"
                 min="0"
                 step="0.01"
@@ -151,12 +150,11 @@ function CalculatorForm(props) {
               />
               <InputGroup.Append>
                 <StyledButton
-                  name="theirDeductionsList"
-                  value={props.receipt.theirDeduction}
+                  name="theirDeductions"
+                  value={props.receipt.theirDeductions.inputValue}
                   variant="outline-dark"
                   onClick={(event) => {
                     props.onDeductionAdd(event);
-                    // resetTheirDeduction();
                   }}
                 >
                   Add
@@ -166,7 +164,7 @@ function CalculatorForm(props) {
           </OverlayTrigger>
         </Form.Group>
       </Form.Row>
-    </Form>
+    </>
   );
 }
 

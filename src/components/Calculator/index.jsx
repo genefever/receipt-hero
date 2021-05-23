@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import CalculatorForm from "./CalculatorForm";
 import CalculatorDisplay from "./CalculatorDisplay";
 import { StyledButton } from "../../components/Button";
+import Form from "react-bootstrap/Form";
 
 function Calculator(props) {
   const defaultReceiptState = {
@@ -10,25 +11,25 @@ function Calculator(props) {
     storeName: "",
     total: 0,
     buyer: "Me",
-    myDeduction: 0,
-    theirDeduction: 0,
-    myDeductionsList: [],
-    theirDeductionsList: [],
     balanceOwed: 0,
+    myDeductions: {
+      list: [],
+      inputValue: 0,
+      sum: 0,
+    },
+    theirDeductions: {
+      list: [],
+      inputValue: 0,
+      sum: 0,
+    },
   };
 
   const [receipt, setReceipt] = useState(defaultReceiptState);
 
   useEffect(() => {
     function calculateBalanceOwed() {
-      const myDeductionsSum = receipt.myDeductionsList.reduce(
-        (a, b) => a * 1 + b * 1,
-        0
-      );
-      const theirDeductionsSum = receipt.theirDeductionsList.reduce(
-        (a, b) => a * 1 + b * 1,
-        0
-      );
+      const myDeductionsSum = receipt.myDeductions.sum;
+      const theirDeductionsSum = receipt.theirDeductions.sum;
       // console.log("myDeductionsSum: " + myDeductionsSum);
       // console.log("theirDeductionsSum: " + theirDeductionsSum);
       const deductionSumToInclude =
@@ -50,12 +51,13 @@ function Calculator(props) {
 
     calculateBalanceOwed();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [receipt.theirDeductionsList, receipt.total, receipt.myDeductionsList]);
+  }, [receipt.theirDeductions.list, receipt.total, receipt.myDeductions.list]);
 
-  function handleInputChange(event) {
+  function handleInputChange(event, isDeductionInputChange = false) {
     const { name, value, type } = event.target;
 
     setReceipt((prevValue) => {
+      // Handle number input.
       if (type === "number") {
         let formattedFloat =
           value.indexOf(".") >= 0
@@ -63,11 +65,31 @@ function Calculator(props) {
               value.substr(value.indexOf("."), 3)
             : value;
 
+        if (formattedFloat < 0) {
+          formattedFloat *= -1;
+        } else {
+          formattedFloat *= 1;
+        }
+
+        // Update nested deductions object.
+        if (isDeductionInputChange) {
+          return {
+            ...prevValue,
+            [name]: {
+              ...prevValue[name],
+              inputValue: formattedFloat,
+            },
+          };
+        }
+
+        // Update regular number input.
         return {
           ...prevValue,
-          [name]: formattedFloat < 0 ? formattedFloat * -1 : formattedFloat * 1,
+          [name]: formattedFloat,
         };
-      } else {
+      }
+      // Handle date / string input.
+      else {
         return { ...prevValue, [name]: value };
       }
     });
@@ -81,18 +103,26 @@ function Calculator(props) {
 
   function handleDeductionAdd(event) {
     const { name, value } = event.target;
+    const floatValue = parseFloat(value).toFixed(2);
 
     setReceipt((prevValue) => {
-      const deductionList = prevValue[[name]];
-      const floatValue = parseFloat(value).toFixed(2);
+      const deductionsObj = prevValue[[name]];
+      const deductionsList = deductionsObj.list;
+      const deductionsSum =
+        deductionsList.reduce((a, b) => a * 1 + b * 1, 0) + floatValue * 1;
 
       return {
         ...prevValue,
-        [name]: [...deductionList, floatValue],
+        [name]: {
+          list: [...deductionsList, floatValue],
+          inputValue: 0,
+          sum: deductionsSum,
+        },
       };
     });
   }
 
+  /*
   function resetMyDeduction() {
     setReceipt((prevValue) => {
       return { ...prevValue, myDeduction: 0 };
@@ -104,9 +134,15 @@ function Calculator(props) {
       return { ...prevValue, theirDeduction: 0 };
     });
   }
-
+*/
   return (
-    <>
+    <Form
+      onSubmit={(event) => {
+        props.onAdd(receipt);
+        event.preventDefault();
+        setReceipt(defaultReceiptState);
+      }}
+    >
       <CalculatorForm
         receipt={receipt}
         onInputChange={handleInputChange}
@@ -117,22 +153,12 @@ function Calculator(props) {
       <hr />
 
       <CalculatorDisplay receipt={receipt} />
+
       {/* Submit Button */}
-      <StyledButton
-        $primary
-        type="submit"
-        block
-        size="sm"
-        className="mt-2"
-        onSubmit={(event) => {
-          props.onAdd(receipt);
-          event.preventDefault();
-          setReceipt(defaultReceiptState);
-        }}
-      >
+      <StyledButton $primary type="submit" block size="sm" className="mt-2">
         Submit
       </StyledButton>
-    </>
+    </Form>
   );
 }
 
