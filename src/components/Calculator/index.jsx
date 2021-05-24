@@ -27,27 +27,24 @@ function Calculator(props) {
 
   const [receipt, setReceipt] = useState(defaultReceiptState);
 
-  function calculateListSum(list) {
+  function calculateDeductionsSum(list) {
     return list.reduce((acc, item) => acc * 1 + item * 1, 0);
   }
 
   useEffect(() => {
     function calculateBalanceOwed() {
-      const myDeductionsSum = calculateListSum(receipt.myDeductions.list);
-      const theirDeductionsSum = calculateListSum(receipt.theirDeductions.list);
-      // console.log("myDeductionsSum: " + myDeductionsSum);
-      // console.log("theirDeductionsSum: " + theirDeductionsSum);
+      const myDeductionsSum = calculateDeductionsSum(receipt.myDeductions.list);
+      const theirDeductionsSum = calculateDeductionsSum(
+        receipt.theirDeductions.list
+      );
       const deductionSumToInclude =
         receipt.buyer === "Me" ? theirDeductionsSum : myDeductionsSum;
-      // console.log("deductionSumToInclude: " + deductionSumToInclude);
       const sharedCost = receipt.total - myDeductionsSum - theirDeductionsSum;
-      // console.log("sharedCost: " + sharedCost);
       const splitReceiptCost = sharedCost / 2;
-      // console.log("splitReceiptCost: " + splitReceiptCost);
+
       const calculatedBalanceOwed = (
         splitReceiptCost + deductionSumToInclude
       ).toFixed(2);
-      // console.log("calculatedBalanceOwed: " + calculatedBalanceOwed);
 
       setReceipt((prevValue) => {
         return {

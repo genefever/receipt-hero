@@ -51,3 +51,13 @@ export const StyledButton = styled(Button)`
     }
     `}
 `;
+
+export const StyledDeleteButtonSpan = styled.span`
+  color: #ea4335;
+  &:active,
+  &:hover,
+  &:focus,
+  &:visited {
+    color: #d33c30;
+  }
+`;

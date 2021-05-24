@@ -1,20 +1,20 @@
-import React, { useRef, useState } from "react";
+import React, { useState, useRef } from "react";
 import BootstrapTable from "react-bootstrap-table-next";
 import cellEditFactory, { Type } from "react-bootstrap-table2-editor";
-import paginationFactory from "react-bootstrap-table2-paginator";
 import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
 import "react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css";
 import "react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit.min.css";
 import { FaTrashAlt, FaFileCsv, FaPrint } from "react-icons/fa";
-import { StyledButton } from "../components/Button";
+import { StyledButton, StyledDeleteButtonSpan } from "../components/Button";
 import ReactToPrint from "react-to-print";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import { Separator } from "./Separator";
 
 function Table(props) {
+  const [meToPayTotal, setMeToPayTotal] = useState(0);
+  const [themToPayTotal, setThemToPayTotal] = useState(0);
   const { SearchBar } = Search;
 
   const cellStyle = {
@@ -23,39 +23,14 @@ function Table(props) {
     overflow: "hidden",
   };
 
+  const footerStyle = {
+    whiteSpace: "normal",
+    wordWrap: "break-word",
+    fontWeight: "bold",
+  };
+
   const cellEdit = cellEditFactory({
     mode: "click",
-  });
-
-  const pagination = paginationFactory({
-    page: 1,
-    alwaysShowAllBtns: true,
-    sizePerPage: 10,
-    withFirstAndLast: false,
-    sizePerPageRenderer: ({
-      options,
-      currSizePerPage,
-      onSizePerPageChange,
-    }) => (
-      <div className="form-inline hide-on-print">
-        <div className="form-group">
-          <label className="d-inline-block">
-            Show{" "}
-            {
-              <select
-                className="form-control form-control-sm d-inline-block"
-                onChange={(e) => onSizePerPageChange(e.target.value)}
-              >
-                <option value="10">10</option>
-                <option value="25">25</option>
-                <option value={props.receipts.length}>All</option>
-              </select>
-            }{" "}
-            entries.
-          </label>
-        </div>
-      </div>
-    ),
   });
 
   const ExportCSVButton = (props) => {
@@ -69,11 +44,11 @@ function Table(props) {
     );
   };
 
-  function formatMonetaryCellContent(cellContent) {
-    return cellContent ? "$ " + cellContent : "";
+  function formatMonetaryCell(content) {
+    return content ? "$ " + parseFloat(content).toFixed(2) : "";
   }
 
-  const columnSettings = [
+  const columns = [
     {
       dataField: "purchaseDate",
       text: "Purchase Date",
@@ -102,9 +77,6 @@ function Table(props) {
         type: Type.DATE,
       },
       footer: "",
-      // headerStyle: (colum, colIndex) => {
-      //   return { width: "110px" };
-      // },
     },
     {
       dataField: "storeName",
@@ -125,7 +97,7 @@ function Table(props) {
           { value: 2, label: "Other" },
         ],
       },
-      footer: "Page total:",
+      footer: "Total:",
     },
     {
       dataField: "total",
@@ -134,15 +106,18 @@ function Table(props) {
       sort: true,
       style: cellStyle,
       formatter: (cellContent) => {
-        return formatMonetaryCellContent(cellContent);
+        return formatMonetaryCell(cellContent);
       },
       csvFormatter: (cellContent) => {
-        return formatMonetaryCellContent(cellContent);
+        return formatMonetaryCell(cellContent);
       },
       csvType: Number,
       footer: (columnData) => {
-        const total = columnData.reduce((acc, item) => acc * 1 + item * 1, 0);
-        return "$ " + parseFloat(total).toFixed(2);
+        const receiptTotal = columnData.reduce(
+          (acc, item) => acc * 1 + item * 1,
+          0
+        );
+        return "$ " + parseFloat(receiptTotal).toFixed(2);
       },
     },
     {
@@ -152,16 +127,21 @@ function Table(props) {
       sort: true,
       style: cellStyle,
       formatter: (cellContent) => {
-        return formatMonetaryCellContent(cellContent);
+        return formatMonetaryCell(cellContent);
       },
       csvFormatter: (cellContent) => {
-        return formatMonetaryCellContent(cellContent);
+        return formatMonetaryCell(cellContent);
       },
       csvType: Number,
       footer: (columnData) => {
-        const total = columnData.reduce((acc, item) => acc * 1 + item * 1, 0);
-        return "$ " + parseFloat(total).toFixed(2);
+        const meToPayTotal = columnData.reduce(
+          (acc, item) => acc * 1 + item * 1,
+          0
+        );
+        setMeToPayTotal(meToPayTotal);
+        return "$ " + parseFloat(meToPayTotal).toFixed(2);
       },
+      footerStyle: footerStyle,
     },
     {
       dataField: "themToPay",
@@ -170,64 +150,60 @@ function Table(props) {
       sort: true,
       style: cellStyle,
       formatter: (cellContent) => {
-        return formatMonetaryCellContent(cellContent);
+        return formatMonetaryCell(cellContent);
       },
       csvFormatter: (cellContent) => {
-        return formatMonetaryCellContent(cellContent);
+        return formatMonetaryCell(cellContent);
       },
       csvType: Number,
       footer: (columnData) => {
-        const total = columnData.reduce((acc, item) => acc * 1 + item * 1, 0);
-        return "$ " + parseFloat(total).toFixed(2);
+        const themToPayTotal = columnData.reduce(
+          (acc, item) => acc * 1 + item * 1,
+          0
+        );
+        setThemToPayTotal(themToPayTotal);
+        return "$ " + parseFloat(themToPayTotal).toFixed(2);
       },
-      footerTitle: true,
+      footerStyle: footerStyle,
     },
     {
       dataField: "id",
       text: "",
+      isDummyField: true,
       align: "center",
       editable: false,
-      csvExport: false,
+      searchable: false,
+      type: "number",
       formatter: (cellContent, row) => {
         return (
-          <StyledButton
-            $google
-            className="btn-sm py-0 px-1 pb-1"
+          <StyledDeleteButtonSpan
+            className="btn btn-default py-0 px-0"
+            role="button"
+            id="deleteButton"
             onClick={() => props.onDelete(row.id)}
           >
             <FaTrashAlt />
-          </StyledButton>
+          </StyledDeleteButtonSpan>
         );
       },
-      // headerStyle: (colum, colIndex) => {
-      //   return { width: "60px" };
-      // },
-      footer: () => {
-        return (
-          <Container fluid>
-            <Row>
-              <Col className="text-right">You owe</Col>
-            </Row>
-            <Row>
-              <Col className="text-right">$1233.00</Col>
-            </Row>
-          </Container>
-        );
+      csvType: Number,
+      csvFormatter: (cellContent) => {
+        return "";
       },
+      footer: (columnData) => {
+        const whoPaysMessage =
+          meToPayTotal > themToPayTotal ? "You owe them" : "They owe you";
+        const diff = Math.abs(themToPayTotal * 1 - meToPayTotal * 1);
+        return whoPaysMessage + " $ " + parseFloat(diff).toFixed(2);
+      },
+      footerStyle:
+        meToPayTotal > themToPayTotal
+          ? { ...footerStyle, backgroundColor: "#FDF3CD" }
+          : { ...footerStyle, backgroundColor: "#D4EDDA" },
     },
   ];
 
-  const [columns, setColumns] = useState(columnSettings);
   const printComponentRef = useRef();
-
-  const toggleDeleteColumn = () => {
-    const newColumns = columns.map((column) => {
-      if (column.dataField !== "id") return column;
-      return { ...column, hidden: !column.hidden };
-    });
-
-    setColumns(newColumns);
-  };
 
   const printPageStyle = `
   @page {
@@ -245,7 +221,7 @@ function Table(props) {
       page-break-before: always;
     }
 
-    .hide-on-print, .react-bootstrap-table-page-btns-ul{
+    .hide-on-print, #deleteButton {
       display: none;
       visibility: hidden;
     }
@@ -260,7 +236,7 @@ function Table(props) {
       columns={columns}
       exportCSV={{
         fileName: "title.csv", // TODO: Pass in dynamic dashboard title,
-        // ignoreFooter: false, // TODO: Activate once footer is set
+        ignoreFooter: false,
       }}
       search
       columnToggle
@@ -291,8 +267,6 @@ function Table(props) {
                     )}
                     content={() => printComponentRef.current}
                     documentTitle={"Title"} // TODO: replace with dynamic title
-                    onBeforeGetContent={() => toggleDeleteColumn()}
-                    onAfterPrint={() => toggleDeleteColumn()}
                     pageStyle={printPageStyle}
                   />
                 </div>
@@ -303,42 +277,11 @@ function Table(props) {
           <BootstrapTable
             {...props.baseProps}
             hover
-            pagination={pagination}
             cellEdit={cellEdit}
             bordered={false}
             condensed
-            // ref={printComponentRef}
-            // rowStyle={(row, rowIndex) =>
-            //   row.buyer === "Me"
-            //     ? { backgroundColor: "green" }
-            //     : { backgroundColor: "red" }
-            // }
+            // noDataIndication={() => <NoDataIndication />}
           />
-          <Separator> Total Calculation </Separator>
-          <div
-            style={{
-              display: "flex",
-              flex: 1,
-              flexDirection: "column",
-              alignItems: "flex-end",
-            }}
-          >
-            <div style={{ fontWeight: "bold", justifyContent: "center" }}>
-              Precio Total
-            </div>
-            $69
-          </div>
-
-          <Container>
-            <Row>
-              <Col md={6}>
-                <h6>This is where I go</h6>
-              </Col>
-              <Col md={6}>
-                <h6 className="float-right">Yert</h6>
-              </Col>
-            </Row>
-          </Container>
         </div>
       )}
     </ToolkitProvider>
