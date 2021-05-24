@@ -3,7 +3,6 @@ import BootstrapTable from "react-bootstrap-table-next";
 import cellEditFactory, { Type } from "react-bootstrap-table2-editor";
 import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
-import "react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css";
 import "react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit.min.css";
 import { FaTrashAlt, FaFileCsv, FaPrint } from "react-icons/fa";
 import { StyledButton, StyledDeleteButtonSpan } from "../components/Button";
@@ -11,10 +10,14 @@ import ReactToPrint from "react-to-print";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import emptyTable from "../assets/empty-table.svg";
 
 function Table(props) {
   const [meToPayTotal, setMeToPayTotal] = useState(0);
   const [themToPayTotal, setThemToPayTotal] = useState(0);
+
+  const printComponentRef = useRef();
+
   const { SearchBar } = Search;
 
   const cellStyle = {
@@ -194,7 +197,9 @@ function Table(props) {
         const whoPaysMessage =
           meToPayTotal > themToPayTotal ? "You owe them" : "They owe you";
         const diff = Math.abs(themToPayTotal * 1 - meToPayTotal * 1);
-        return whoPaysMessage + " $ " + parseFloat(diff).toFixed(2);
+        return diff !== 0
+          ? whoPaysMessage + " $ " + parseFloat(diff).toFixed(2)
+          : "";
       },
       footerStyle:
         meToPayTotal > themToPayTotal
@@ -202,8 +207,6 @@ function Table(props) {
           : { ...footerStyle, backgroundColor: "#D4EDDA" },
     },
   ];
-
-  const printComponentRef = useRef();
 
   const printPageStyle = `
   @page {
@@ -243,7 +246,7 @@ function Table(props) {
     >
       {(props) => (
         <div ref={printComponentRef}>
-          <h3>Title</h3>
+          <h4>Title</h4>
           <Container fluid className="px-0 mb-2 hide-on-print">
             <Row className="align-items-end">
               <Col xs={12} sm={6}>
@@ -276,11 +279,21 @@ function Table(props) {
 
           <BootstrapTable
             {...props.baseProps}
-            hover
             cellEdit={cellEdit}
             bordered={false}
             condensed
-            // noDataIndication={() => <NoDataIndication />}
+            noDataIndication={() => (
+              <div>
+                <h4 className="mt-4">Add a receipt to begin.</h4>
+                <img
+                  className="mx-auto d-block mt-3"
+                  src={emptyTable}
+                  width="270"
+                  height="270"
+                  alt="logo"
+                />
+              </div>
+            )}
           />
         </div>
       )}

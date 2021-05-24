@@ -153,6 +153,8 @@ function Calculator(props) {
         setReceipt(defaultReceiptState);
       }}
     >
+      <h4>Add Receipt</h4>
+      <hr />
       <CalculatorForm
         receipt={receipt}
         onInputChange={handleInputChange}
