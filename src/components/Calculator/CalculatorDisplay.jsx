@@ -159,7 +159,12 @@ function CalculatorDisplay(props) {
             {props.receipt.buyer === "Me" ? "They owe you" : "You owe them"} :{" "}
           </Col>
           <Col className="text-right" md={6}>
-            <h4>$ {props.receipt.balanceOwed}</h4>
+            <h4>
+              ${" "}
+              {props.receipt.buyer === "Me"
+                ? props.receipt.themToPay
+                : props.receipt.meToPay}
+            </h4>
           </Col>
         </Row>
       </Container>

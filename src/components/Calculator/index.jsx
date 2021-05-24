@@ -11,7 +11,8 @@ function Calculator(props) {
     storeName: "",
     total: 0,
     buyer: "Me",
-    balanceOwed: 0,
+    meToPay: 0,
+    themToPay: 0,
     myDeductions: {
       list: [],
       inputValue: 0,
@@ -27,7 +28,7 @@ function Calculator(props) {
   const [receipt, setReceipt] = useState(defaultReceiptState);
 
   function calculateListSum(list) {
-    return list.reduce((a, b) => a * 1 + b * 1, 0);
+    return list.reduce((acc, item) => acc * 1 + item * 1, 0);
   }
 
   useEffect(() => {
@@ -51,7 +52,8 @@ function Calculator(props) {
       setReceipt((prevValue) => {
         return {
           ...prevValue,
-          balanceOwed: calculatedBalanceOwed,
+          meToPay: receipt.buyer === "Me" ? "" : calculatedBalanceOwed,
+          themToPay: receipt.buyer === "Me" ? calculatedBalanceOwed : "",
           myDeductions: { ...prevValue["myDeductions"], sum: myDeductionsSum },
           theirDeductions: {
             ...prevValue["theirDeductions"],

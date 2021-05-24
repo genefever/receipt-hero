@@ -12,6 +12,7 @@ import ReactToPrint from "react-to-print";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import { Separator } from "./Separator";
 
 function Table(props) {
   const { SearchBar } = Search;
@@ -68,6 +69,10 @@ function Table(props) {
     );
   };
 
+  function formatMonetaryCellContent(cellContent) {
+    return cellContent ? "$ " + cellContent : "";
+  }
+
   const columnSettings = [
     {
       dataField: "purchaseDate",
@@ -96,6 +101,7 @@ function Table(props) {
       editor: {
         type: Type.DATE,
       },
+      footer: "",
       // headerStyle: (colum, colIndex) => {
       //   return { width: "110px" };
       // },
@@ -105,6 +111,7 @@ function Table(props) {
       text: "Store Name",
       style: cellStyle,
       sort: true,
+      footer: "",
     },
     {
       dataField: "buyer",
@@ -118,6 +125,7 @@ function Table(props) {
           { value: 2, label: "Other" },
         ],
       },
+      footer: "Page total:",
     },
     {
       dataField: "total",
@@ -126,26 +134,53 @@ function Table(props) {
       sort: true,
       style: cellStyle,
       formatter: (cellContent) => {
-        return "$ " + cellContent;
+        return formatMonetaryCellContent(cellContent);
       },
       csvFormatter: (cellContent) => {
-        return "$ " + cellContent;
+        return formatMonetaryCellContent(cellContent);
       },
       csvType: Number,
+      footer: (columnData) => {
+        const total = columnData.reduce((acc, item) => acc * 1 + item * 1, 0);
+        return "$ " + parseFloat(total).toFixed(2);
+      },
     },
     {
-      dataField: "balanceOwed",
-      text: "Balance Owed",
+      dataField: "meToPay",
+      text: "You Owe Them",
       type: "number",
       sort: true,
       style: cellStyle,
       formatter: (cellContent) => {
-        return "$ " + cellContent;
+        return formatMonetaryCellContent(cellContent);
       },
       csvFormatter: (cellContent) => {
-        return "$ " + cellContent;
+        return formatMonetaryCellContent(cellContent);
       },
       csvType: Number,
+      footer: (columnData) => {
+        const total = columnData.reduce((acc, item) => acc * 1 + item * 1, 0);
+        return "$ " + parseFloat(total).toFixed(2);
+      },
+    },
+    {
+      dataField: "themToPay",
+      text: "They Owe You",
+      type: "number",
+      sort: true,
+      style: cellStyle,
+      formatter: (cellContent) => {
+        return formatMonetaryCellContent(cellContent);
+      },
+      csvFormatter: (cellContent) => {
+        return formatMonetaryCellContent(cellContent);
+      },
+      csvType: Number,
+      footer: (columnData) => {
+        const total = columnData.reduce((acc, item) => acc * 1 + item * 1, 0);
+        return "$ " + parseFloat(total).toFixed(2);
+      },
+      footerTitle: true,
     },
     {
       dataField: "id",
@@ -164,8 +199,20 @@ function Table(props) {
           </StyledButton>
         );
       },
-      headerStyle: (colum, colIndex) => {
-        return { width: "60px" };
+      // headerStyle: (colum, colIndex) => {
+      //   return { width: "60px" };
+      // },
+      footer: () => {
+        return (
+          <Container fluid>
+            <Row>
+              <Col className="text-right">You owe</Col>
+            </Row>
+            <Row>
+              <Col className="text-right">$1233.00</Col>
+            </Row>
+          </Container>
+        );
       },
     },
   ];
@@ -267,6 +314,31 @@ function Table(props) {
             //     : { backgroundColor: "red" }
             // }
           />
+          <Separator> Total Calculation </Separator>
+          <div
+            style={{
+              display: "flex",
+              flex: 1,
+              flexDirection: "column",
+              alignItems: "flex-end",
+            }}
+          >
+            <div style={{ fontWeight: "bold", justifyContent: "center" }}>
+              Precio Total
+            </div>
+            $69
+          </div>
+
+          <Container>
+            <Row>
+              <Col md={6}>
+                <h6>This is where I go</h6>
+              </Col>
+              <Col md={6}>
+                <h6 className="float-right">Yert</h6>
+              </Col>
+            </Row>
+          </Container>
         </div>
       )}
     </ToolkitProvider>
