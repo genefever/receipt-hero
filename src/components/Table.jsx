@@ -34,6 +34,9 @@ function Table(props) {
 
   const cellEdit = cellEditFactory({
     mode: "click",
+    beforeSaveCell: (prevValue, newValue, row, colun) => {
+      console.log(prevValue);
+    },
   });
 
   const ExportCSVButton = (props) => {
@@ -284,7 +287,7 @@ function Table(props) {
             condensed
             noDataIndication={() => (
               <div>
-                <h4 className="mt-4">Add a receipt to begin.</h4>
+                <h4 className="mt-4">←Add a receipt to begin.</h4>
                 <img
                   className="mx-auto d-block mt-3"
                   src={emptyTable}
