@@ -9,17 +9,25 @@ import { TestTableData } from "./TestTableData";
 function Home() {
   const [receipts, setReceipts] = useState(TestTableData);
 
-  function dateInputFocus() {
-    console.log("FOCUS!!!");
-    // ref.current.focus();
-  }
-
   function addReceipt(newReceipt) {
     setReceipts((prevReceipts) => {
       newReceipt.total = parseFloat(newReceipt.total).toFixed(2);
       newReceipt.id = prevReceipts.length + 1;
 
       return [...prevReceipts, newReceipt];
+    });
+  }
+
+  function editReceipt(newReceipt) {
+    setReceipts((prevReceipts) => {
+      const newReceipts = prevReceipts.map((receipt) => {
+        if (receipt.id !== newReceipt.id) {
+          return receipt;
+        }
+        return newReceipt;
+      });
+
+      return newReceipts;
     });
   }
 
@@ -44,7 +52,7 @@ function Home() {
             <Table
               receipts={receipts}
               onDelete={deleteReceipt}
-              onFocus={dateInputFocus}
+              onEdit={editReceipt}
             />
           </StyledCard>
         </Col>

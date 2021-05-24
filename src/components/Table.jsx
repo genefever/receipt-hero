@@ -34,8 +34,8 @@ function Table(props) {
 
   const cellEdit = cellEditFactory({
     mode: "click",
-    beforeSaveCell: (prevValue, newValue, row, colun) => {
-      console.log(prevValue);
+    afterSaveCell: (oldValue, newValue, row) => {
+      props.onEdit(row);
     },
   });
 
@@ -196,7 +196,7 @@ function Table(props) {
       csvFormatter: (cellContent) => {
         return "";
       },
-      footer: (columnData) => {
+      footer: () => {
         const whoPaysMessage =
           meToPayTotal > themToPayTotal ? "You owe them" : "They owe you";
         const diff = Math.abs(themToPayTotal * 1 - meToPayTotal * 1);
