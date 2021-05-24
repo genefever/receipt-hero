@@ -9,6 +9,11 @@ import { TestTableData } from "./TestTableData";
 function Home() {
   const [receipts, setReceipts] = useState(TestTableData);
 
+  function dateInputFocus() {
+    console.log("FOCUS!!!");
+    // ref.current.focus();
+  }
+
   function addReceipt(newReceipt) {
     setReceipts((prevReceipts) => {
       newReceipt.total = parseFloat(newReceipt.total).toFixed(2);
@@ -36,7 +41,11 @@ function Home() {
         </Col>
         <Col md={8}>
           <StyledCard $main className="pb-3">
-            <Table receipts={receipts} onDelete={deleteReceipt} />
+            <Table
+              receipts={receipts}
+              onDelete={deleteReceipt}
+              onFocus={dateInputFocus}
+            />
           </StyledCard>
         </Col>
       </Row>
