@@ -8,16 +8,16 @@ export const StyledButton = styled(Button)`
   ${(props) =>
     props.$primary &&
     `
-    background-color: #5abf71 !important;
-    border-color: #5abf71;
+    background-color: #56B65B !important;
+    border-color: #56B65B;
 
     &:hover, &:visited {
-      background-color: #40a558 !important;
-      border-color: #40a558;
+      background-color: #4da452 !important;
+      border-color: #4da452;
     }
     &:active, &:focus {
-      background-color: #328044 !important;
-      border-color: #328044;
+      background-color: #459249 !important;
+      border-color: #459249;
     }
     `}
 

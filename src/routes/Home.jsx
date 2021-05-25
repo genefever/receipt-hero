@@ -1,14 +1,16 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useContext } from "react";
 import Calculator from "../components/Calculator";
 import Table from "../components/Table";
 import { StyledCard } from "../components/Card";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import { TestTableData } from "./TestTableData";
+import { DarkModeContext } from "../components/App";
 
 function Home() {
   const [receipts, setReceipts] = useState(TestTableData);
   const calculatorRef = useRef();
+  const [darkMode] = useContext(DarkModeContext);
 
   function addReceipt(newReceipt) {
     setReceipts((prevReceipts) => {
@@ -52,16 +54,17 @@ function Home() {
     <div className="mt-4">
       <Row>
         <Col md={4}>
-          <StyledCard $main>
+          <StyledCard $main darkMode={darkMode}>
             <Calculator onAdd={addReceipt} ref={calculatorRef} />
           </StyledCard>
         </Col>
         <Col md={8}>
-          <StyledCard $main className="pb-3">
+          <StyledCard $main className="pb-3" darkMode={darkMode}>
             <Table
               receipts={receipts}
               onDelete={deleteReceipt}
               onEdit={editReceipt}
+              darkMode={darkMode}
             />
           </StyledCard>
         </Col>

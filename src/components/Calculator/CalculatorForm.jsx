@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import ButtonToolbar from "react-bootstrap/ButtonToolbar";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
@@ -8,8 +8,11 @@ import ToggleButton from "react-bootstrap/ToggleButton";
 import ToggleButtonGroup from "react-bootstrap/ToggleButtonGroup";
 import Tooltip from "react-bootstrap/Tooltip";
 import { StyledButton } from "../../components/Button";
+import { DarkModeContext } from "../App";
 
 function CalculatorForm(props) {
+  const [darkMode] = useContext(DarkModeContext);
+
   return (
     <>
       <Form.Row>
@@ -71,10 +74,18 @@ function CalculatorForm(props) {
               value={props.receipt.buyer}
               onChange={(event) => props.onBuyerChange(event)}
             >
-              <ToggleButton value={"Me"} variant="outline-dark" size="sm">
+              <ToggleButton
+                value={"Me"}
+                variant={darkMode ? "outline-light" : "outline-dark"}
+                size="sm"
+              >
                 Me
               </ToggleButton>
-              <ToggleButton value={"Them"} variant="outline-dark" size="sm">
+              <ToggleButton
+                value={"Them"}
+                variant={darkMode ? "outline-light" : "outline-dark"}
+                size="sm"
+              >
                 Them
               </ToggleButton>
             </ToggleButtonGroup>
@@ -112,10 +123,10 @@ function CalculatorForm(props) {
                 <StyledButton
                   name="myDeductions"
                   value={props.receipt.myDeductions.inputValue}
-                  variant="outline-dark"
+                  variant={darkMode ? "outline-light" : "outline-dark"}
                   onClick={(event) => {
                     props.receipt.myDeductions.inputValue &&
-                    props.onDeductionAdd(event);
+                      props.onDeductionAdd(event);
                   }}
                 >
                   Add
@@ -153,10 +164,10 @@ function CalculatorForm(props) {
                 <StyledButton
                   name="theirDeductions"
                   value={props.receipt.theirDeductions.inputValue}
-                  variant="outline-dark"
+                  variant={darkMode ? "outline-light" : "outline-dark"}
                   onClick={(event) => {
                     props.receipt.theirDeductions.inputValue &&
-                    props.onDeductionAdd(event);
+                      props.onDeductionAdd(event);
                   }}
                 >
                   Add

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyledButton } from "../../components/Button";
+import { StyledButton, StyledDeleteButtonSpan } from "../../components/Button";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import ListGroup from "react-bootstrap/ListGroup";
@@ -180,13 +180,12 @@ function CalculatorDisplay(props) {
               <ListGroup.Item key={index} action>
                 <div>
                   $ {item}
-                  <span
-                    className="float-right btn btn-default py-0 px-0"
-                    role="button"
+                  <StyledDeleteButtonSpan
+                    className="float-right"
                     onClick={() => deleteDeductionFromModal(index)}
                   >
                     <FaTrashAlt />
-                  </span>
+                  </StyledDeleteButtonSpan>
                 </div>
               </ListGroup.Item>
             ))}

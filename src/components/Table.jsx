@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useContext } from "react";
 import BootstrapTable from "react-bootstrap-table-next";
 import cellEditFactory, { Type } from "react-bootstrap-table2-editor";
 import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
@@ -291,7 +291,7 @@ function Table(props) {
             condensed
             noDataIndication={() => (
               <div>
-                <h4 className="mt-4">← Add a receipt to begin.</h4>
+                <h4 className="mt-4">Add a receipt to begin.</h4>
                 <img
                   className="mx-auto d-block mt-3"
                   src={emptyTable}
