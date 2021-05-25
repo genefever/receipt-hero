@@ -114,6 +114,7 @@ function CalculatorForm(props) {
                   value={props.receipt.myDeductions.inputValue}
                   variant="outline-dark"
                   onClick={(event) => {
+                    props.receipt.myDeductions.inputValue &&
                     props.onDeductionAdd(event);
                   }}
                 >
@@ -154,6 +155,7 @@ function CalculatorForm(props) {
                   value={props.receipt.theirDeductions.inputValue}
                   variant="outline-dark"
                   onClick={(event) => {
+                    props.receipt.theirDeductions.inputValue &&
                     props.onDeductionAdd(event);
                   }}
                 >
