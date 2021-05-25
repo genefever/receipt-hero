@@ -144,7 +144,9 @@ function Table(props) {
           (acc, item) => acc * 1 + item * 1,
           0
         );
-        setMeToPayTotal(meToPayTotal);
+        setTimeout(() => {
+          setMeToPayTotal(meToPayTotal);
+        }, 0);
         return "$ " + parseFloat(meToPayTotal).toFixed(2);
       },
       footerStyle: footerStyle,
@@ -167,7 +169,9 @@ function Table(props) {
           (acc, item) => acc * 1 + item * 1,
           0
         );
-        setThemToPayTotal(themToPayTotal);
+        setTimeout(() => {
+          setThemToPayTotal(themToPayTotal);
+        }, 0);
         return "$ " + parseFloat(themToPayTotal).toFixed(2);
       },
       footerStyle: footerStyle,
