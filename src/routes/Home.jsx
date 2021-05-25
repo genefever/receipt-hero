@@ -18,13 +18,45 @@ function Home() {
     });
   }
 
+  function calculateDeductionsSum(list) {
+    return list.reduce((acc, item) => acc * 1 + item * 1, 0);
+  }
+
   function editReceipt(newReceipt) {
     setReceipts((prevReceipts) => {
       const newReceipts = prevReceipts.map((receipt) => {
         if (receipt.id !== newReceipt.id) {
           return receipt;
         }
-        return newReceipt;
+        const myDeductionsSum = calculateDeductionsSum(
+          newReceipt.myDeductions.list
+        );
+        const theirDeductionsSum = calculateDeductionsSum(
+          newReceipt.theirDeductions.list
+        );
+        const deductionSumToInclude =
+          newReceipt.buyer === "Me" ? theirDeductionsSum : myDeductionsSum;
+        const sharedCost =
+          newReceipt.total - myDeductionsSum - theirDeductionsSum;
+        const splitReceiptCost = sharedCost / 2;
+
+        const calculatedBalanceOwed = (
+          splitReceiptCost + deductionSumToInclude
+        ).toFixed(2);
+
+        return {
+          ...newReceipt,
+          meToPay: newReceipt.buyer === "Me" ? "" : calculatedBalanceOwed,
+          themToPay: newReceipt.buyer === "Me" ? calculatedBalanceOwed : "",
+          myDeductions: {
+            ...newReceipt["myDeductions"],
+            sum: myDeductionsSum,
+          },
+          theirDeductions: {
+            ...newReceipt["theirDeductions"],
+            sum: theirDeductionsSum,
+          },
+        };
       });
 
       return newReceipts;

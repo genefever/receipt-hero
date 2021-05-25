@@ -35,6 +35,7 @@ function Table(props) {
   const cellEdit = cellEditFactory({
     mode: "click",
     afterSaveCell: (oldValue, newValue, row) => {
+      console.log(row);
       props.onEdit(row);
     },
   });
@@ -99,8 +100,8 @@ function Table(props) {
       editor: {
         type: Type.SELECT,
         options: [
-          { value: 1, label: "Me" },
-          { value: 2, label: "Other" },
+          { value: "Me", label: "Me" },
+          { value: "Other", label: "Other" },
         ],
       },
       footer: "Total:",
