@@ -1,10 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, {
+  useState,
+  useEffect,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
 import CalculatorForm from "./CalculatorForm";
 import CalculatorDisplay from "./CalculatorDisplay";
 import { StyledButton } from "../../components/Button";
 import Form from "react-bootstrap/Form";
 
-function Calculator(props) {
+const Calculator = forwardRef((props, ref) => {
   const defaultReceiptState = {
     id: 0,
     purchaseDate: "",
@@ -27,40 +32,53 @@ function Calculator(props) {
 
   const [receipt, setReceipt] = useState(defaultReceiptState);
 
+  useImperativeHandle(ref, () => ({
+    calculateBalanceOwed: calculateBalanceOwed,
+  }));
+
   function calculateDeductionsSum(list) {
     return list.reduce((acc, item) => acc * 1 + item * 1, 0);
   }
 
+  function calculateBalanceOwed(receiptToCalculate) {
+    const myDeductionsSum = calculateDeductionsSum(
+      receiptToCalculate.myDeductions.list
+    );
+    const theirDeductionsSum = calculateDeductionsSum(
+      receiptToCalculate.theirDeductions.list
+    );
+    const deductionSumToInclude =
+      receiptToCalculate.buyer === "Me" ? theirDeductionsSum : myDeductionsSum;
+    const sharedCost =
+      receiptToCalculate.total - myDeductionsSum - theirDeductionsSum;
+    const splitReceiptCost = sharedCost / 2;
+
+    const calculatedBalanceOwed = (
+      splitReceiptCost + deductionSumToInclude
+    ).toFixed(2);
+
+    return {
+      meToPay: receiptToCalculate.buyer === "Me" ? "" : calculatedBalanceOwed,
+      themToPay: receiptToCalculate.buyer === "Me" ? calculatedBalanceOwed : "",
+      myDeductions: {
+        ...receiptToCalculate["myDeductions"],
+        sum: myDeductionsSum,
+      },
+      theirDeductions: {
+        ...receiptToCalculate["theirDeductions"],
+        sum: theirDeductionsSum,
+      },
+    };
+  }
+
   useEffect(() => {
-    function calculateBalanceOwed() {
-      const myDeductionsSum = calculateDeductionsSum(receipt.myDeductions.list);
-      const theirDeductionsSum = calculateDeductionsSum(
-        receipt.theirDeductions.list
-      );
-      const deductionSumToInclude =
-        receipt.buyer === "Me" ? theirDeductionsSum : myDeductionsSum;
-      const sharedCost = receipt.total - myDeductionsSum - theirDeductionsSum;
-      const splitReceiptCost = sharedCost / 2;
-
-      const calculatedBalanceOwed = (
-        splitReceiptCost + deductionSumToInclude
-      ).toFixed(2);
-
-      setReceipt((prevValue) => {
-        return {
-          ...prevValue,
-          meToPay: receipt.buyer === "Me" ? "" : calculatedBalanceOwed,
-          themToPay: receipt.buyer === "Me" ? calculatedBalanceOwed : "",
-          myDeductions: { ...prevValue["myDeductions"], sum: myDeductionsSum },
-          theirDeductions: {
-            ...prevValue["theirDeductions"],
-            sum: theirDeductionsSum,
-          },
-        };
-      });
-    }
-
-    calculateBalanceOwed();
+    const updatedCalculations = calculateBalanceOwed(receipt);
+    setReceipt((prevValue) => {
+      return {
+        ...prevValue,
+        ...updatedCalculations,
+      };
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     receipt.theirDeductions.list,
@@ -175,6 +193,6 @@ function Calculator(props) {
       </StyledButton>
     </Form>
   );
-}
+});
 
 export default Calculator;

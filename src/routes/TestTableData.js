@@ -76,7 +76,7 @@ export const TestTableData = [
     },
   },
   {
-    id: 13,
+    id: 130,
     purchaseDate: "2021-05-10",
     storeName: "abc",
     total: "22.00",

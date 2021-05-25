@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Calculator from "../components/Calculator";
 import Table from "../components/Table";
 import { StyledCard } from "../components/Card";
@@ -8,6 +8,7 @@ import { TestTableData } from "./TestTableData";
 
 function Home() {
   const [receipts, setReceipts] = useState(TestTableData);
+  const calculatorRef = useRef();
 
   function addReceipt(newReceipt) {
     setReceipts((prevReceipts) => {
@@ -18,48 +19,24 @@ function Home() {
     });
   }
 
-  function calculateDeductionsSum(list) {
-    return list.reduce((acc, item) => acc * 1 + item * 1, 0);
-  }
-
   function editReceipt(newReceipt) {
     setReceipts((prevReceipts) => {
-      const newReceipts = prevReceipts.map((receipt) => {
+      const updatedReceipts = prevReceipts.map((receipt) => {
         if (receipt.id !== newReceipt.id) {
           return receipt;
         }
-        const myDeductionsSum = calculateDeductionsSum(
-          newReceipt.myDeductions.list
-        );
-        const theirDeductionsSum = calculateDeductionsSum(
-          newReceipt.theirDeductions.list
-        );
-        const deductionSumToInclude =
-          newReceipt.buyer === "Me" ? theirDeductionsSum : myDeductionsSum;
-        const sharedCost =
-          newReceipt.total - myDeductionsSum - theirDeductionsSum;
-        const splitReceiptCost = sharedCost / 2;
 
-        const calculatedBalanceOwed = (
-          splitReceiptCost + deductionSumToInclude
-        ).toFixed(2);
+        const updatedCalculations = calculatorRef.current.calculateBalanceOwed(
+          newReceipt
+        );
 
         return {
           ...newReceipt,
-          meToPay: newReceipt.buyer === "Me" ? "" : calculatedBalanceOwed,
-          themToPay: newReceipt.buyer === "Me" ? calculatedBalanceOwed : "",
-          myDeductions: {
-            ...newReceipt["myDeductions"],
-            sum: myDeductionsSum,
-          },
-          theirDeductions: {
-            ...newReceipt["theirDeductions"],
-            sum: theirDeductionsSum,
-          },
+          ...updatedCalculations,
         };
       });
 
-      return newReceipts;
+      return updatedReceipts;
     });
   }
 
@@ -76,7 +53,7 @@ function Home() {
       <Row>
         <Col md={4}>
           <StyledCard $main>
-            <Calculator onAdd={addReceipt} />
+            <Calculator onAdd={addReceipt} ref={calculatorRef} />
           </StyledCard>
         </Col>
         <Col md={8}>
