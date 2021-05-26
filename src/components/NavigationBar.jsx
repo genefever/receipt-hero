@@ -7,6 +7,7 @@ import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import { StyledButton } from "./Button";
 import { ThemeContext } from "styled-components";
+import { FaPlus } from "react-icons/fa";
 
 const StyledNavbar = styled(Navbar)`
   background-color: ${({ theme }) => theme.navbar};
@@ -27,7 +28,7 @@ function NavigationBar(props) {
   return (
     <StyledNavbar fixed="top" expand="md" variant="dark">
       <StyledNavbar.Toggle
-        className="border-0 p-0"
+        className="border-0 pb-0"
         aria-controls="basic-navbar-nav"
       />
       <LinkContainer to="/">
@@ -45,7 +46,13 @@ function NavigationBar(props) {
       <StyledNavbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
           <LinkContainer to="/">
-            <Nav.Link>Home</Nav.Link>
+            <Nav.Link>
+              <StyledButton $primary size="sm">
+                <div className="d-flex align-items-center">
+                  <FaPlus className="mr-1" /> Create
+                </div>
+              </StyledButton>
+            </Nav.Link>
           </LinkContainer>
         </Nav>
 
@@ -61,13 +68,19 @@ function NavigationBar(props) {
 
       {/* Buttons */}
       <Link to="/login">
-        <StyledButton variant="outline-light" className="ml-auto mr-2">
+        <StyledButton
+          size="sm"
+          variant="outline-light"
+          className="ml-auto mr-2 px-3"
+        >
           Log in
         </StyledButton>
       </Link>
 
       <Link to="/signup">
-        <StyledButton $primary>Sign up</StyledButton>
+        <StyledButton size="sm" variant="light" className="px-3">
+          Sign up
+        </StyledButton>
       </Link>
     </StyledNavbar>
   );

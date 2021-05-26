@@ -7,7 +7,6 @@ export const GlobalStyles = createGlobalStyle`
 
     body {
       background-color: ${({ theme }) => theme.background};
-      // font-family: "Montserrat", sans-serif;
     }
 
     h1,h2,h3,h4,h5,h6 {
@@ -34,10 +33,6 @@ export const GlobalStyles = createGlobalStyle`
       color: ${({ theme }) => theme.text} !important;
     }
 
-    .main-container {
-      padding: 0 3%;
-    }
-
     .as-text {
       background:none;
       border:none;
@@ -45,4 +40,5 @@ export const GlobalStyles = createGlobalStyle`
       padding:0;
       cursor: pointer;
     }
+
 `;

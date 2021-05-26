@@ -258,12 +258,11 @@ function Table(props) {
         ignoreFooter: false,
       }}
       search
-      columnToggle
     >
       {(props) => (
         <div ref={printComponentRef}>
           <h4>Title</h4>
-          <Container fluid className="px-0 mb-2 hide-on-print">
+          <Container fluid className="px-0 mb-3 hide-on-print">
             <Row className="align-items-end">
               <Col xs={12} sm={6}>
                 <div className="form-inline">
@@ -310,7 +309,7 @@ function Table(props) {
                   src={emptyTable}
                   width="270"
                   height="270"
-                  alt="logo"
+                  alt="Empty table."
                 />
               </div>
             )}

@@ -1,5 +1,4 @@
 import React from "react";
-import Container from "react-bootstrap/Container";
 import NavigationBar from "./NavigationBar";
 import Home from "../routes/Home";
 import Login from "../routes/Login";
@@ -11,6 +10,7 @@ import { ThemeProvider } from "styled-components";
 import { GlobalStyles } from "./styles/GlobalStyles";
 import { lightTheme, darkTheme } from "./styles/Themes";
 import { useDarkMode } from "./styles/useDarkMode";
+import { Wrapper } from "./Container";
 
 function App() {
   const [theme, themeToggler, mountedComponent] = useDarkMode();
@@ -23,7 +23,7 @@ function App() {
         <GlobalStyles />
         <Router>
           <NavigationBar theme={theme} toggleTheme={themeToggler} />
-          <Container fluid className="main-container">
+          <Wrapper>
             <Switch>
               <Route path="/" exact component={Home} />
               <Route path="/login" component={Login} />
@@ -31,7 +31,7 @@ function App() {
               <Route path="/u" component={UserReceipts} />
               <Route component={NoMatch} />
             </Switch>
-          </Container>
+          </Wrapper>
         </Router>
       </>
     </ThemeProvider>

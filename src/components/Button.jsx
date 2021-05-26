@@ -1,6 +1,5 @@
-import { useContext } from "react";
 import Button from "react-bootstrap/Button";
-import styled, { ThemeContext } from "styled-components";
+import styled from "styled-components";
 
 export const StyledButton = styled(Button)`
   font-size: 1rem;

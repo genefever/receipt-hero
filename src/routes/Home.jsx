@@ -49,7 +49,7 @@ function Home(props) {
   }
 
   return (
-    <div className="mt-4">
+    <>
       <Row>
         <Col md={4}>
           <StyledCard $main>
@@ -66,7 +66,7 @@ function Home(props) {
           </StyledCard>
         </Col>
       </Row>
-    </div>
+    </>
   );
 }
 
