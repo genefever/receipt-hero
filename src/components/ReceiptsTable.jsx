@@ -13,7 +13,7 @@ import Col from "react-bootstrap/Col";
 import emptyTable from "../assets/empty-table.svg";
 import { ThemeContext } from "styled-components";
 
-function Table(props) {
+function ReceiptsTable(props) {
   const [meToPayTotal, setMeToPayTotal] = useState(0);
   const [themToPayTotal, setThemToPayTotal] = useState(0);
 
@@ -297,4 +297,4 @@ function Table(props) {
   );
 }
 
-export default Table;
+export default ReceiptsTable;

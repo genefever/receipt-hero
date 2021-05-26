@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import Calculator from "../components/Calculator";
-import Table from "../components/Table";
+import ReceiptsTable from "../components/ReceiptsTable";
 import { StyledCard } from "../components/Card";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
@@ -58,7 +58,7 @@ function Home(props) {
         </Col>
         <Col md={8}>
           <StyledCard $main className="pb-3">
-            <Table
+            <ReceiptsTable
               receipts={receipts}
               onDelete={deleteReceipt}
               onEdit={editReceipt}
