@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useContext } from "react";
 import BootstrapTable from "react-bootstrap-table-next";
 import cellEditFactory, { Type } from "react-bootstrap-table2-editor";
 import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
@@ -11,10 +11,12 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import emptyTable from "../assets/empty-table.svg";
+import { ThemeContext } from "styled-components";
 
 function Table(props) {
   const [meToPayTotal, setMeToPayTotal] = useState(0);
   const [themToPayTotal, setThemToPayTotal] = useState(0);
+  const themeContext = useContext(ThemeContext);
 
   const printComponentRef = useRef();
 
@@ -205,13 +207,20 @@ function Table(props) {
           meToPayTotal > themToPayTotal ? "You owe them" : "They owe you";
         const diff = Math.abs(themToPayTotal * 1 - meToPayTotal * 1);
         return diff !== 0
-          ? whoPaysMessage + " $ " + parseFloat(diff).toFixed(2)
+          ? whoPaysMessage + " $" + parseFloat(diff).toFixed(2)
           : "";
       },
       footerStyle:
         meToPayTotal > themToPayTotal
-          ? { ...footerStyle, backgroundColor: "#FDF3CD" }
-          : { ...footerStyle, backgroundColor: "#D4EDDA" },
+          ? {
+              ...footerStyle,
+              backgroundColor: themeContext.cellColorYellow,
+              color: "black",
+            }
+          : {
+              ...footerStyle,
+              backgroundColor: themeContext.cellColorGreen,
+            },
     },
   ];
 
