@@ -12,7 +12,7 @@ export const lightTheme = {
 
 export const darkTheme = {
   background: "#1a1a1a",
-  text: "#F5F5F5",
+  text: "#DDDDDD",
   body: "#313131",
   navbar: "#3A3B3C",
   toggleButton: "outline-light",

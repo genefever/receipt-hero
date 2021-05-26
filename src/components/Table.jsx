@@ -210,6 +210,7 @@ function Table(props) {
           ? whoPaysMessage + " $" + parseFloat(diff).toFixed(2)
           : "";
       },
+      footerAlign: "center",
       footerStyle:
         meToPayTotal > themToPayTotal
           ? {
@@ -220,6 +221,7 @@ function Table(props) {
           : {
               ...footerStyle,
               backgroundColor: themeContext.cellColorGreen,
+              color: "#F5F5F5",
             },
     },
   ];
