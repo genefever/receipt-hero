@@ -8,10 +8,10 @@ import ToggleButton from "react-bootstrap/ToggleButton";
 import ToggleButtonGroup from "react-bootstrap/ToggleButtonGroup";
 import Tooltip from "react-bootstrap/Tooltip";
 import { StyledButton } from "../../components/Button";
-import { DarkModeContext } from "../App";
+import { ThemeContext } from "styled-components";
 
 function CalculatorForm(props) {
-  const [darkMode] = useContext(DarkModeContext);
+  const themeContext = useContext(ThemeContext);
 
   return (
     <>
@@ -76,14 +76,14 @@ function CalculatorForm(props) {
             >
               <ToggleButton
                 value={"Me"}
-                variant={darkMode ? "outline-light" : "outline-dark"}
+                variant={themeContext.toggleButton}
                 size="sm"
               >
                 Me
               </ToggleButton>
               <ToggleButton
                 value={"Them"}
-                variant={darkMode ? "outline-light" : "outline-dark"}
+                variant={themeContext.toggleButton}
                 size="sm"
               >
                 Them
@@ -123,7 +123,7 @@ function CalculatorForm(props) {
                 <StyledButton
                   name="myDeductions"
                   value={props.receipt.myDeductions.inputValue}
-                  variant={darkMode ? "outline-light" : "outline-dark"}
+                  variant={themeContext.toggleButton}
                   onClick={(event) => {
                     props.receipt.myDeductions.inputValue &&
                       props.onDeductionAdd(event);
@@ -164,7 +164,7 @@ function CalculatorForm(props) {
                 <StyledButton
                   name="theirDeductions"
                   value={props.receipt.theirDeductions.inputValue}
-                  variant={darkMode ? "outline-light" : "outline-dark"}
+                  variant={themeContext.toggleButton}
                   onClick={(event) => {
                     props.receipt.theirDeductions.inputValue &&
                       props.onDeductionAdd(event);

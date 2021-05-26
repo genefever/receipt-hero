@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Container from "react-bootstrap/Container";
 import NavigationBar from "./NavigationBar";
 import Home from "../routes/Home";
@@ -7,56 +7,22 @@ import SignUp from "../routes/SignUp";
 import UserReceipts from "../routes/UserReceipts";
 import NoMatch from "../routes/NoMatch";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { createGlobalStyle } from "styled-components";
-
-export const DarkModeContext = React.createContext();
+import { ThemeProvider } from "styled-components";
+import { GlobalStyles } from "./styles/GlobalStyles";
+import { lightTheme, darkTheme } from "./styles/Themes";
+import { useDarkMode } from "./styles/useDarkMode";
 
 function App() {
-  const [darkMode, setDarkMode] = useState(false);
+  const [theme, themeToggler, mountedComponent] = useDarkMode();
+  const themeMode = theme === "light" ? lightTheme : darkTheme;
 
-  const GlobalStyle = createGlobalStyle`
-      html, body, #root, #root>div {
-        height: 100%;
-      }
-
-      body {
-        background-color: ${darkMode ? "#181818" : "#F4F3EF"};
-        // font-family: "Montserrat", sans-serif;
-      }
-
-      text {
-        color:
-      }
-
-      h1,h2,h3,h4,h5,h6 {
-        font-family: "Montserrat";
-        font-weight: 500;
-        color: ${darkMode ? "#E4E6EB" : "black"}
-      }
-
-      td, th {
-        color: ${darkMode ? "#E4E6EB" : "black"}
-      }
-
-      .main-container {
-        padding: 0 3%;
-      }
-
-      .as-text {
-        background:none;
-        border:none;
-        margin:0;
-        padding:0;
-        cursor: pointer;
-      }
-  `;
-
+  if (!mountedComponent) return <div />;
   return (
-    <>
-      <DarkModeContext.Provider value={[darkMode, setDarkMode]}>
-        <GlobalStyle />
+    <ThemeProvider theme={themeMode}>
+      <>
+        <GlobalStyles />
         <Router>
-          <NavigationBar />
+          <NavigationBar theme={theme} toggleTheme={themeToggler} />
           <Container fluid className="main-container">
             <Switch>
               <Route path="/" exact component={Home} />
@@ -67,8 +33,8 @@ function App() {
             </Switch>
           </Container>
         </Router>
-      </DarkModeContext.Provider>
-    </>
+      </>
+    </ThemeProvider>
   );
 }
 
