@@ -71,7 +71,7 @@ function NavigationBar(props) {
         <StyledButton
           size="sm"
           variant="outline-light"
-          className="ml-auto mr-2 px-3"
+          className="ml-auto mr-3 px-3"
         >
           Log in
         </StyledButton>

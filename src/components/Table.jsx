@@ -16,6 +16,7 @@ import { ThemeContext } from "styled-components";
 function Table(props) {
   const [meToPayTotal, setMeToPayTotal] = useState(0);
   const [themToPayTotal, setThemToPayTotal] = useState(0);
+
   const themeContext = useContext(ThemeContext);
 
   const printComponentRef = useRef();
@@ -216,38 +217,13 @@ function Table(props) {
           ? {
               ...footerStyle,
               backgroundColor: themeContext.cellColorYellow,
-              color: "black",
             }
           : {
               ...footerStyle,
               backgroundColor: themeContext.cellColorGreen,
-              color: "#F5F5F5",
             },
     },
   ];
-
-  const printPageStyle = `
-  @page {
-    margin: 10%;
-  }
-
-  @media all {
-    .pagebreak {
-      display: none;
-    }
-  }
-
-  @media print {
-    .pagebreak {
-      page-break-before: always;
-    }
-
-    .hide-on-print, #deleteButton {
-      display: none;
-      visibility: hidden;
-    }
-  }
-`;
 
   return (
     <ToolkitProvider
@@ -287,7 +263,6 @@ function Table(props) {
                     )}
                     content={() => printComponentRef.current}
                     documentTitle={"Title"} // TODO: replace with dynamic title
-                    pageStyle={printPageStyle}
                   />
                 </div>
               </Col>

@@ -5,7 +5,7 @@ export const lightTheme = {
   navbar: "#5b5656",
   toggleButton: "outline-dark",
   emoji: "☀️",
-  divider: "2B2B2B",
+  borderColor: "2B2B2B",
   cellColorGreen: "#D4EDDA",
   cellColorYellow: "#FDF3CD",
 };
@@ -17,7 +17,7 @@ export const darkTheme = {
   navbar: "#3A3B3C",
   toggleButton: "outline-light",
   emoji: "🌙",
-  divider: "#636465",
+  borderColor: "#636465",
   cellColorGreen: "#56B65B",
   cellColorYellow: "#F9C10B",
 };
