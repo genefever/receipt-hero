@@ -7,9 +7,9 @@ import UserReceipts from "../routes/UserReceipts";
 import NoMatch from "../routes/NoMatch";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
-import { GlobalStyles } from "./styles/GlobalStyles";
-import { lightTheme, darkTheme } from "./styles/Themes";
-import { useDarkMode } from "./styles/useDarkMode";
+import { GlobalStyles } from "../styles/GlobalStyles";
+import { lightTheme, darkTheme } from "../styles/Themes";
+import { useDarkMode } from "../styles/useDarkMode";
 import { Wrapper } from "./Container";
 
 function App() {
