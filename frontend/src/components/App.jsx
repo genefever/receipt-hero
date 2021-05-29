@@ -1,8 +1,7 @@
 import React from "react";
 import NavigationBar from "./NavigationBar";
+import Auth from "../routes/Auth";
 import Home from "../routes/Home";
-import Login from "../routes/Login";
-import SignUp from "../routes/SignUp";
 import UserReceipts from "../routes/UserReceipts";
 import NoMatch from "../routes/NoMatch";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
@@ -26,8 +25,14 @@ function App() {
           <Wrapper>
             <Switch>
               <Route path="/" exact component={Home} />
-              <Route path="/login" component={Login} />
-              <Route path="/signup" component={SignUp} />
+              <Route
+                path="/login"
+                render={(props) => <Auth {...props} isSignup={false} />}
+              />
+              <Route
+                path="/signup"
+                render={(props) => <Auth {...props} isSignup={true} />}
+              />
               <Route path="/u" component={UserReceipts} />
               <Route component={NoMatch} />
             </Switch>
