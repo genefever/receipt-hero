@@ -11,7 +11,7 @@ import axios from "axios";
 
 function SignUp() {
   const [formInput, setFormInputChange] = useState({
-    name: "",
+    username: "",
     email: "",
     password: "",
   });
@@ -27,7 +27,7 @@ function SignUp() {
     axios({
       method: "post",
       data: {
-        name: formInput.name,
+        username: formInput.username,
         email: formInput.email,
         password: formInput.password,
       },
@@ -65,21 +65,21 @@ function SignUp() {
               event.preventDefault();
             }}
           >
-            {/* Name */}
-            <Form.Group controlId="formBasicName">
-              <Form.Label>Name</Form.Label>
+            {/* Username */}
+            <Form.Group controlId="formBasicUsername">
+              <Form.Label>Username</Form.Label>
               <Form.Control
                 required
                 type="text"
-                name="name"
-                value={formInput.name}
+                name="username"
+                value={formInput.username}
                 onChange={(event) => handleFormInputChange(event)}
               />
             </Form.Group>
 
             {/* Email */}
             <Form.Group controlId="formBasicEmail">
-              <Form.Label>Email address</Form.Label>
+              <Form.Label>Email</Form.Label>
               <Form.Control
                 required
                 type="email"

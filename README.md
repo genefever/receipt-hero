@@ -6,7 +6,7 @@ In the project directory, you can run:
 
 ### `npm run dev`
 
-Runs the app in the development mode.\
+Runs the frontend and server with concurrently in development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 The page will reload if you make edits.\
@@ -18,7 +18,7 @@ In the frontend directory, you can run:
 
 ### `npm start`
 
-Runs only the frontend of the app in the development mode without the backend running.\
+Runs only the frontend of the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 ### `npm test`

@@ -11,7 +11,7 @@ import axios from "axios";
 
 function Login() {
   const [formInput, setFormInputChange] = useState({
-    email: "",
+    username: "",
     password: "",
   });
 
@@ -26,7 +26,7 @@ function Login() {
     axios({
       method: "post",
       data: {
-        email: formInput.email,
+        username: formInput.username,
         password: formInput.password,
       },
       withCredentials: true, // Make axios send cookies in its requests
@@ -63,14 +63,14 @@ function Login() {
               event.preventDefault();
             }}
           >
-            {/* Email */}
-            <Form.Group controlId="formBasicEmail">
-              <Form.Label>Email address</Form.Label>
+            {/* Username */}
+            <Form.Group controlId="formBasicUsername">
+              <Form.Label>Username</Form.Label>
               <Form.Control
                 required
-                type="email"
-                name="email"
-                value={formInput.email}
+                type="text"
+                name="username"
+                value={formInput.username}
                 onChange={(event) => handleFormInputChange(event)}
               />
             </Form.Group>

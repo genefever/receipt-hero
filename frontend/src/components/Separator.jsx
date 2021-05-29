@@ -13,10 +13,10 @@ export const Separator = styled.div`
   }
 
   :not(:empty):before {
-    margin-right: 0.3em;
+    margin-right: 0.4em;
   }
 
   :not(:empty):after {
-    margin-left: 0.3em;
+    margin-left: 0.4em;
   }
 `;
