@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Card from "react-bootstrap/Card";
 import Input from "../components/Input";
 import { Separator } from "../components/Separator";
@@ -7,51 +7,58 @@ import { StyledCard } from "../components/Card";
 import { StyledButton } from "../components/Button";
 import logo from "../assets/logo.svg";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import * as api from "../api";
 
 function Auth(props) {
-  const [isSignup, setIsSignup] = useState(props.isSignup);
+  const [isSignUp, setIsSignUp] = useState(props.isSignUp);
+  // Update authentication page based on props.isSignUp change.
+  useEffect(() => {
+    setIsSignUp(props.isSignUp);
+  }, [props.isSignUp]);
 
-  const [formInput, setFormInputChange] = useState({
+  const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
   });
 
-  function handleFormInputChange(event) {
+  function handleFormDataChange(event) {
     const { name, value } = event.target;
-    setFormInputChange((prevValue) => {
+    setFormData((prevValue) => {
       return { ...prevValue, [name]: value };
     });
   }
 
-  function signUp() {
-    axios({
-      method: "post",
-      data: {
-        username: formInput.username,
-        email: formInput.email,
-        password: formInput.password,
-      },
-      withCredentials: true, // Make axios send cookies in its requests
-      url: "http://localhost:4000/signup",
-    }).then((res) => console.log(res));
+  function handleSubmit(event) {
+    event.preventDefault();
+
+    if (isSignUp) {
+      signUp();
+    } else {
+      login();
+    }
   }
 
-  // function login() {
-  //   axios({
-  //     method: "post",
-  //     data: {
-  //       username: formInput.username,
-  //       password: formInput.password,
-  //     },
-  //     withCredentials: true, // Make axios send cookies in its requests
-  //     url: "http://localhost:4000/login",
-  //   }).then((res) => console.log(res));
-  // }
+  async function signUp() {
+    try {
+      const { data } = await api.signUp(formData);
+      console.log(data);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async function login() {
+    try {
+      const { data } = await api.login(formData);
+      console.log(data);
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   function switchMode() {
-    setIsSignup((prevIsSignup) => !prevIsSignup);
+    setIsSignUp((prevIsSignup) => !prevIsSignup);
   }
 
   return (
@@ -69,40 +76,35 @@ function Auth(props) {
 
         <StyledButton $google size="lg" block className="mb-3">
           <i className="fab fa-google"></i>{" "}
-          {isSignup ? " Sign up " : " Log in "}
+          {isSignUp ? " Sign up " : " Log in "}
           with Google
         </StyledButton>
         <StyledButton $facebook size="lg" block>
           <i className="fab fa-facebook-square"></i>
-          {isSignup ? " Sign up " : " Log in "} with Facebook
+          {isSignUp ? " Sign up " : " Log in "} with Facebook
         </StyledButton>
 
         <Separator className="my-3">or</Separator>
 
         <StyledCard>
-          <form
-            onSubmit={(event) => {
-              signUp();
-              event.preventDefault();
-            }}
-          >
+          <form onSubmit={(event) => handleSubmit(event)}>
             {/* Username */}
             <Input
               name="username"
-              value={formInput.username}
+              value={formData.username}
               label="Username"
-              handleChange={(event) => handleFormInputChange(event)}
+              handleChange={(event) => handleFormDataChange(event)}
               controlId={"formBasicUsername"}
             />
 
             {/* Email */}
-            {isSignup && (
+            {isSignUp && (
               <Input
                 name="email"
-                value={formInput.email}
+                value={formData.email}
                 label="Email"
                 type="email"
-                handleChange={(event) => handleFormInputChange(event)}
+                handleChange={(event) => handleFormDataChange(event)}
                 controlId={"formBasicEmail"}
               />
             )}
@@ -110,32 +112,40 @@ function Auth(props) {
             {/* Password */}
             <Input
               name="password"
-              value={formInput.password}
+              value={formData.password}
               label="Password"
               type="password"
-              handleChange={(event) => handleFormInputChange(event)}
+              handleChange={(event) => handleFormDataChange(event)}
               controlId={"formBasicPassword"}
             />
 
-            {!isSignup && (
+            {!isSignUp && (
               <div className="mb-4">
                 <Link to="/signup">Forgot password?</Link>
               </div>
             )}
 
-            {/* Sign up button */}
+            {/* Submit button */}
             <StyledButton $primary type="submit" size="lg" block>
-              {isSignup ? "Sign up" : "Log in"}
+              {isSignUp ? "Sign up" : "Log in"}
             </StyledButton>
           </form>
         </StyledCard>
       </Card.Body>
 
+      {/* Have an account message */}
       <div className="d-flex align-items-center justify-content-center">
-        {isSignup ? "Already" : "Don't"} have an account?
-        <StyledButton className="py-0" variant="link" onClick={switchMode}>
-          {isSignup ? "Log in" : "Sign up"}
-        </StyledButton>
+        {isSignUp ? "Already" : "Don't"} have an account?
+        <Link
+          to={{
+            pathname: isSignUp ? "/login" : "/signup",
+            state: { isSignUp: !isSignUp },
+          }}
+        >
+          <StyledButton className="py-0" variant="link" onClick={switchMode}>
+            {isSignUp ? "Log in" : "Sign up"}
+          </StyledButton>
+        </Link>
       </div>
     </SignInContainer>
   );

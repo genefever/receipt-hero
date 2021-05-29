@@ -25,14 +25,12 @@ function App() {
           <Wrapper>
             <Switch>
               <Route path="/" exact component={Home} />
-              <Route
-                path="/login"
-                render={(props) => <Auth {...props} isSignup={false} />}
-              />
-              <Route
-                path="/signup"
-                render={(props) => <Auth {...props} isSignup={true} />}
-              />
+              <Route path="/login">
+                <Auth isSignUp={false} />
+              </Route>
+              <Route path="/signup">
+                <Auth isSignUp={true} />
+              </Route>
               <Route path="/u" component={UserReceipts} />
               <Route component={NoMatch} />
             </Switch>

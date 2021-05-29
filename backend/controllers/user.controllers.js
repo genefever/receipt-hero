@@ -3,7 +3,7 @@ const User = require("../models/user");
 const passport = require("passport");
 require("../config/passportConfig")(passport);
 
-const userSignUp = (req, res, next) => {
+const signup = (req, res, next) => {
   User.findOne({ username: req.body.username }, async (err, doc) => {
     if (err) {
       return res.status(500).json({
@@ -25,7 +25,7 @@ const userSignUp = (req, res, next) => {
         });
 
         await newUser.save();
-        res.sendStatus(200);
+        res.status(200);
       } catch (err) {
         res
           .status(500)
@@ -35,7 +35,7 @@ const userSignUp = (req, res, next) => {
   });
 };
 
-const userLogin = (req, res, next) => {
+const login = (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     if (err) {
       return next(err);
@@ -60,4 +60,4 @@ const userLogin = (req, res, next) => {
   })(req, res, next);
 };
 
-module.exports = { userSignUp, userLogin };
+module.exports = { signup, login };

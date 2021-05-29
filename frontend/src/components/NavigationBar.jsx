@@ -67,7 +67,12 @@ function NavigationBar(props) {
       </StyledNavbar.Collapse>
 
       {/* Buttons */}
-      <Link to="/login">
+      <Link
+        to={{
+          pathname: "/login",
+          state: { isSignup: false },
+        }}
+      >
         <StyledButton
           size="sm"
           variant="outline-light"
@@ -77,7 +82,12 @@ function NavigationBar(props) {
         </StyledButton>
       </Link>
 
-      <Link to="/signup">
+      <Link
+        to={{
+          pathname: "/signup",
+          state: { isSignUp: true },
+        }}
+      >
         <StyledButton size="sm" variant="light" className="px-3">
           Sign up
         </StyledButton>
