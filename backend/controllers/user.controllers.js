@@ -24,8 +24,12 @@ const signup = (req, res, next) => {
           password: hashedPassword,
         });
 
-        await newUser.save();
-        res.status(200);
+        const result = await newUser.save();
+        res.status(201).json({
+          userId: result._id,
+          email: result.email,
+          username: result.username,
+        });
       } catch (err) {
         res
           .status(500)
@@ -60,4 +64,26 @@ const login = (req, res, next) => {
   })(req, res, next);
 };
 
-module.exports = { signup, login };
+const googleAuth = (req, res, next) => {
+  passport.authenticate("google", { scope: ["email", "openid", "profile"] })(
+    req,
+    res,
+    next
+  );
+};
+
+const googleAuthCallback = (req, res, next) => {
+  console.log("1");
+  passport.authenticate("google", { failureRedirect: "/login" })(
+    req,
+    res,
+    next
+  ),
+    (function (req, res, next) {
+      console.log(res);
+      // Successful authentication, redirect home.
+      res.redirect("http://localhost:3000");
+    })(req, res, next);
+};
+
+module.exports = { signup, login, googleAuth, googleAuthCallback };

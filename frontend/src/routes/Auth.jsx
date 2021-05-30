@@ -8,8 +8,10 @@ import { StyledButton } from "../components/Button";
 import logo from "../assets/logo.svg";
 import { Link } from "react-router-dom";
 import * as api from "../api";
+import { useHistory } from "react-router-dom";
 
 function Auth(props) {
+  const history = useHistory();
   const [isSignUp, setIsSignUp] = useState(props.isSignUp);
   // Update authentication page based on props.isSignUp change.
   useEffect(() => {
@@ -43,6 +45,7 @@ function Auth(props) {
     try {
       const { data } = await api.signUp(formData);
       console.log(data);
+      history.push("/");
     } catch (err) {
       console.log(err);
     }
@@ -52,9 +55,14 @@ function Auth(props) {
     try {
       const { data } = await api.login(formData);
       console.log(data);
+      history.push("/");
     } catch (err) {
       console.log(err);
     }
+  }
+
+  function googleLogin() {
+    window.open("http://localhost:4000/auth/google");
   }
 
   function switchMode() {
@@ -74,7 +82,13 @@ function Auth(props) {
 
         {/* Social buttons */}
 
-        <StyledButton $google size="lg" block className="mb-3">
+        <StyledButton
+          $google
+          size="lg"
+          block
+          className="mb-3"
+          onClick={googleLogin}
+        >
           <i className="fab fa-google"></i>{" "}
           {isSignUp ? " Sign up " : " Log in "}
           with Google

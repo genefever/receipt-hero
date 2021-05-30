@@ -1,6 +1,8 @@
+require("dotenv").config();
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const LocalStrategy = require("passport-local").Strategy;
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
 module.exports = function (passport) {
   passport.use(
@@ -27,13 +29,36 @@ module.exports = function (passport) {
     })
   );
 
+  passport.use(
+    new GoogleStrategy(
+      {
+        clientID: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        callbackURL: "/auth/google/callback",
+      },
+      // Called on a successful authentication
+      // Insert into database
+      function (accessToken, refreshToken, profile, done) {
+        User.findOrCreate({ googleId: profile.id }, function (err, user) {
+          return done(err, user);
+        });
+      }
+    )
+  );
+
+  // Persists user data (after successful authentication) into session.
   passport.serializeUser((user, done) => {
     done(null, user.id);
   });
 
+  // Retrieves data from session.
   passport.deserializeUser((id, done) => {
     User.findById(id, (err, user) => {
-      const userInformation = { email: user.email, username: user.username };
+      const userInformation = {
+        email: user.email,
+        username: user.username,
+        googleId: user.googleId,
+      };
       done(err, userInformation);
     });
   });
