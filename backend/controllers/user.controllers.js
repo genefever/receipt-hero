@@ -3,6 +3,10 @@ const User = require("../models/user");
 const passport = require("passport");
 require("../config/passportConfig")(passport);
 
+const getUser = (req, res, next) => {
+  res.send(req.user);
+};
+
 const signup = (req, res, next) => {
   User.findOne({ username: req.body.username }, async (err, doc) => {
     if (err) {
@@ -94,6 +98,7 @@ const facebookAuthCallback = (req, res, next) => {
 };
 
 module.exports = {
+  getUser,
   signup,
   login,
   googleAuth,

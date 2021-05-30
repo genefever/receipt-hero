@@ -65,7 +65,7 @@ module.exports = function (passport) {
 
   // Persists user data (after successful authentication) into session.
   passport.serializeUser((user, done) => {
-    done(null, user.id);
+    done(null, user._id);
   });
 
   // Retrieves data from session.
@@ -75,6 +75,7 @@ module.exports = function (passport) {
         email: user.email,
         username: user.username,
         googleId: user.googleId,
+        facebookId: user.facebookId,
       };
       done(err, userInformation);
     });
