@@ -59,9 +59,17 @@ module.exports = function (passport) {
       // Called on a successful authentication
       // Insert into database
       function (accessToken, refreshToken, profile, done) {
-        User.findOrCreate({ googleId: profile.id }, function (err, user) {
-          return done(err, user);
-        });
+        User.findOrCreate(
+          { googleId: profile.id },
+          {
+            firstName: profile.name.givenName,
+            lastName: profile.name.familyName,
+            email: profile.emails[0].value,
+          },
+          function (err, user) {
+            return done(err, user);
+          }
+        );
       }
     )
   );
@@ -75,9 +83,17 @@ module.exports = function (passport) {
         profileFields: ["id", "email", "name"],
       },
       function (accessToken, refreshToken, profile, done) {
-        User.findOrCreate({ facebookId: profile.id }, function (err, user) {
-          done(err, user);
-        });
+        User.findOrCreate(
+          { facebookId: profile.id },
+          {
+            firstName: profile.name.givenName,
+            lastName: profile.name.familyName,
+            email: profile.emails[0].value,
+          },
+          function (err, user) {
+            done(err, user);
+          }
+        );
       }
     )
   );
