@@ -80,17 +80,19 @@ function NavigationBar(props) {
 
           {/* Auth Buttons */}
           {userObject ? (
-            <Nav.Link>
-              <StyledButton
-                size="sm"
-                onClick={logout}
-                variant="outline-light"
-                className="px-3"
-              >
-                Log out
-              </StyledButton>
-            </Nav.Link>
+            // User is logged in
+              <Nav.Link>
+                <StyledButton
+                  size="sm"
+                  onClick={logout}
+                  variant="outline-light"
+                  className="px-3"
+                >
+                  Log out
+                </StyledButton>
+              </Nav.Link>
           ) : (
+            // User is not logged in
             <>
               <LinkContainer
                 to={{
