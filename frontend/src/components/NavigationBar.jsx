@@ -6,7 +6,9 @@ import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import { StyledButton } from "./Button";
 import { ThemeContext } from "styled-components";
+import { UserContext } from "../UserContext";
 import { FaPlus } from "react-icons/fa";
+import * as api from "../api";
 
 const StyledNavbar = styled(Navbar)`
   background-color: ${({ theme }) => theme.navbar};
@@ -22,7 +24,15 @@ const StyledNavbarBrand = styled(Navbar.Brand)`
 `;
 
 function NavigationBar(props) {
+  const userObject = useContext(UserContext);
   const themeContext = useContext(ThemeContext);
+
+  async function logout() {
+    const res = await api.logout();
+    if (res.status === 200) {
+      window.location.href = "/";
+    }
+  }
 
   return (
     <StyledNavbar fixed="top" expand="md" variant="dark">
@@ -47,6 +57,7 @@ function NavigationBar(props) {
       <StyledNavbar.Collapse id="basic-navbar-nav">
         {/* Left Navbar */}
         <Nav className="mr-auto">
+          {/* Create Button */}
           <LinkContainer to="/">
             <Nav.Link>
               <StyledButton $primary size="sm">
@@ -68,32 +79,50 @@ function NavigationBar(props) {
           </Nav.Item>
 
           {/* Auth Buttons */}
-
-          <LinkContainer
-            to={{
-              pathname: "/login",
-              state: { isSignup: false },
-            }}
-          >
+          {userObject ? (
             <Nav.Link>
-              <StyledButton size="sm" variant="outline-light" className="px-3">
-                Log in
+              <StyledButton
+                size="sm"
+                onClick={logout}
+                variant="outline-light"
+                className="px-3"
+              >
+                Log out
               </StyledButton>
             </Nav.Link>
-          </LinkContainer>
+          ) : (
+            <>
+              <LinkContainer
+                to={{
+                  pathname: "/login",
+                  state: { isSignup: false },
+                }}
+              >
+                <Nav.Link>
+                  <StyledButton
+                    size="sm"
+                    variant="outline-light"
+                    className="px-3"
+                  >
+                    Log in
+                  </StyledButton>
+                </Nav.Link>
+              </LinkContainer>
 
-          <LinkContainer
-            to={{
-              pathname: "/signup",
-              state: { isSignUp: true },
-            }}
-          >
-            <Nav.Link>
-              <StyledButton size="sm" variant="light" className="px-3">
-                Sign up
-              </StyledButton>
-            </Nav.Link>
-          </LinkContainer>
+              <LinkContainer
+                to={{
+                  pathname: "/signup",
+                  state: { isSignUp: true },
+                }}
+              >
+                <Nav.Link>
+                  <StyledButton size="sm" variant="light" className="px-3">
+                    Sign up
+                  </StyledButton>
+                </Nav.Link>
+              </LinkContainer>
+            </>
+          )}
         </Nav>
       </StyledNavbar.Collapse>
     </StyledNavbar>

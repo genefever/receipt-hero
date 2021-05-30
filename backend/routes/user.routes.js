@@ -5,7 +5,7 @@ const router = Router();
 
 router.post("/signup", userControllers.signup);
 router.post("/login", userControllers.login);
-router.post("/logout", userControllers.logout);
+router.get("/logout", userControllers.logout);
 router.get("/auth/google", userControllers.googleAuth);
 router.get("/auth/google/callback", userControllers.googleAuthCallback);
 router.get("/auth/facebook", userControllers.facebookAuth);
