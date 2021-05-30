@@ -71,6 +71,13 @@ const login = (req, res, next) => {
   })(req, res, next);
 };
 
+const logout = (req, res, next) => {
+  if (req.user) {
+    req.logout();
+    res.status("200").json({ message: "Successfully logged out." });
+  }
+};
+
 const googleAuth = (req, res, next) => {
   passport.authenticate("google", { scope: ["email", "openid", "profile"] })(
     req,
@@ -101,6 +108,7 @@ module.exports = {
   getUser,
   signup,
   login,
+  logout,
   googleAuth,
   googleAuthCallback,
   facebookAuth,
