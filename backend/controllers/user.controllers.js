@@ -81,12 +81,9 @@ const googleAuth = (req, res, next) => {
 
 const googleAuthCallback = (req, res, next) => {
   passport.authenticate("google", {
+    successRedirect: "http://localhost:3000/",
     failureRedirect: "http://localhost:3000/login",
-  })(req, res, next),
-    (function (req, res, next) {
-      // Successful authentication, redirect home.
-      res.redirect("http://localhost:3000");
-    })(req, res, next);
+  })(req, res, next);
 };
 
 const facebookAuth = (req, res, next) => {

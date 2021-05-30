@@ -4,10 +4,10 @@ const findOrCreate = require("mongoose-findorcreate");
 const userSchema = new mongoose.Schema({
   firstName: String,
   lastName: String,
-  email: String, //{ type: String, required: true },
-  password: String, //{ type: String, required: true },
+  email: { type: String, required: true },
   googleId: String,
   facebookId: String,
+  password: String,
 });
 
 userSchema.plugin(findOrCreate);
