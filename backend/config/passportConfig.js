@@ -6,9 +6,28 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
 
 module.exports = function (passport) {
+  // Persists user data (after successful authentication) into session.
+  passport.serializeUser((user, done) => {
+    done(null, user._id);
+  });
+
+  // Retrieves data from session.
+  passport.deserializeUser((id, done) => {
+    User.findById(id, (err, user) => {
+      const userInformation = {
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        googleId: user.googleId,
+        facebookId: user.facebookId,
+      };
+      done(err, userInformation);
+    });
+  });
+
   passport.use(
-    new LocalStrategy((username, password, done) => {
-      User.findOne({ username: username }, (err, user) => {
+    new LocalStrategy({ usernameField: "email" }, (email, password, done) => {
+      User.findOne({ email: email }, (err, user) => {
         if (err) {
           return done(err);
         }
@@ -62,22 +81,4 @@ module.exports = function (passport) {
       }
     )
   );
-
-  // Persists user data (after successful authentication) into session.
-  passport.serializeUser((user, done) => {
-    done(null, user._id);
-  });
-
-  // Retrieves data from session.
-  passport.deserializeUser((id, done) => {
-    User.findById(id, (err, user) => {
-      const userInformation = {
-        email: user.email,
-        username: user.username,
-        googleId: user.googleId,
-        facebookId: user.facebookId,
-      };
-      done(err, userInformation);
-    });
-  });
 };

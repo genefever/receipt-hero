@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
+import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
+import Form from "react-bootstrap/Form";
 import Input from "../components/Input";
 import { Separator } from "../components/Separator";
 import { SignInContainer } from "../components/Container";
@@ -19,9 +21,13 @@ function Auth(props) {
   }, [props.isSignUp]);
 
   const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
     username: "",
     email: "",
     password: "",
+    googleId: "",
+    facebookId: "",
   });
 
   function handleFormDataChange(event) {
@@ -105,27 +111,39 @@ function Auth(props) {
         <Separator className="my-3">or</Separator>
 
         <StyledCard>
-          <form onSubmit={(event) => handleSubmit(event)}>
-            {/* Username */}
-            <Input
-              name="username"
-              value={formData.username}
-              label="Username"
-              handleChange={(event) => handleFormDataChange(event)}
-              controlId={"formBasicUsername"}
-            />
+          <Form onSubmit={(event) => handleSubmit(event)}>
+            {/* Name */}
+            {isSignUp && (
+              <Form.Row>
+                <Input
+                  as={Col}
+                  name="firstName"
+                  value={formData.firstName}
+                  label="First Name"
+                  handleChange={(event) => handleFormDataChange(event)}
+                  controlId={"formBasicFirstName"}
+                />
+
+                <Input
+                  as={Col}
+                  name="lastName"
+                  value={formData.lastName}
+                  label="Last Name"
+                  handleChange={(event) => handleFormDataChange(event)}
+                  controlId={"formBasicLastName"}
+                />
+              </Form.Row>
+            )}
 
             {/* Email */}
-            {isSignUp && (
-              <Input
-                name="email"
-                value={formData.email}
-                label="Email"
-                type="email"
-                handleChange={(event) => handleFormDataChange(event)}
-                controlId={"formBasicEmail"}
-              />
-            )}
+            <Input
+              name="email"
+              value={formData.email}
+              label="Email"
+              type="email"
+              handleChange={(event) => handleFormDataChange(event)}
+              controlId={"formBasicEmail"}
+            />
 
             {/* Password */}
             <Input
@@ -136,18 +154,16 @@ function Auth(props) {
               handleChange={(event) => handleFormDataChange(event)}
               controlId={"formBasicPassword"}
             />
-
             {!isSignUp && (
               <div className="mb-4">
                 <Link to="/signup">Forgot password?</Link>
               </div>
             )}
-
             {/* Submit button */}
             <StyledButton $primary type="submit" size="lg" block>
               {isSignUp ? "Sign up" : "Log in"}
             </StyledButton>
-          </form>
+          </Form>
         </StyledCard>
       </Card.Body>
 

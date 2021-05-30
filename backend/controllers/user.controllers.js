@@ -8,22 +8,23 @@ const getUser = (req, res, next) => {
 };
 
 const signup = (req, res, next) => {
-  User.findOne({ username: req.body.username }, async (err, doc) => {
+  User.findOne({ email: req.body.email }, async (err, doc) => {
     if (err) {
       return res.status(500).json({
-        message: `Failed while looking up username: ${username}.`,
+        message: `Failed while looking up email: ${email}.`,
         error: err,
       });
     }
     if (doc) {
       return res
         .status(409)
-        .json({ message: "An account with this username already exists." });
+        .json({ message: "An account with this email already exists." });
     } else {
       try {
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
         const newUser = new User({
-          username: req.body.username,
+          firstName: req.body.firstName,
+          lastName: req.body.lastName,
           email: req.body.email,
           password: hashedPassword,
         });
@@ -32,7 +33,8 @@ const signup = (req, res, next) => {
         res.status(201).json({
           userId: result._id,
           email: result.email,
-          username: result.username,
+          firstName: req.body.firstName,
+          lastName: req.body.lastName,
         });
       } catch (err) {
         res
@@ -61,7 +63,8 @@ const login = (req, res, next) => {
         userDetails: {
           userId: user._id,
           email: user.email,
-          username: user.username,
+          firstName: req.body.firstName,
+          lastName: req.body.lastName,
         },
       });
     });
