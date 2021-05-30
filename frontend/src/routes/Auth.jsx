@@ -62,7 +62,11 @@ function Auth(props) {
   }
 
   function googleLogin() {
-    window.open("http://localhost:4000/auth/google");
+    window.open("http://localhost:4000/auth/google", "_self");
+  }
+
+  function facebookLogin() {
+    window.open("http://localhost:4000/auth/facebook", "_self");
   }
 
   function switchMode() {
@@ -93,7 +97,7 @@ function Auth(props) {
           {isSignUp ? " Sign up " : " Log in "}
           with Google
         </StyledButton>
-        <StyledButton $facebook size="lg" block>
+        <StyledButton $facebook size="lg" block onClick={facebookLogin}>
           <i className="fab fa-facebook-square"></i>
           {isSignUp ? " Sign up " : " Log in "} with Facebook
         </StyledButton>

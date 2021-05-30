@@ -3,6 +3,7 @@ const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const LocalStrategy = require("passport-local").Strategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const FacebookStrategy = require("passport-facebook").Strategy;
 
 module.exports = function (passport) {
   passport.use(
@@ -41,6 +42,22 @@ module.exports = function (passport) {
       function (accessToken, refreshToken, profile, done) {
         User.findOrCreate({ googleId: profile.id }, function (err, user) {
           return done(err, user);
+        });
+      }
+    )
+  );
+
+  passport.use(
+    new FacebookStrategy(
+      {
+        clientID: process.env.FACEBOOK_APP_ID,
+        clientSecret: process.env.FACEBOOK_APP_SECRET,
+        callbackURL: "/auth/facebook/callback",
+        profileFields: ["id", "email", "name"],
+      },
+      function (accessToken, refreshToken, profile, done) {
+        User.findOrCreate({ facebookId: profile.id }, function (err, user) {
+          done(err, user);
         });
       }
     )

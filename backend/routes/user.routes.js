@@ -7,5 +7,7 @@ router.post("/signup", userControllers.signup);
 router.post("/login", userControllers.login);
 router.get("/auth/google", userControllers.googleAuth);
 router.get("/auth/google/callback", userControllers.googleAuthCallback);
+router.get("/auth/facebook", userControllers.facebookAuth);
+router.get("/auth/facebook/callback", userControllers.facebookAuthCallback);
 
 module.exports = router;

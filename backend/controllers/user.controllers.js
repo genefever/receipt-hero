@@ -73,17 +73,31 @@ const googleAuth = (req, res, next) => {
 };
 
 const googleAuthCallback = (req, res, next) => {
-  console.log("1");
-  passport.authenticate("google", { failureRedirect: "/login" })(
-    req,
-    res,
-    next
-  ),
+  passport.authenticate("google", {
+    failureRedirect: "http://localhost:3000/login",
+  })(req, res, next),
     (function (req, res, next) {
-      console.log(res);
       // Successful authentication, redirect home.
       res.redirect("http://localhost:3000");
     })(req, res, next);
 };
 
-module.exports = { signup, login, googleAuth, googleAuthCallback };
+const facebookAuth = (req, res, next) => {
+  passport.authenticate("facebook", { scope: ["email"] })(req, res, next);
+};
+
+const facebookAuthCallback = (req, res, next) => {
+  passport.authenticate("facebook", {
+    successRedirect: "http://localhost:3000/",
+    failureRedirect: "http://localhost:3000/login",
+  })(req, res, next);
+};
+
+module.exports = {
+  signup,
+  login,
+  googleAuth,
+  googleAuthCallback,
+  facebookAuth,
+  facebookAuthCallback,
+};
