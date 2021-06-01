@@ -14,6 +14,7 @@ import Col from "react-bootstrap/Col";
 import Input from "./Input";
 import emptyTable from "../assets/empty-table.svg";
 import { ThemeContext } from "styled-components";
+import OutsideClickHandler from "react-outside-click-handler";
 
 function ReceiptsTable(props) {
   const [calculation, setCalculation] = useState({ title: "Untitled" });
@@ -251,14 +252,16 @@ function ReceiptsTable(props) {
         <div ref={printComponentRef}>
           <div className="d-inline-flex">
             {editTitle ? (
-              <Input
-                autoFocus
-                defaultValue={calculation.title}
-                handleChange={(e) => handleTitleEdit(e)}
-                onKeyPress={(e) => {
-                  if (e.key === "Enter") toggleEditTitle();
-                }}
-              />
+              <OutsideClickHandler onOutsideClick={toggleEditTitle}>
+                <Input
+                  autoFocus
+                  defaultValue={calculation.title}
+                  handleChange={(e) => handleTitleEdit(e)}
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter") toggleEditTitle();
+                  }}
+                />
+              </OutsideClickHandler>
             ) : (
               <h4 onClick={toggleEditTitle}>{calculation.title}</h4>
             )}
