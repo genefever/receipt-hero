@@ -47,20 +47,20 @@ function Auth(props) {
     }
   }
 
+  // TODO: Handle error
   async function signUp() {
     try {
-      const { data } = await api.signUp(formData);
-      console.log(data);
+      await api.signUp(formData);
       history.push("/");
     } catch (err) {
       console.log(err);
     }
   }
 
+  // TODO: Handle error
   async function login() {
     try {
-      const { data } = await api.login(formData);
-      console.log(data);
+      await api.login(formData);
       history.push("/");
     } catch (err) {
       console.log(err);

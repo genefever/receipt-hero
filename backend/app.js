@@ -8,8 +8,7 @@ const session = require("express-session");
 const bodyParser = require("body-parser");
 // Routes import
 const userRouter = require("./routes/user.routes");
-// Models import
-const User = require("./models/user");
+const calculationRouter = require("./routes/calculation.routes");
 
 //---------------------------- END OF IMPORTS--------------------------------------
 // Connect to Mongo DB
@@ -44,6 +43,7 @@ app.use(passport.session());
 //-------------------------- END OF MIDDLEWARE------------------------------------
 
 // Routes
+app.use("/calculations/", calculationRouter);
 app.use("/", userRouter);
 
 //---------------------------- END OF ROUTES--------------------------------------

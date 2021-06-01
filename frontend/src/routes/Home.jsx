@@ -1,20 +1,19 @@
 import React, { useState, useRef, useContext } from "react";
 import Calculator from "../components/Calculator";
 import ReceiptsTable from "../components/ReceiptsTable";
-import { StyledButton } from "../components/Button";
 import { StyledCard } from "../components/Card";
 import Alert from "react-bootstrap/Alert";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import { TestTableData } from "./TestTableData";
-import { UserContext } from "../UserContext";
 import { BsInfoCircle } from "react-icons/bs";
+import { UserContext } from "../UserContext";
 
 function Home(props) {
+  const userObject = useContext(UserContext);
   const [receipts, setReceipts] = useState(TestTableData);
   const [showAlert, setShowAlert] = useState(true);
   const calculatorRef = useRef();
-  const userObject = useContext(UserContext);
 
   function addReceipt(newReceipt) {
     setReceipts((prevReceipts) => {
@@ -90,7 +89,6 @@ function Home(props) {
               onDelete={deleteReceipt}
               onEdit={editReceipt}
             />
-            {userObject && <StyledButton>Create</StyledButton>}
           </StyledCard>
         </Col>
       </Row>

@@ -3,7 +3,7 @@ const User = require("../models/user");
 const passport = require("passport");
 require("../config/passportConfig")(passport);
 
-const getUser = (req, res, next) => {
+const getUser = (req, res) => {
   res.send(req.user);
 };
 
@@ -29,12 +29,9 @@ const signup = (req, res, next) => {
           password: hashedPassword,
         });
 
-        const result = await newUser.save();
+        await newUser.save();
         res.status(201).json({
-          userId: result._id,
-          email: result.email,
-          firstName: req.body.firstName,
-          lastName: req.body.lastName,
+          message: "Successfully created new user.",
         });
       } catch (err) {
         res
@@ -58,15 +55,7 @@ const login = (req, res, next) => {
         return next(err);
       }
 
-      res.status(200).json({
-        message: "Successfully authenticated.",
-        userDetails: {
-          userId: user._id,
-          email: user.email,
-          firstName: req.body.firstName,
-          lastName: req.body.lastName,
-        },
-      });
+      res.status(200).json({ message: "Successfully authenticated." });
     });
   })(req, res, next);
 };
