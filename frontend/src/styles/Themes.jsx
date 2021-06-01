@@ -1,11 +1,11 @@
 export const lightTheme = {
   background: "#F4F3EF",
-  text: "2B2B2B",
+  text: "#2B2B2B",
   body: "white",
   navbar: "#5b5656",
   toggleButton: "outline-dark",
   emoji: "🌙",
-  borderColor: "2B2B2B",
+  borderColor: "#2B2B2B",
   cellColorGreen: "#D4EDDA",
   cellColorYellow: "#FDF3CD",
 };

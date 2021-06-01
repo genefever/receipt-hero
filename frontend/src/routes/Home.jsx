@@ -1,12 +1,14 @@
 import React, { useState, useRef, useContext } from "react";
 import Calculator from "../components/Calculator";
 import ReceiptsTable from "../components/ReceiptsTable";
+import { StyledButton } from "../components/Button";
 import { StyledCard } from "../components/Card";
 import Alert from "react-bootstrap/Alert";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import { TestTableData } from "./TestTableData";
 import { UserContext } from "../UserContext";
+import { BsInfoCircle } from "react-icons/bs";
 
 function Home(props) {
   const [receipts, setReceipts] = useState(TestTableData);
@@ -56,10 +58,21 @@ function Home(props) {
     <>
       {/* Alert message - login/signup */}
       {!userObject && showAlert && (
-        <Alert variant="info" onClose={() => setShowAlert(false)} dismissible>
-          You are not logged in. <Alert.Link href="/login">Log in</Alert.Link>{" "}
-          or <Alert.Link href="/signup">sign up</Alert.Link> to save your
-          calculations.
+        <Alert
+          variant="info"
+          onClose={() => setShowAlert(false)}
+          dismissible
+          className="d-flex align-items-center"
+        >
+          <BsInfoCircle className="mr-2" /> You are not logged in.
+          <Alert.Link href="/login" className="mx-1">
+            Log in
+          </Alert.Link>
+          or
+          <Alert.Link href="/signup" className="mx-1">
+            sign up
+          </Alert.Link>{" "}
+          to save your calculations.
         </Alert>
       )}
 
@@ -77,6 +90,7 @@ function Home(props) {
               onDelete={deleteReceipt}
               onEdit={editReceipt}
             />
+            {userObject && <StyledButton>Create</StyledButton>}
           </StyledCard>
         </Col>
       </Row>

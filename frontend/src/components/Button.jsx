@@ -52,12 +52,26 @@ export const StyledButton = styled(Button)`
     `}
 `;
 
-export const StyledDeleteButtonSpan = styled.span`
-  color: #ea4335;
+export const StyledIconButtonSpan = styled.span.attrs(() => ({
+  className: "btn btn-default py-0 px-0",
+}))`
+  color: ${({ theme }) => theme.text};
   &:active,
   &:hover,
   &:focus,
   &:visited {
-    color: #d33c30;
+    opacity: 95%;
   }
+
+  ${(props) =>
+    props.$delete &&
+    `
+    color: #ea4335;
+    &:active,
+    &:hover,
+    &:focus,
+    &:visited {
+      color: #d33c30;
+    }
+  `}
 `;

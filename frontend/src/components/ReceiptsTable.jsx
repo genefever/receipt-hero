@@ -5,17 +5,21 @@ import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
 import "react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit.min.css";
 import { FaTrashAlt, FaFileCsv, FaPrint } from "react-icons/fa";
-import { StyledButton, StyledDeleteButtonSpan } from "../components/Button";
+import { MdEdit } from "react-icons/md";
+import { StyledButton, StyledIconButtonSpan } from "../components/Button";
 import ReactToPrint from "react-to-print";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import Input from "./Input";
 import emptyTable from "../assets/empty-table.svg";
 import { ThemeContext } from "styled-components";
 
 function ReceiptsTable(props) {
+  const [calculation, setCalculation] = useState({ title: "Untitled" });
   const [meToPayTotal, setMeToPayTotal] = useState(0);
   const [themToPayTotal, setThemToPayTotal] = useState(0);
+  const [editTitle, setEditTitle] = useState(false);
 
   const themeContext = useContext(ThemeContext);
 
@@ -55,6 +59,17 @@ function ReceiptsTable(props) {
 
   function formatMonetaryCell(content) {
     return content ? "$ " + parseFloat(content).toFixed(2) : "";
+  }
+
+  function toggleEditTitle() {
+    setEditTitle((prevEditTitle) => !prevEditTitle);
+  }
+
+  function handleTitleEdit(event) {
+    const value = event.target.value ? event.target.value : "Untitled";
+    setCalculation((prevValue) => {
+      return { ...prevValue, title: value };
+    });
   }
 
   const columns = [
@@ -189,14 +204,9 @@ function ReceiptsTable(props) {
       type: "number",
       formatter: (cellContent, row) => {
         return (
-          <StyledDeleteButtonSpan
-            className="btn btn-default py-0 px-0"
-            role="button"
-            id="deleteButton"
-            onClick={() => props.onDelete(row.id)}
-          >
+          <StyledIconButtonSpan $delete onClick={() => props.onDelete(row.id)}>
             <FaTrashAlt />
-          </StyledDeleteButtonSpan>
+          </StyledIconButtonSpan>
         );
       },
       csvType: Number,
@@ -239,7 +249,24 @@ function ReceiptsTable(props) {
     >
       {(props) => (
         <div ref={printComponentRef}>
-          <h4>Title</h4>
+          <div className="d-inline-flex">
+            {editTitle ? (
+              <Input
+                autoFocus
+                defaultValue={calculation.title}
+                handleChange={(e) => handleTitleEdit(e)}
+                onKeyPress={(e) => {
+                  if (e.key === "Enter") toggleEditTitle();
+                }}
+              />
+            ) : (
+              <h4 onClick={toggleEditTitle}>{calculation.title}</h4>
+            )}
+            <StyledIconButtonSpan onClick={toggleEditTitle}>
+              <MdEdit className="ml-2" />
+            </StyledIconButtonSpan>
+          </div>
+
           <Container fluid className="px-0 mb-3 hide-on-print">
             <Row className="align-items-end">
               <Col xs={12} sm={6}>

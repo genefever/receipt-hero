@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import NavigationBar from "./NavigationBar";
 import Auth from "../routes/Auth";
 import Home from "../routes/Home";
@@ -10,14 +10,10 @@ import { GlobalStyles } from "../styles/GlobalStyles";
 import { lightTheme, darkTheme } from "../styles/Themes";
 import { useDarkMode } from "../styles/useDarkMode";
 import { Wrapper } from "./Container";
-import { UserContext } from "../UserContext";
 
 function App() {
   const [theme, themeToggler, mountedComponent] = useDarkMode();
   const themeMode = theme === "light" ? lightTheme : darkTheme;
-  const userObject = useContext(UserContext);
-
-  console.log(userObject);
 
   if (!mountedComponent) return <div />;
   return (
