@@ -17,6 +17,7 @@ import OutsideClickHandler from "react-outside-click-handler";
 import ReceiptsTableData from "./ReceiptsTableData";
 import { UserContext } from "../../UserContext";
 import * as api from "../../api";
+import { useHistory } from "react-router-dom";
 
 function ReceiptsTable(props) {
   // Table properties
@@ -45,6 +46,8 @@ function ReceiptsTable(props) {
   const [calculation, setCalculation] = useState({ title: "Untitled" });
   const [editTitle, setEditTitle] = useState(false);
 
+  const history = useHistory();
+
   function toggleEditTitle() {
     setEditTitle((prevEditTitle) => !prevEditTitle);
   }
@@ -64,6 +67,7 @@ function ReceiptsTable(props) {
         receipts: props.receipts,
       };
       await api.createCalculation(newCalculation);
+      history.push("/user/" + userObject._id);
     } catch (err) {
       console.log(err);
     }

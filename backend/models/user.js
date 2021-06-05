@@ -9,6 +9,9 @@ const userSchema = new mongoose.Schema(
     googleId: String,
     facebookId: String,
     password: String,
+    calculations: [
+      { type: mongoose.Schema.Types.ObjectId, ref: "Calculation" },
+    ],
   },
   { timestamps: true }
 );

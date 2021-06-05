@@ -1,4 +1,5 @@
 const Calculation = require("../models/calculation");
+const User = require("../models/user");
 
 const createCalculation = (req, res) => {
   if (!req.isAuthenticated()) {
@@ -13,9 +14,16 @@ const createCalculation = (req, res) => {
         userId: req.user._id,
       });
 
-      newCalculation.save();
-      res.status(201).json({
-        message: "Successfully created a new calculation.",
+      newCalculation.save().then((result) => {
+        User.findById(req.user._id, (err, user) => {
+          if (user) {
+            user.calculations.push(newCalculation);
+            user.save();
+            res.status(201).json({
+              message: "Successfully created a new calculation.",
+            });
+          }
+        });
       });
     } catch (err) {
       res
