@@ -8,7 +8,7 @@ const getAuthenticatedUser = (req, res) => {
 };
 
 const getUser = (req, res) => {
-  User.findOne({ _id: req.params.id }, function (err, user) {
+  User.findById(req.params.id, function (err, user) {
     if (err) {
       return res.status(500).json({
         message: "Failed while looking up user.",
@@ -18,9 +18,8 @@ const getUser = (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User doesn't exist." });
     }
-
-    return user;
-  });
+    res.send(user);
+  }).select("-password");
 };
 
 const signup = (req, res, next) => {

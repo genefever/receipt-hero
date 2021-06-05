@@ -10,7 +10,6 @@ export const logout = () => API.get("/logout", { withCredentials: true });
 
 export const getAuthenticatedUserObject = () =>
   API.get("/getauthuser", { withCredentials: true }); // withCredentials tells axios to send cookies in requests
-export const getUserObject = (id) => API.get("/user/:" + id);
-
+export const getUserObject = (id) => API.get("/user/" + id);
 export const createCalculation = (newCalculation) =>
   API.post("/calculations/create", newCalculation, { withCredentials: true });

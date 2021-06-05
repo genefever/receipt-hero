@@ -39,7 +39,7 @@ function App() {
               {userObject ? <Redirect to="/" /> : <Auth isSignUp={true} />}
             </Route>
             <Route path="/user/:id" component={User} />
-            <Route component={NoMatch} />
+            <Route path="*" component={NoMatch} />
           </Switch>
         </Wrapper>
       </Router>
