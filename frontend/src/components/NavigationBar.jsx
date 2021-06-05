@@ -1,9 +1,11 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import logo from "../assets/logo.svg";
+import { Link } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
 import styled from "styled-components";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
+import NavDropdown from "react-bootstrap/NavDropdown";
 import { StyledButton } from "./Button";
 import { ThemeContext } from "styled-components";
 import { UserContext } from "../UserContext";
@@ -27,6 +29,15 @@ function NavigationBar(props) {
   const userObject = useContext(UserContext);
   const themeContext = useContext(ThemeContext);
 
+  // Toggle dropdown on hover
+  const [showDropdown, setShowDropdown] = useState(false);
+  function handleOpen() {
+    setShowDropdown(true);
+  }
+  function handleClose() {
+    setShowDropdown(false);
+  }
+
   async function logout() {
     const res = await api.logout();
     if (res.status === 200) {
@@ -48,7 +59,7 @@ function NavigationBar(props) {
             src={logo}
             width="30"
             height="30"
-            className="d-inline-block align-top ml-2"
+            className="d-inline-block align-top ml-3"
           />{" "}
           receipt hero
         </StyledNavbarBrand>
@@ -72,7 +83,7 @@ function NavigationBar(props) {
         {/* Right Navbar */}
         <Nav className="mr-2">
           {/* Dark mode toggle */}
-          <Nav.Item className="d-flex align-items-center mr-5">
+          <Nav.Item className="d-flex align-items-center mr-4">
             <button className="as-text" onClick={props.toggleTheme}>
               {themeContext.emoji}
             </button>
@@ -81,16 +92,26 @@ function NavigationBar(props) {
           {/* Auth Buttons */}
           {userObject ? (
             // User is logged in
-            <Nav.Link>
-              <StyledButton
-                size="sm"
-                onClick={logout}
-                variant="outline-light"
-                className="px-3"
+              <NavDropdown
+                title="Profile "
+                id="navbarScrollingDropdown"
+                alignRight
+                show={showDropdown}
+                onMouseEnter={handleOpen}
+                onMouseLeave={handleClose}
+                className="mr-3"
               >
-                Log out
-              </StyledButton>
-            </Nav.Link>
+                <NavDropdown.Item as={Link} to="/signup">
+                  My profile
+                </NavDropdown.Item>
+
+                <NavDropdown.Item as={Link} to="/">
+                  Settings
+                </NavDropdown.Item>
+
+                <NavDropdown.Divider />
+              <NavDropdown.Item onClick={logout}>Log out</NavDropdown.Item>
+            </NavDropdown>
           ) : (
             // User is not logged in
             <>
