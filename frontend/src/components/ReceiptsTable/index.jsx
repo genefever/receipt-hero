@@ -85,8 +85,9 @@ function ReceiptsTable(props) {
         {(props) => (
           <div ref={printComponentRef}>
             <div className="d-inline-flex">
+              {/* Edit Title  */}
               {editTitle ? (
-                <OutsideClickHandler onOutsideClick={toggleEditTitle}>
+                <OutsideClickHandler onOutsideClick={() => setEditTitle(false)}>
                   <Input
                     autoFocus
                     defaultValue={calculation.title}
@@ -97,11 +98,16 @@ function ReceiptsTable(props) {
                   />
                 </OutsideClickHandler>
               ) : (
-                <h4 onClick={toggleEditTitle}>{calculation.title}</h4>
+                <>
+                  <h4 onClick={toggleEditTitle}>{calculation.title}</h4>
+                  <StyledIconButtonSpan
+                    onClick={toggleEditTitle}
+                    className="hide-on-print"
+                  >
+                    <MdEdit className="ml-2" />
+                  </StyledIconButtonSpan>
+                </>
               )}
-              <StyledIconButtonSpan onClick={toggleEditTitle}>
-                <MdEdit className="ml-2" />
-              </StyledIconButtonSpan>
             </div>
 
             <Container fluid className="px-0 mb-3 hide-on-print">
@@ -160,7 +166,7 @@ function ReceiptsTable(props) {
       </ToolkitProvider>
 
       {/* Create button */}
-      {userObject && <StyledButton onClick={updateTable}>Create</StyledButton>}
+      {userObject && <StyledButton onClick={updateTable}>Publish</StyledButton>}
     </>
   );
 }

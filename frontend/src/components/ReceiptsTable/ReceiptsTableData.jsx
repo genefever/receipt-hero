@@ -158,7 +158,11 @@ function ReceiptsTableData(props) {
       type: "number",
       formatter: (cellContent, row) => {
         return (
-          <StyledIconButtonSpan $delete onClick={() => props.onDelete(row.id)}>
+          <StyledIconButtonSpan
+            $delete
+            className="hide-on-print"
+            onClick={() => props.onDelete(row.id)}
+          >
             <FaTrashAlt />
           </StyledIconButtonSpan>
         );
