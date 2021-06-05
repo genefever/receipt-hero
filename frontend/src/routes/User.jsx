@@ -10,6 +10,7 @@ import { useParams } from "react-router-dom";
 import * as api from "../api";
 import Spinner from "react-bootstrap/Spinner";
 import { useHistory } from "react-router-dom";
+import { StyledButton } from "../components/Button";
 
 function User(props) {
   const { id } = useParams();
@@ -43,6 +44,21 @@ function User(props) {
   const columns = [
     { dataField: "_id", hidden: "true" },
     {
+      dataField: "title",
+      text: "Name",
+      sort: true,
+      formatter: (cell, row) => (
+        <StyledButton className="py-0 px-0" variant="link">
+          {cell}
+        </StyledButton>
+      ),
+      events: {
+        onClick: (e, column, columnIndex, row, rowIndex) => {
+          console.log(row);
+        },
+      },
+    },
+    {
       dataField: "createdAt",
       text: "Created",
       type: "date",
@@ -58,7 +74,6 @@ function User(props) {
         ).slice(-2)}/${dateObj.getUTCFullYear()}`;
       },
     },
-    { dataField: "title", text: "Name", sort: true },
   ];
 
   return (
