@@ -105,11 +105,11 @@ function NavigationBar(props) {
                   My profile
                 </NavDropdown.Item>
 
-                <NavDropdown.Item as={Link} to="/">
-                  Settings
-                </NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/">
+                Settings
+              </NavDropdown.Item>
 
-                <NavDropdown.Divider />
+              <NavDropdown.Divider />
               <NavDropdown.Item onClick={logout}>Log out</NavDropdown.Item>
             </NavDropdown>
           ) : (

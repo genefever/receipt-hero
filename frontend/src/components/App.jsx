@@ -1,19 +1,27 @@
-import React from "react";
+import React, { useContext } from "react";
 import NavigationBar from "./NavigationBar";
 import Auth from "../routes/Auth";
 import Home from "../routes/Home";
 import UserReceipts from "../routes/UserReceipts";
 import NoMatch from "../routes/NoMatch";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+} from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 import { GlobalStyles } from "../styles/GlobalStyles";
 import { lightTheme, darkTheme } from "../styles/Themes";
 import { useDarkMode } from "../styles/useDarkMode";
 import { Wrapper } from "./Container";
+import { UserContext } from "../UserContext";
 
 function App() {
   const [theme, themeToggler, mountedComponent] = useDarkMode();
   const themeMode = theme === "light" ? lightTheme : darkTheme;
+
+  const userObject = useContext(UserContext);
 
   if (!mountedComponent) return <div />;
   return (
@@ -25,10 +33,10 @@ function App() {
           <Switch>
             <Route path="/" exact component={Home} />
             <Route path="/login">
-              <Auth isSignUp={false} />
+              {userObject ? <Redirect to="/" /> : <Auth isSignUp={false} />}
             </Route>
             <Route path="/signup">
-              <Auth isSignUp={true} />
+              {userObject ? <Redirect to="/" /> : <Auth isSignUp={true} />}
             </Route>
             <Route path="/u" component={UserReceipts} />
             <Route component={NoMatch} />
