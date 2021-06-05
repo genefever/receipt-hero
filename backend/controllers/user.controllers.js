@@ -19,7 +19,9 @@ const getUser = (req, res) => {
       return res.status(404).json({ message: "User doesn't exist." });
     }
     res.send(user);
-  }).select("-password");
+  })
+    .select("-password")
+    .populate("calculations", "title createdAt updatedAt");
 };
 
 const signup = (req, res, next) => {

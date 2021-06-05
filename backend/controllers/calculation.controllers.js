@@ -17,6 +17,8 @@ const createCalculation = (req, res) => {
       newCalculation.save().then((result) => {
         User.findById(req.user._id, (err, user) => {
           if (user) {
+            // The below two lines will add the newly saved calculation's
+            // ObjectID to the the User's calculations array field
             user.calculations.push(newCalculation);
             user.save();
             res.status(201).json({

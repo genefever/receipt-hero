@@ -40,12 +40,10 @@ function User(props) {
     overflow: "hidden",
   };
 
-  // const data = [{ dateCreated: "2021-05-10" }];
-  const data = [];
-
   const columns = [
+    { dataField: "_id", hidden: "true" },
     {
-      dataField: "dateCreated",
+      dataField: "createdAt",
       text: "Created",
       type: "date",
       style: cellStyle,
@@ -60,7 +58,7 @@ function User(props) {
         ).slice(-2)}/${dateObj.getUTCFullYear()}`;
       },
     },
-    { dataField: "calculationName", text: "Name", sort: true },
+    { dataField: "title", text: "Name", sort: true },
   ];
 
   return (
@@ -72,9 +70,9 @@ function User(props) {
       ) : (
         <StyledCard $main>
           <ToolkitProvider
-            keyField="purchaseDate"
+            keyField="_id"
             bootstrap4={true}
-            data={data}
+            data={userProfile.calculations}
             columns={columns}
             search
           >
