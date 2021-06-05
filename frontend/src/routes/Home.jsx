@@ -10,7 +10,7 @@ import { BsInfoCircle } from "react-icons/bs";
 import { UserContext } from "../UserContext";
 
 function Home(props) {
-  const userObject = useContext(UserContext);
+  const { userObject } = useContext(UserContext);
   const [receipts, setReceipts] = useState(TestTableData);
   const [showAlert, setShowAlert] = useState(true);
   const calculatorRef = useRef();

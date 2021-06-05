@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
@@ -11,8 +11,11 @@ import logo from "../assets/logo.svg";
 import { Link } from "react-router-dom";
 import * as api from "../api";
 import { useHistory } from "react-router-dom";
+import { UserContext } from "../UserContext";
 
 function Auth(props) {
+  const { setUserObject } = useContext(UserContext);
+
   const history = useHistory();
   const [isSignUp, setIsSignUp] = useState(props.isSignUp);
   // Update authentication page based on props.isSignUp change.
@@ -50,7 +53,8 @@ function Auth(props) {
   // TODO: Handle error
   async function signUp() {
     try {
-      await api.signUp(formData);
+      const res = await api.signUp(formData);
+      setUserObject(res.data.userObject);
       history.push("/");
     } catch (err) {
       console.log(err);
@@ -60,7 +64,8 @@ function Auth(props) {
   // TODO: Handle error
   async function login() {
     try {
-      await api.login(formData);
+      const res = await api.login(formData);
+      setUserObject(res.data.userObject);
       history.push("/");
     } catch (err) {
       console.log(err);

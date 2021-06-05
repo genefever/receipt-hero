@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import BootstrapTable from "react-bootstrap-table-next";
 import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
@@ -6,8 +6,25 @@ import "react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit.min.c
 import { StyledCard } from "../components/Card";
 import inkpot from "../assets/inkpot.svg";
 import { Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import * as api from "../api";
 
-function UserReceipts(props) {
+function User(props) {
+  const { id } = useParams();
+  const [userProfile, setUserProfile] = useState();
+
+  useEffect(() => {
+    async function getUserObject(id) {
+      const res = await api.getUserObject(id);
+
+      if (res.data) {
+        setUserProfile(res.data);
+      }
+    }
+
+    getUserObject(id);
+  }, [id]);
+
   const { SearchBar } = Search;
   const cellStyle = {
     whiteSpace: "nowrap",
@@ -50,7 +67,7 @@ function UserReceipts(props) {
         >
           {(props) => (
             <div>
-              <h4 className="mb-4">User's Calculations</h4>
+              <h4 className="mb-4">{userProfile.firstName}'s Calculations</h4>
               <div className="form-inline mb-3">
                 <div className="form-group">
                   <SearchBar
@@ -95,4 +112,4 @@ function UserReceipts(props) {
   );
 }
 
-export default UserReceipts;
+export default User;

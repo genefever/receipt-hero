@@ -41,7 +41,7 @@ function ReceiptsTable(props) {
   });
 
   // Table save / edits
-  const userObject = useContext(UserContext);
+  const { userObject } = useContext(UserContext);
   const [calculation, setCalculation] = useState({ title: "Untitled" });
   const [editTitle, setEditTitle] = useState(false);
 

@@ -7,19 +7,19 @@ export const UserProvider = (props) => {
   const [userObject, setUserObject] = useState();
 
   useEffect(() => {
-    async function getUserObject() {
-      const res = await api.getUserObject();
+    async function getAuthenticatedUserObject() {
+      const res = await api.getAuthenticatedUserObject();
 
       if (res.data) {
         setUserObject(res.data);
       }
     }
 
-    getUserObject();
+    getAuthenticatedUserObject();
   }, []);
 
   return (
-    <UserContext.Provider value={userObject}>
+    <UserContext.Provider value={{ userObject, setUserObject }}>
       {props.children}
     </UserContext.Provider>
   );

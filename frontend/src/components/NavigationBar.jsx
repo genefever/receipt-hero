@@ -26,7 +26,7 @@ const StyledNavbarBrand = styled(Navbar.Brand)`
 `;
 
 function NavigationBar(props) {
-  const userObject = useContext(UserContext);
+  const { userObject } = useContext(UserContext);
   const themeContext = useContext(ThemeContext);
 
   // Toggle dropdown on hover
@@ -40,6 +40,7 @@ function NavigationBar(props) {
 
   async function logout() {
     const res = await api.logout();
+    console.log(res);
     if (res.status === 200) {
       window.location.href = "/";
     }
@@ -92,18 +93,18 @@ function NavigationBar(props) {
           {/* Auth Buttons */}
           {userObject ? (
             // User is logged in
-              <NavDropdown
-                title="Profile "
-                id="navbarScrollingDropdown"
-                alignRight
-                show={showDropdown}
-                onMouseEnter={handleOpen}
-                onMouseLeave={handleClose}
-                className="mr-3"
-              >
-                <NavDropdown.Item as={Link} to="/signup">
-                  My profile
-                </NavDropdown.Item>
+            <NavDropdown
+              title="Profile "
+              id="navbarScrollingDropdown"
+              alignRight
+              show={showDropdown}
+              onMouseEnter={handleOpen}
+              onMouseLeave={handleClose}
+              className="mr-3"
+            >
+              <NavDropdown.Item as={Link} to={"/user/" + userObject._id}>
+                My profile
+              </NavDropdown.Item>
 
               <NavDropdown.Item as={Link} to="/">
                 Settings

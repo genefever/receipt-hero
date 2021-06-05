@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import NavigationBar from "./NavigationBar";
 import Auth from "../routes/Auth";
 import Home from "../routes/Home";
-import UserReceipts from "../routes/UserReceipts";
+import User from "../routes/User";
 import NoMatch from "../routes/NoMatch";
 import {
   BrowserRouter as Router,
@@ -21,7 +21,7 @@ function App() {
   const [theme, themeToggler, mountedComponent] = useDarkMode();
   const themeMode = theme === "light" ? lightTheme : darkTheme;
 
-  const userObject = useContext(UserContext);
+  const { userObject } = useContext(UserContext);
 
   if (!mountedComponent) return <div />;
   return (
@@ -38,7 +38,7 @@ function App() {
             <Route path="/signup">
               {userObject ? <Redirect to="/" /> : <Auth isSignUp={true} />}
             </Route>
-            <Route path="/u" component={UserReceipts} />
+            <Route path="/user/:id" component={User} />
             <Route component={NoMatch} />
           </Switch>
         </Wrapper>

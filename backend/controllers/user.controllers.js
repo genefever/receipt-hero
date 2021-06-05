@@ -3,8 +3,24 @@ const User = require("../models/user");
 const passport = require("passport");
 require("../config/passportConfig")(passport);
 
-const getUser = (req, res) => {
+const getAuthenticatedUser = (req, res) => {
   res.send(req.user);
+};
+
+const getUser = (req, res) => {
+  User.findOne({ _id: req.params.id }, function (err, user) {
+    if (err) {
+      return res.status(500).json({
+        message: "Failed while looking up user.",
+        err: err,
+      });
+    }
+    if (!user) {
+      return res.status(404).json({ message: "User doesn't exist." });
+    }
+
+    return user;
+  });
 };
 
 const signup = (req, res, next) => {
@@ -29,9 +45,27 @@ const signup = (req, res, next) => {
           password: hashedPassword,
         });
 
-        await newUser.save();
-        res.status(201).json({
-          message: "Successfully created new user.",
+        newUser.save(function (err) {
+          if (err) {
+            throw err;
+          } else {
+            req.login(newUser, function (err) {
+              if (err) {
+                throw err;
+              }
+              res.status(201).json({
+                message: "Successfully created new user.",
+                userObject: {
+                  createdAt: req.user.createdAt,
+                  email: req.user.email,
+                  firstName: req.user.firstName,
+                  lastName: req.user.lastName,
+                  updatedAt: req.user.updatedAt,
+                  _id: req.user._id,
+                },
+              });
+            });
+          }
         });
       } catch (err) {
         res
@@ -55,7 +89,17 @@ const login = (req, res, next) => {
         return next(err);
       }
 
-      res.status(200).json({ message: "Successfully authenticated." });
+      res.status(200).json({
+        message: "Successfully authenticated.",
+        userObject: {
+          createdAt: req.user.createdAt,
+          email: req.user.email,
+          firstName: req.user.firstName,
+          lastName: req.user.lastName,
+          updatedAt: req.user.updatedAt,
+          _id: req.user._id,
+        },
+      });
     });
   })(req, res, next);
 };
@@ -95,6 +139,7 @@ const facebookAuthCallback = (req, res, next) => {
 
 module.exports = {
   getUser,
+  getAuthenticatedUser,
   signup,
   login,
   logout,
