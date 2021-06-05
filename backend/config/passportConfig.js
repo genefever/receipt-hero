@@ -14,15 +14,8 @@ module.exports = function (passport) {
   // Retrieves data from session.
   passport.deserializeUser((id, done) => {
     User.findById(id, (err, user) => {
-      const userInformation = {
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        googleId: user.googleId,
-        facebookId: user.facebookId,
-      };
-      done(err, userInformation);
-    });
+      done(err, user);
+    }).select("-password");
   });
 
   passport.use(
