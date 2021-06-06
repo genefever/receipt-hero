@@ -5,12 +5,11 @@ import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
 import "react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit.min.css";
 import { StyledCard } from "../components/Card";
 import inkpot from "../assets/inkpot.svg";
-import { Link } from "react-router-dom";
-import { useParams } from "react-router-dom";
+import { Link, useParams, useHistory } from "react-router-dom";
 import * as api from "../api";
 import Spinner from "react-bootstrap/Spinner";
-import { useHistory } from "react-router-dom";
 import { StyledButton } from "../components/Button";
+import { StyledSpinner } from "../components/Spinner";
 
 function User(props) {
   const { id } = useParams();
@@ -54,7 +53,7 @@ function User(props) {
       ),
       events: {
         onClick: (e, column, columnIndex, row, rowIndex) => {
-          history.push("/calculation/" + row._id);
+          history.push("/" + row._id);
         },
       },
     },
@@ -79,9 +78,7 @@ function User(props) {
   return (
     <>
       {loading ? (
-        <div className="d-flex justify-content-center align-items-center h-75">
-          <Spinner animation="grow" variant="success" />
-        </div>
+        <StyledSpinner />
       ) : (
         <StyledCard $main>
           <ToolkitProvider

@@ -169,7 +169,7 @@ function ReceiptsTable(props) {
         )}
       </ToolkitProvider>
 
-      {/* Create button */}
+      {/* Create button TODO: change from publish/save on edit */}
       {userObject && <StyledButton onClick={updateTable}>Publish</StyledButton>}
     </>
   );

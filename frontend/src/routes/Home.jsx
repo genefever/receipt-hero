@@ -2,25 +2,20 @@ import React, { useState, useRef, useContext, useEffect } from "react";
 import Calculator from "../components/Calculator";
 import ReceiptsTable from "../components/ReceiptsTable";
 import { StyledCard } from "../components/Card";
+import { StyledSpinner } from "../components/Spinner";
 import Alert from "react-bootstrap/Alert";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
-// import { TestTableData } from "./TestTableData";
 import { BsInfoCircle } from "react-icons/bs";
 import { UserContext } from "../UserContext";
-
 import { useHistory, useParams } from "react-router-dom";
 import * as api from "../api";
 
 function Home(props) {
   const { userObject } = useContext(UserContext);
-  // const [receipts, setReceipts] = useState({TestTableData});
   const [receipts, setReceipts] = useState([]);
   const [showAlert, setShowAlert] = useState(true);
-
-  const calculatorRef = useRef();
-
-  // Added here
+  const calculatorRef = useRef(); // Used to calculate balance owed
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
   const history = useHistory();
@@ -30,9 +25,8 @@ function Home(props) {
       try {
         const res = await api.getCalculation(id);
         if (res.data) {
-          setReceipts(res.data);
+          setReceipts(res.data.receipts);
         }
-        setLoading(false);
       } catch (err) {
         history.push("/not-found");
       }
@@ -41,6 +35,8 @@ function Home(props) {
     if (id) {
       getCalculationObject(id);
     }
+
+    setLoading(false);
   }, [id, history]);
 
   function addReceipt(newReceipt) {
@@ -84,42 +80,50 @@ function Home(props) {
   return (
     <>
       {/* Alert message - login/signup */}
-      {!userObject && showAlert && (
-        <Alert
-          variant="info"
-          onClose={() => setShowAlert(false)}
-          dismissible
-          className="d-flex align-items-center"
-        >
-          <BsInfoCircle className="mr-2" /> You are not logged in.
-          <Alert.Link href="/login" className="mx-1">
-            Log in
-          </Alert.Link>
-          or
-          <Alert.Link href="/signup" className="mx-1">
-            sign up
-          </Alert.Link>{" "}
-          to save your calculations.
-        </Alert>
+      {loading ? (
+        <StyledSpinner />
+      ) : (
+        <>
+          {!userObject && showAlert && !id && (
+            <Alert
+              variant="info"
+              onClose={() => setShowAlert(false)}
+              dismissible
+              className="d-flex align-items-center"
+            >
+              <BsInfoCircle className="mr-2" /> You are not logged in.
+              <Alert.Link href="/login" className="mx-1">
+                Log in
+              </Alert.Link>
+              or
+              <Alert.Link href="/signup" className="mx-1">
+                sign up
+              </Alert.Link>{" "}
+              to save your calculations.
+            </Alert>
+          )}
+          {/* Main dashboard */}
+          <Row>
+            {!id && (
+              <Col md={4}>
+                <StyledCard $main>
+                  <Calculator onAdd={addReceipt} ref={calculatorRef} />
+                </StyledCard>
+              </Col>
+            )}
+            <Col md={!id && 8}>
+              <StyledCard $main className="pb-3">
+                <ReceiptsTable
+                  receipts={receipts}
+                  onDelete={deleteReceipt}
+                  onEdit={editReceipt}
+                  calculationId={id}
+                />
+              </StyledCard>
+            </Col>
+          </Row>
+        </>
       )}
-
-      {/* Main dashboard */}
-      <Row>
-        <Col md={4}>
-          <StyledCard $main>
-            <Calculator onAdd={addReceipt} ref={calculatorRef} />
-          </StyledCard>
-        </Col>
-        <Col md={8}>
-          <StyledCard $main className="pb-3">
-            <ReceiptsTable
-              receipts={receipts}
-              onDelete={deleteReceipt}
-              onEdit={editReceipt}
-            />
-          </StyledCard>
-        </Col>
-      </Row>
     </>
   );
 }

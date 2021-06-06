@@ -7,7 +7,7 @@ const router = Router();
 router.post("/signup", authControllers.signup);
 router.post("/login", authControllers.login);
 router.get("/logout", authControllers.logout);
-router.get("/getauthuser", authControllers.getAuthenticatedUser); // gets the logged in user
+router.get("/getuser", authControllers.getAuthenticatedUser); // gets the logged in user
 
 // OAuth 2.0
 router.get("/google", authControllers.googleAuth);

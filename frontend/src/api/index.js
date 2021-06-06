@@ -9,7 +9,7 @@ export const signUp = (formData) =>
   API.post("/auth/signup", formData, { withCredentials: true });
 export const logout = () => API.get("/auth/logout", { withCredentials: true });
 export const getAuthenticatedUser = () =>
-  API.get("/auth/getauthuser", { withCredentials: true }); // withCredentials tells axios to send cookies in requests
+  API.get("/auth/getuser", { withCredentials: true }); // withCredentials tells axios to send cookies in requests
 
 // User
 export const getUser = (id) => API.get("/user/" + id);
