@@ -7,6 +7,7 @@ const passportLocal = require("passport-local");
 const session = require("express-session");
 const bodyParser = require("body-parser");
 // Routes import
+const authRouter = require("./routes/auth.routes");
 const userRouter = require("./routes/user.routes");
 const calculationRouter = require("./routes/calculation.routes");
 
@@ -43,8 +44,9 @@ app.use(passport.session());
 //-------------------------- END OF MIDDLEWARE------------------------------------
 
 // Routes
-app.use("/calculation/", calculationRouter);
-app.use("/", userRouter);
+app.use("/auth", authRouter);
+app.use("/user", userRouter);
+app.use("/", calculationRouter);
 
 //---------------------------- END OF ROUTES--------------------------------------
 

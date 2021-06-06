@@ -8,7 +8,7 @@ export const UserProvider = (props) => {
 
   useEffect(() => {
     async function getAuthenticatedUserObject() {
-      const res = await api.getAuthenticatedUserObject();
+      const res = await api.getAuthenticatedUser();
 
       if (res.data) {
         setUserObject(res.data);

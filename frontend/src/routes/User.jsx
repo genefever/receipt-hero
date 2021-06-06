@@ -21,7 +21,7 @@ function User(props) {
   useEffect(() => {
     async function getUserObject(id) {
       try {
-        const res = await api.getUserObject(id);
+        const res = await api.getUser(id);
         if (res.data) {
           setUserProfile(res.data);
         }
