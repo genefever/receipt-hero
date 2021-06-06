@@ -43,7 +43,7 @@ app.use(passport.session());
 //-------------------------- END OF MIDDLEWARE------------------------------------
 
 // Routes
-app.use("/calculations/", calculationRouter);
+app.use("/calculation/", calculationRouter);
 app.use("/", userRouter);
 
 //---------------------------- END OF ROUTES--------------------------------------

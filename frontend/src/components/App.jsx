@@ -39,6 +39,7 @@ function App() {
               {userObject ? <Redirect to="/" /> : <Auth isSignUp={true} />}
             </Route>
             <Route path="/user/:id" component={User} />
+            <Route path="/calculation/:id" component={Home} />
             <Route path="*" component={NoMatch} />
           </Switch>
         </Wrapper>

@@ -54,7 +54,7 @@ function User(props) {
       ),
       events: {
         onClick: (e, column, columnIndex, row, rowIndex) => {
-          console.log(row);
+          history.push("/calculation/" + row._id);
         },
       },
     },

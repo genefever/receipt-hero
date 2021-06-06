@@ -35,6 +35,21 @@ const createCalculation = (req, res) => {
   }
 };
 
+const getCalculation = (req, res) => {
+  Calculation.findById(req.params.id, function (err, doc) {
+    if (err)
+      return res.status(500).json({
+        message: "Failed while looking up calculation.",
+        err: err,
+      });
+    if (!doc) {
+      return res.status(404).json({ message: "Calculation doesn't exist." });
+    }
+    res.send(doc);
+  });
+};
+
 module.exports = {
   createCalculation,
+  getCalculation,
 };
