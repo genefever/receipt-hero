@@ -31,6 +31,7 @@ function ReceiptsTableData(props) {
       dataField: "purchaseDate",
       text: "Purchase Date",
       type: "date",
+      editable: props.editMode,
       style: cellStyle,
       sort: true,
       formatter: (cell) => {
@@ -60,6 +61,7 @@ function ReceiptsTableData(props) {
       dataField: "storeName",
       text: "Store Name",
       style: cellStyle,
+      editable: props.editMode,
       sort: true,
       footer: "",
     },
@@ -68,6 +70,7 @@ function ReceiptsTableData(props) {
       text: "Buyer",
       style: cellStyle,
       sort: true,
+      editable: props.editMode,
       editor: {
         type: Type.SELECT,
         options: [
@@ -81,6 +84,7 @@ function ReceiptsTableData(props) {
       dataField: "total",
       text: "Receipt Total",
       type: "number",
+      editable: props.editMode,
       sort: true,
       style: cellStyle,
       formatter: (cellContent) => {
@@ -102,6 +106,7 @@ function ReceiptsTableData(props) {
       dataField: "meToPay",
       text: "You Owe Them",
       type: "number",
+      editable: false,
       sort: true,
       style: cellStyle,
       formatter: (cellContent) => {
@@ -127,6 +132,7 @@ function ReceiptsTableData(props) {
       dataField: "themToPay",
       text: "They Owe You",
       type: "number",
+      editable: false,
       sort: true,
       style: cellStyle,
       formatter: (cellContent) => {
@@ -149,7 +155,7 @@ function ReceiptsTableData(props) {
       footerStyle: footerStyle,
     },
     {
-      dataField: "id",
+      dataField: "id", // TODO find a better way to generate id
       text: "",
       isDummyField: true,
       align: "center",
@@ -157,15 +163,16 @@ function ReceiptsTableData(props) {
       searchable: false,
       type: "number",
       formatter: (cellContent, row) => {
-        return (
-          <StyledIconButtonSpan
-            $delete
-            className="hide-on-print"
-            onClick={() => props.onDelete(row.id)}
-          >
-            <FaTrashAlt />
-          </StyledIconButtonSpan>
-        );
+        if (props.editMode)
+          return (
+            <StyledIconButtonSpan
+              $delete
+              className="hide-on-print"
+              onClick={() => props.onDelete(row.id)}
+            >
+              <FaTrashAlt />
+            </StyledIconButtonSpan>
+          );
       },
       csvType: Number,
       csvFormatter: (cellContent) => {

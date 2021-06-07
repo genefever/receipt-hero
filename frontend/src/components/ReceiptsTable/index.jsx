@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext } from "react";
+import React, { useState, useRef, useContext, useEffect } from "react";
 import BootstrapTable from "react-bootstrap-table-next";
 import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
 import cellEditFactory from "react-bootstrap-table2-editor";
@@ -36,6 +36,7 @@ function ReceiptsTable(props) {
   };
   const cellEdit = cellEditFactory({
     mode: "click",
+    blurToSave: true,
     afterSaveCell: (oldValue, newValue, row) => {
       props.onEdit(row);
     },
@@ -45,6 +46,13 @@ function ReceiptsTable(props) {
   const { userObject } = useContext(UserContext);
   const [calculation, setCalculation] = useState({ title: "Untitled" });
   const [editTitle, setEditTitle] = useState(false);
+  const [editMode, setEditMode] = useState(props.editMode);
+
+  // Set editMode from parent's editMode because react-bootstrap-table2 won't allow
+  // parent props to be passed through ToolkitProvider.
+  useEffect(() => {
+    setEditMode(props.editMode);
+  }, [props.editMode]);
 
   const history = useHistory();
 
@@ -103,13 +111,21 @@ function ReceiptsTable(props) {
                 </OutsideClickHandler>
               ) : (
                 <>
-                  <h4 onClick={toggleEditTitle}>{calculation.title}</h4>
-                  <StyledIconButtonSpan
-                    onClick={toggleEditTitle}
-                    className="hide-on-print"
+                  <h4
+                    onClick={() => {
+                      if (editMode) toggleEditTitle();
+                    }}
                   >
-                    <MdEdit className="ml-2" />
-                  </StyledIconButtonSpan>
+                    {calculation.title}
+                  </h4>
+                  {editMode && (
+                    <StyledIconButtonSpan
+                      onClick={toggleEditTitle}
+                      className="hide-on-print"
+                    >
+                      <MdEdit className="ml-2" />
+                    </StyledIconButtonSpan>
+                  )}
                 </>
               )}
             </div>
@@ -170,7 +186,9 @@ function ReceiptsTable(props) {
       </ToolkitProvider>
 
       {/* Create button TODO: change from publish/save on edit */}
-      {userObject && <StyledButton onClick={updateTable}>Publish</StyledButton>}
+      {userObject && editMode && (
+        <StyledButton onClick={updateTable}>Publish</StyledButton>
+      )}
     </>
   );
 }

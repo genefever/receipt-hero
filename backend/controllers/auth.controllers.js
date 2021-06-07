@@ -91,7 +91,18 @@ const login = (req, res, next) => {
 const logout = (req, res, next) => {
   if (req.user) {
     req.logout();
-    res.status("200").json({ message: "Successfully logged out." });
+    // Delete the entire session from the server and clear the cookie on the
+    // client side on successful logout.
+    req.session.destroy(function (err) {
+      if (!err) {
+        res
+          .status(200)
+          .clearCookie("connect.sid", { path: "/" })
+          .json({ message: "Successfully logged out." });
+      } else {
+        res.status(500).json({ message: "Failed to log user out." });
+      }
+    });
   }
 };
 

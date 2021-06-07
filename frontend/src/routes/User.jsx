@@ -7,7 +7,6 @@ import { StyledCard } from "../components/Card";
 import inkpot from "../assets/inkpot.svg";
 import { Link, useParams, useHistory } from "react-router-dom";
 import * as api from "../api";
-import Spinner from "react-bootstrap/Spinner";
 import { StyledButton } from "../components/Button";
 import { StyledSpinner } from "../components/Spinner";
 

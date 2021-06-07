@@ -15,6 +15,7 @@ function Home(props) {
   const { userObject } = useContext(UserContext);
   const [receipts, setReceipts] = useState([]);
   const [showAlert, setShowAlert] = useState(true);
+  const [editMode, setEditMode] = useState(true);
   const calculatorRef = useRef(); // Used to calculate balance owed
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
@@ -34,6 +35,10 @@ function Home(props) {
 
     if (id) {
       getCalculationObject(id);
+      setEditMode(false);
+    } else {
+      setReceipts([]);
+      setEditMode(true);
     }
 
     setLoading(false);
@@ -84,7 +89,8 @@ function Home(props) {
         <StyledSpinner />
       ) : (
         <>
-          {!userObject && showAlert && !id && (
+          {/* Show alert only when user is not logged and is in the homepage. */}
+          {!userObject && showAlert && editMode && (
             <Alert
               variant="info"
               onClose={() => setShowAlert(false)}
@@ -102,22 +108,23 @@ function Home(props) {
               to save your calculations.
             </Alert>
           )}
+
           {/* Main dashboard */}
           <Row>
-            {!id && (
+            {editMode && (
               <Col md={4}>
                 <StyledCard $main>
                   <Calculator onAdd={addReceipt} ref={calculatorRef} />
                 </StyledCard>
               </Col>
             )}
-            <Col md={!id && 8}>
+            <Col md={editMode && 8}>
               <StyledCard $main className="pb-3">
                 <ReceiptsTable
                   receipts={receipts}
                   onDelete={deleteReceipt}
                   onEdit={editReceipt}
-                  calculationId={id}
+                  editMode={editMode}
                 />
               </StyledCard>
             </Col>
