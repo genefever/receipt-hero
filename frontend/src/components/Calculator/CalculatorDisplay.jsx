@@ -4,6 +4,7 @@ import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import ListGroup from "react-bootstrap/ListGroup";
 import Modal from "react-bootstrap/Modal";
+import { StyledModal } from "../Modal";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Row from "react-bootstrap/Row";
 import Tooltip from "react-bootstrap/Tooltip";
@@ -170,7 +171,7 @@ function CalculatorDisplay(props) {
       </Container>
 
       {/* Modal - Edit deduction */}
-      <Modal show={showModal} onHide={handleCloseModal} size="sm">
+      <StyledModal show={showModal} onHide={handleCloseModal} size="sm">
         <Modal.Header closeButton>
           <Modal.Title>{deductionModalItem.title} deductions</Modal.Title>
         </Modal.Header>
@@ -193,7 +194,7 @@ function CalculatorDisplay(props) {
           </ListGroup>
         </Modal.Body>
         <Modal.Footer>
-          <StyledButton variant="outline-secondary" onClick={handleCloseModal}>
+          <StyledButton variant="secondary" onClick={handleCloseModal}>
             Cancel
           </StyledButton>
           <StyledButton
@@ -209,7 +210,7 @@ function CalculatorDisplay(props) {
             Save Changes
           </StyledButton>
         </Modal.Footer>
-      </Modal>
+      </StyledModal>
     </>
   );
 }

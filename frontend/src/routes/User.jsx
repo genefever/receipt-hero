@@ -3,17 +3,21 @@ import BootstrapTable from "react-bootstrap-table-next";
 import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
 import "react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit.min.css";
-import { StyledCard } from "../components/Card";
 import inkpot from "../assets/inkpot.svg";
 import { Link, useParams, useHistory } from "react-router-dom";
-import * as api from "../api";
-import { StyledButton } from "../components/Button";
+import { StyledButton, StyledIconButtonSpan } from "../components/Button";
+import { StyledCard } from "../components/Card";
 import { StyledSpinner } from "../components/Spinner";
+import { FaTrashAlt } from "react-icons/fa";
+import Modal from "react-bootstrap/Modal";
+import { StyledModal } from "../components/Modal";
+import * as api from "../api";
 
 function User(props) {
   const { id } = useParams();
   const [userProfile, setUserProfile] = useState();
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
   const history = useHistory();
 
   useEffect(() => {
@@ -31,6 +35,14 @@ function User(props) {
 
     getUserObject(id);
   }, [id, history]);
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
+  const handleShowModal = (deductionItem) => {
+    setShowModal(true);
+  };
 
   const { SearchBar } = Search;
   const cellStyle = {
@@ -72,6 +84,23 @@ function User(props) {
         ).slice(-2)}/${dateObj.getUTCFullYear()}`;
       },
     },
+    {
+      isDummyField: true,
+      editable: false,
+      searchable: false,
+      type: "number",
+      align: "right",
+      style: {
+        paddingRight: "1rem",
+      },
+      formatter: (cellContent, row) => {
+        return (
+          <StyledIconButtonSpan $delete onClick={handleShowModal}>
+            <FaTrashAlt />
+          </StyledIconButtonSpan>
+        );
+      },
+    },
   ];
 
   return (
@@ -79,57 +108,82 @@ function User(props) {
       {loading ? (
         <StyledSpinner />
       ) : (
-        <StyledCard $main>
-          <ToolkitProvider
-            keyField="_id"
-            bootstrap4={true}
-            data={userProfile.calculations}
-            columns={columns}
-            search
-          >
-            {(props) => (
-              <div>
-                <h4 className="mb-4">{userProfile.firstName}'s Calculations</h4>
-                <div className="form-inline mb-3">
-                  <div className="form-group">
-                    <SearchBar
-                      className="form-control-sm"
-                      {...props.searchProps}
-                    />
-                  </div>
-                </div>
-
-                <BootstrapTable
-                  {...props.baseProps}
-                  bordered={false}
-                  condensed
-                  noDataIndication={() => (
-                    <div>
-                      <h4 className="mt-4">
-                        {props.searchProps.searchText
-                          ? "No records found."
-                          : "You have no calculations."}
-                      </h4>
-                      {!props.searchProps.searchText && (
-                        <Link to="/">
-                          <span className="mt-3">Create your first one.</span>
-                        </Link>
-                      )}
-
-                      <img
-                        className="mx-auto d-block my-4"
-                        src={inkpot}
-                        width="270"
-                        height="270"
-                        alt="Create a new calculation."
+        <>
+          <StyledCard $main>
+            <ToolkitProvider
+              keyField="_id"
+              bootstrap4={true}
+              data={userProfile.calculations}
+              columns={columns}
+              search
+            >
+              {(props) => (
+                <div>
+                  <h4 className="mb-4">
+                    {userProfile.firstName}'s Calculations
+                  </h4>
+                  <div className="form-inline mb-3">
+                    <div className="form-group">
+                      <SearchBar
+                        className="form-control-sm"
+                        {...props.searchProps}
                       />
                     </div>
-                  )}
-                />
-              </div>
-            )}
-          </ToolkitProvider>
-        </StyledCard>
+                  </div>
+
+                  <BootstrapTable
+                    {...props.baseProps}
+                    bordered={false}
+                    condensed
+                    noDataIndication={() => (
+                      <div>
+                        <h4 className="mt-4">
+                          {props.searchProps.searchText
+                            ? "No records found."
+                            : "You have no calculations."}
+                        </h4>
+                        {!props.searchProps.searchText && (
+                          <Link to="/">
+                            <span className="mt-3">Create your first one.</span>
+                          </Link>
+                        )}
+
+                        <img
+                          className="mx-auto d-block my-4"
+                          src={inkpot}
+                          width="270"
+                          height="270"
+                          alt="Create a new calculation."
+                        />
+                      </div>
+                    )}
+                  />
+                </div>
+              )}
+            </ToolkitProvider>
+          </StyledCard>
+
+          <StyledModal show={showModal} onHide={handleCloseModal}>
+            <Modal.Header closeButton>
+              <Modal.Title>Confirm deletion.</Modal.Title>
+            </Modal.Header>
+
+            <Modal.Body>
+              <p>
+                Are you sure you want to permanently delete this calculation?
+              </p>
+            </Modal.Body>
+
+            <Modal.Footer>
+              <StyledButton variant="secondary" onClick={handleCloseModal}>
+                Cancel
+              </StyledButton>
+              <StyledButton variant="danger" onClick={handleCloseModal}>
+                Delete
+              </StyledButton>
+            </Modal.Footer>
+          </StyledModal>
+        </>
       )}
     </>
   );
