@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext, useEffect } from "react";
+import React, { useState, useRef, useContext } from "react";
 import BootstrapTable from "react-bootstrap-table-next";
 import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
 import cellEditFactory from "react-bootstrap-table2-editor";
@@ -38,21 +38,13 @@ function ReceiptsTable(props) {
     mode: "click",
     blurToSave: true,
     afterSaveCell: (oldValue, newValue, row) => {
-      props.onEdit(row);
+      props.onEditReceipt(row);
     },
   });
 
   // Table save / edits
   const { userObject } = useContext(UserContext);
-  const [calculation, setCalculation] = useState({ title: "Untitled" });
   const [editTitle, setEditTitle] = useState(false);
-  const [editMode, setEditMode] = useState(props.editMode);
-
-  // Set editMode from parent's editMode because react-bootstrap-table2 won't allow
-  // parent props to be passed through ToolkitProvider.
-  useEffect(() => {
-    setEditMode(props.editMode);
-  }, [props.editMode]);
 
   const history = useHistory();
 
@@ -60,19 +52,12 @@ function ReceiptsTable(props) {
     setEditTitle((prevEditTitle) => !prevEditTitle);
   }
 
-  function handleTitleEdit(event) {
-    const value = event.target.value ? event.target.value : "Untitled";
-    setCalculation((prevValue) => {
-      return { ...prevValue, title: value };
-    });
-  }
-
   // TODO: Handle error
   async function updateTable() {
     try {
       const newCalculation = {
-        title: calculation.title,
-        receipts: props.receipts,
+        title: props.calculationObject.title,
+        receipts: props.calculationObject.receipts,
       };
       await api.createCalculation(newCalculation);
       history.push("/user/" + userObject._id);
@@ -86,15 +71,15 @@ function ReceiptsTable(props) {
       <ToolkitProvider
         keyField="id"
         bootstrap4={true}
-        data={props.receipts}
+        data={props.calculationObject.receipts}
         columns={columns}
         exportCSV={{
-          fileName: calculation.title + ".csv",
+          fileName: props.calculationObject.title + ".csv",
           ignoreFooter: false,
         }}
         search
       >
-        {(props) => (
+        {(toolkitprops) => (
           <div ref={printComponentRef}>
             <div className="d-inline-flex">
               {/* Edit Title  */}
@@ -102,8 +87,8 @@ function ReceiptsTable(props) {
                 <OutsideClickHandler onOutsideClick={() => setEditTitle(false)}>
                   <Input
                     autoFocus
-                    defaultValue={calculation.title}
-                    handleChange={(e) => handleTitleEdit(e)}
+                    defaultValue={props.calculationObject.title}
+                    handleChange={(e) => props.onEditCalculationTitle(e)}
                     onKeyPress={(e) => {
                       if (e.key === "Enter") toggleEditTitle();
                     }}
@@ -113,12 +98,12 @@ function ReceiptsTable(props) {
                 <>
                   <h4
                     onClick={() => {
-                      if (editMode) toggleEditTitle();
+                      if (props.editMode) toggleEditTitle();
                     }}
                   >
-                    {calculation.title}
+                    {props.calculationObject.title}
                   </h4>
-                  {editMode && (
+                  {props.editMode && (
                     <StyledIconButtonSpan
                       onClick={toggleEditTitle}
                       className="hide-on-print"
@@ -137,14 +122,14 @@ function ReceiptsTable(props) {
                     <div className="form-group">
                       <SearchBar
                         className="form-control-sm"
-                        {...props.searchProps}
+                        {...toolkitprops.searchProps}
                       />
                     </div>
                   </div>
                 </Col>
                 <Col xs={12} sm={6}>
                   <div className="float-right">
-                    <ExportCSVButton {...props.csvProps} />
+                    <ExportCSVButton {...toolkitprops.csvProps} />
                     <ReactToPrint
                       trigger={() => (
                         <StyledButton size="sm" variant="link">
@@ -152,7 +137,7 @@ function ReceiptsTable(props) {
                         </StyledButton>
                       )}
                       content={() => printComponentRef.current}
-                      documentTitle={calculation.title}
+                      documentTitle={props.calculationObject.title}
                     />
                   </div>
                 </Col>
@@ -160,16 +145,18 @@ function ReceiptsTable(props) {
             </Container>
 
             <BootstrapTable
-              {...props.baseProps}
+              {...toolkitprops.baseProps}
               cellEdit={cellEdit}
               bordered={false}
               condensed
               noDataIndication={() => (
                 <div>
                   <h4 className="mt-4">
-                    {props.searchProps.searchText
+                    {toolkitprops.searchProps.searchText
                       ? "No records found."
-                      : "Add a receipt to begin."}
+                      : props.editMode
+                        ? "Add a receipt to begin."
+                        : "No receipts to show."}
                   </h4>
                   <img
                     className="mx-auto d-block mt-3"
@@ -186,7 +173,7 @@ function ReceiptsTable(props) {
       </ToolkitProvider>
 
       {/* Create button TODO: change from publish/save on edit */}
-      {userObject && editMode && (
+      {userObject && props.editMode && (
         <StyledButton onClick={updateTable}>Publish</StyledButton>
       )}
     </>

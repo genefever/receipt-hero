@@ -168,7 +168,7 @@ function ReceiptsTableData(props) {
             <StyledIconButtonSpan
               $delete
               className="hide-on-print"
-              onClick={() => props.onDelete(row.id)}
+              onClick={() => props.onDeleteReceipt(row.id)}
             >
               <FaTrashAlt />
             </StyledIconButtonSpan>
@@ -192,6 +192,7 @@ function ReceiptsTableData(props) {
           ? {
               ...footerStyle,
               backgroundColor: themeContext.cellColorYellow,
+              color: "#2B2B2B",
             }
           : {
               ...footerStyle,

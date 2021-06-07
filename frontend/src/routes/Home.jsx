@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext, useEffect } from "react";
+import React, { useState, useRef, useContext, useEffect, useMemo } from "react";
 import Calculator from "../components/Calculator";
 import ReceiptsTable from "../components/ReceiptsTable";
 import { StyledCard } from "../components/Card";
@@ -13,7 +13,16 @@ import * as api from "../api";
 
 function Home(props) {
   const { userObject } = useContext(UserContext);
-  const [receipts, setReceipts] = useState([]);
+  const defaultCalculationObject = useMemo(() => {
+    return {
+      title: "Untitled",
+      _id: null,
+      receipts: [],
+    };
+  }, []);
+  const [calculationObject, setCalculationObject] = useState(
+    defaultCalculationObject
+  );
   const [showAlert, setShowAlert] = useState(true);
   const [editMode, setEditMode] = useState(true);
   const calculatorRef = useRef(); // Used to calculate balance owed
@@ -22,11 +31,11 @@ function Home(props) {
   const history = useHistory();
 
   useEffect(() => {
-    async function getCalculationObject(id) {
+    async function getcalculationObjectect(id) {
       try {
         const res = await api.getCalculation(id);
         if (res.data) {
-          setReceipts(res.data.receipts);
+          setCalculationObject(res.data);
         }
       } catch (err) {
         history.push("/not-found");
@@ -34,27 +43,33 @@ function Home(props) {
     }
 
     if (id) {
-      getCalculationObject(id);
+      // Show a created calculation page.
+      getcalculationObjectect(id);
       setEditMode(false);
     } else {
-      setReceipts([]);
+      // Show a brand new calculate page.
+      setCalculationObject(defaultCalculationObject);
       setEditMode(true);
     }
 
     setLoading(false);
-  }, [id, history]);
+  }, [id, history, defaultCalculationObject]);
 
+  // Adds a new receipt to the calculation's receipts list.
   function addReceipt(newReceipt) {
-    setReceipts((prevReceipts) => {
+    setCalculationObject((prevValue) => {
+      const prevReceipts = prevValue.receipts;
       newReceipt.total = parseFloat(newReceipt.total).toFixed(2);
       newReceipt.id = prevReceipts.length + 1;
 
-      return [...prevReceipts, newReceipt];
+      return { ...prevValue, receipts: [...prevReceipts, newReceipt] };
     });
   }
 
+  // Edits a receipt in the receipts list with updated balance calculation.
   function editReceipt(newReceipt) {
-    setReceipts((prevReceipts) => {
+    setCalculationObject((prevValue) => {
+      const prevReceipts = prevValue.receipts;
       const updatedReceipts = prevReceipts.map((receipt) => {
         if (receipt.id !== newReceipt.id) {
           return receipt;
@@ -70,15 +85,26 @@ function Home(props) {
         };
       });
 
-      return updatedReceipts;
+      return { ...prevValue, receipts: updatedReceipts };
     });
   }
 
+  // Deletes a receipt from the calculation's receipts list.
   function deleteReceipt(idToDelete) {
-    setReceipts((prevReceipts) => {
-      return prevReceipts.filter((receipt) => {
+    setCalculationObject((prevValue) => {
+      const prevReceipts = prevValue.receipts;
+      const updatedReceipts = prevReceipts.filter((receipt) => {
         return idToDelete !== receipt.id;
       });
+
+      return { ...prevValue, receipts: updatedReceipts };
+    });
+  }
+
+  function editCalculationTitle(event) {
+    const value = event.target.value ? event.target.value : "Untitled";
+    setCalculationObject((prevValue) => {
+      return { ...prevValue, title: value };
     });
   }
 
@@ -121,9 +147,10 @@ function Home(props) {
             <Col md={editMode && 8}>
               <StyledCard $main className="pb-3">
                 <ReceiptsTable
-                  receipts={receipts}
-                  onDelete={deleteReceipt}
-                  onEdit={editReceipt}
+                  calculationObject={calculationObject}
+                  onDeleteReceipt={deleteReceipt}
+                  onEditReceipt={editReceipt}
+                  onEditCalculationTitle={editCalculationTitle}
                   editMode={editMode}
                 />
               </StyledCard>
