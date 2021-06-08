@@ -13,6 +13,7 @@ const Input = ({
   autoFocus,
   onKeyPress,
   defaultValue,
+  onFocus,
 }) => {
   return (
     <Form.Group as={as} controlId={controlId}>
@@ -27,6 +28,7 @@ const Input = ({
         autoFocus={autoFocus}
         onKeyPress={onKeyPress}
         defaultValue={defaultValue}
+        onFocus={onFocus}
       />
     </Form.Group>
   );

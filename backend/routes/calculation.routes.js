@@ -5,5 +5,6 @@ const router = Router();
 
 router.post("/create", calcControllers.createCalculation);
 router.get("/:id", calcControllers.getCalculation);
+router.delete("/delete/:id", calcControllers.deleteCalculation);
 
 module.exports = router;

@@ -16,6 +16,7 @@ import * as api from "../api";
 function User(props) {
   const { id } = useParams();
   const [userProfile, setUserProfile] = useState();
+  const [calculationIdToDelete, setCalculationIdToDelete] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const history = useHistory();
@@ -37,11 +38,45 @@ function User(props) {
   }, [id, history]);
 
   const handleCloseModal = () => {
+    setCalculationIdToDelete(null);
     setShowModal(false);
   };
 
-  const handleShowModal = (deductionItem) => {
+  const handleShowModal = (calculationId = null) => {
+    if (calculationId) setCalculationIdToDelete(calculationId);
     setShowModal(true);
+  };
+
+  const deleteCalculationObject = async () => {
+    if (calculationIdToDelete) {
+      // State, before deleting anything.
+      const currentCalculations = userProfile.calculations;
+
+      // Remove deleted item from state.
+      setUserProfile((prevValue) => {
+        return {
+          ...prevValue,
+          calculations: currentCalculations.filter(
+            (calculation) => calculation._id !== calculationIdToDelete
+          ),
+        };
+      });
+
+      try {
+        // Fire delete API.
+        await api.deleteCalculation(calculationIdToDelete);
+      } catch (err) {
+        // Something went wrong. Revert back to original state.
+        setUserProfile((prevValue) => {
+          return {
+            ...prevValue,
+            calculations: currentCalculations,
+          };
+        });
+
+        // TODO: Show error message
+      }
+    }
   };
 
   const { SearchBar } = Search;
@@ -85,6 +120,8 @@ function User(props) {
       },
     },
     {
+      dataField: "",
+      text: "",
       isDummyField: true,
       editable: false,
       searchable: false,
@@ -95,7 +132,10 @@ function User(props) {
       },
       formatter: (cellContent, row) => {
         return (
-          <StyledIconButtonSpan $delete onClick={handleShowModal}>
+          <StyledIconButtonSpan
+            $delete
+            onClick={() => handleShowModal(row._id)}
+          >
             <FaTrashAlt />
           </StyledIconButtonSpan>
         );
@@ -178,7 +218,13 @@ function User(props) {
               <StyledButton variant="secondary" onClick={handleCloseModal}>
                 Cancel
               </StyledButton>
-              <StyledButton variant="danger" onClick={handleCloseModal}>
+              <StyledButton
+                variant="danger"
+                onClick={() => {
+                  deleteCalculationObject();
+                  handleCloseModal();
+                }}
+              >
                 Delete
               </StyledButton>
             </Modal.Footer>

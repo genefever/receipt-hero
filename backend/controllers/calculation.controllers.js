@@ -49,7 +49,48 @@ const getCalculation = (req, res) => {
   });
 };
 
+const deleteCalculation = (req, res) => {
+  if (!req.isAuthenticated()) {
+    res
+      .status(401)
+      .json({ message: "You must be logged in to delete a calculation." });
+  } else {
+    Calculation.findOneAndDelete(
+      { _id: req.params.id, userId: req.user._id },
+      (err, calculation) => {
+        if (err)
+          res
+            .status(500)
+            .json({ err: err, message: "Failed to delete calculation." });
+        else {
+          // Remove the calculation id from the User's calculations reference array.
+          User.updateOne(
+            {
+              calculations: { $in: [req.params.id] },
+            },
+            {
+              $pullAll: { calculations: [req.params.id] },
+            },
+            (err) => {
+              if (err)
+                res.status(500).json({
+                  err: err,
+                  message:
+                    "Failed to remove calculation reference from User's calculations.",
+                });
+            }
+          );
+          res
+            .status(200)
+            .json({ message: "Successfully deleted calculation." });
+        }
+      }
+    );
+  }
+};
+
 module.exports = {
   createCalculation,
   getCalculation,
+  deleteCalculation,
 };

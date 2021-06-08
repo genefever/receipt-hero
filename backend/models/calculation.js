@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const User = require("./user");
 
 const receiptSchema = new mongoose.Schema({
   id: { type: String, required: true },
