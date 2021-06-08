@@ -6,6 +6,8 @@ const passport = require("passport");
 const passportLocal = require("passport-local");
 const session = require("express-session");
 const bodyParser = require("body-parser");
+const redis = require("redis");
+const redisStore = require("connect-redis")(session);
 // Routes import
 const authRouter = require("./routes/auth.routes");
 const userRouter = require("./routes/user.routes");
@@ -22,6 +24,16 @@ mongoose.connect(
 // Create the server
 const app = express();
 
+// Configure redis
+const redisClient = redis.createClient({
+  port: 6379,
+  host: "localhost",
+});
+
+redisClient.on("error", (err) => {
+  console.log("Redis error: ", err);
+});
+
 // Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -33,9 +45,15 @@ app.use(
 );
 app.use(
   session({
+    name: "_receiptHero",
     secret: "secretcode",
     resave: false,
     saveUninitialized: false,
+    store: new redisStore({ client: redisClient }),
+    cookie: {
+      secure: false, // TODO: change to true. Only send the cookie back if the connection is secure/encrypted (https).
+      httpOnly: true, // Prevents client side JS from reading the cookie.
+    },
   })
 );
 app.use(passport.initialize());
