@@ -9,6 +9,7 @@ import { StyledButton, StyledIconButtonSpan } from "../components/Button";
 import { StyledCard } from "../components/Card";
 import { StyledSpinner } from "../components/Spinner";
 import { FaTrashAlt } from "react-icons/fa";
+import { MdEdit } from "react-icons/md";
 import Modal from "react-bootstrap/Modal";
 import { StyledModal } from "../components/Modal";
 import * as api from "../api";
@@ -120,24 +121,31 @@ function User(props) {
       },
     },
     {
-      dataField: "",
+      dataField: "deleteButton",
       text: "",
       isDummyField: true,
       editable: false,
       searchable: false,
-      type: "number",
       align: "right",
       style: {
         paddingRight: "1rem",
       },
       formatter: (cellContent, row) => {
         return (
-          <StyledIconButtonSpan
-            $delete
-            onClick={() => handleShowModal(row._id)}
-          >
-            <FaTrashAlt />
-          </StyledIconButtonSpan>
+          <>
+            <StyledIconButtonSpan
+              onClick={() => handleShowModal(row._id)}
+              className="mr-2"
+            >
+              <MdEdit />
+            </StyledIconButtonSpan>
+            <StyledIconButtonSpan
+              $delete
+              onClick={() => handleShowModal(row._id)}
+            >
+              <FaTrashAlt />
+            </StyledIconButtonSpan>
+          </>
         );
       },
     },

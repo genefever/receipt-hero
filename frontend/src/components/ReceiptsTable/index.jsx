@@ -82,7 +82,7 @@ function ReceiptsTable(props) {
         {(toolkitprops) => (
           <div ref={printComponentRef}>
             <div className="d-inline-flex">
-              {/* Edit Title  */}
+              {/* Title  */}
               {editTitle ? (
                 <OutsideClickHandler onOutsideClick={() => setEditTitle(false)}>
                   <Input

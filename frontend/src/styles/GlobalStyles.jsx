@@ -44,6 +44,19 @@ export const GlobalStyles = createGlobalStyle`
       cursor: pointer;
     }
 
+    .dropdown-menu {
+      background-color: ${({ theme }) => theme.body};
+      box-shadow: 0 3px 3px rgba(0,0,0,0.2);
+    }
+
+    .dropdown-divider {
+      border-color: #aaa;
+    }
+
+    .dropdown-menu a {
+      color: ${({ theme }) => theme.text};
+    }
+
     /* Print settings */
 
     @page {

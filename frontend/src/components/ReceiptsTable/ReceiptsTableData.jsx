@@ -188,16 +188,18 @@ function ReceiptsTableData(props) {
       },
       footerAlign: "center",
       footerStyle:
-        meToPayTotal > themToPayTotal
-          ? {
-              ...footerStyle,
-              backgroundColor: themeContext.cellColorYellow,
-              color: "#2B2B2B",
-            }
-          : {
-              ...footerStyle,
-              backgroundColor: themeContext.cellColorGreen,
-            },
+        meToPayTotal || themToPayTotal
+          ? meToPayTotal > themToPayTotal
+            ? {
+                ...footerStyle,
+                backgroundColor: themeContext.cellColorYellow,
+                color: "#2B2B2B",
+              }
+            : {
+                ...footerStyle,
+                backgroundColor: themeContext.cellColorGreen,
+              }
+          : footerStyle,
     },
   ];
 }
