@@ -23,6 +23,7 @@ const createCalculation = (req, res) => {
             user.save();
             res.status(201).json({
               message: "Successfully created a new calculation.",
+              calculationId: newCalculation._id,
             });
           }
         });
@@ -65,9 +66,10 @@ const deleteCalculation = (req, res) => {
         else {
           // Remove the calculation id from the User's calculations reference array.
           User.updateOne(
-            {
-              calculations: { $in: [req.params.id] },
-            },
+            { _id: req.user._id },
+            // {
+            //   calculations: { $in: [req.params.id] },
+            // },
             {
               $pullAll: { calculations: [req.params.id] },
             },
@@ -89,13 +91,24 @@ const deleteCalculation = (req, res) => {
   }
 };
 
-const editCalculation = (req, res) => {
+const updateCalculation = (req, res) => {
   if (!req.isAuthenticated()) {
     res
       .status(401)
-      .json({ message: "You must be logged in to edit a calculation." });
+      .json({ message: "You must be logged in to update a calculation." });
   } else {
-    console.log("Welcome");
+    Calculation.updateOne(
+      { _id: req.params.id, userId: req.user._id },
+      req.body,
+      (err) => {
+        if (err)
+          res.status(500).json({
+            err: err,
+            message: "Failed to update the calculation.",
+          });
+      }
+    );
+    res.status(200).json({ message: "Successfully updated the calculation." });
   }
 };
 
@@ -103,5 +116,5 @@ module.exports = {
   createCalculation,
   getCalculation,
   deleteCalculation,
-  editCalculation,
+  updateCalculation,
 };

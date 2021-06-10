@@ -126,7 +126,7 @@ function CalculatorForm(props) {
                   variant={themeContext.toggleButton}
                   onClick={(event) => {
                     props.receipt.myDeductions.inputValue &&
-                      props.onDeductionAdd(event);
+                    props.onDeductionAdd(event);
                   }}
                 >
                   Add

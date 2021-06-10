@@ -20,5 +20,7 @@ export const createCalculation = (newCalculation) =>
 export const getCalculation = (id) => API.get("/calculation/" + id);
 export const deleteCalculation = (id) =>
   API.delete("/calculation/delete/" + id, { withCredentials: true });
-export const editCalculation = (id) =>
-  API.put("/calculation/edit/" + id, { withCredentials: true });
+export const updateCalculation = (calculationObject) =>
+  API.put("/calculation/edit/" + calculationObject._id, calculationObject, {
+    withCredentials: true,
+  });

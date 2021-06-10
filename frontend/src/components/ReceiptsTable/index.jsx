@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext } from "react";
+import React, { useState, useRef } from "react";
 import BootstrapTable from "react-bootstrap-table-next";
 import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
 import cellEditFactory from "react-bootstrap-table2-editor";
@@ -15,9 +15,6 @@ import Input from "../Input";
 import emptyTable from "../../assets/empty-table.svg";
 import OutsideClickHandler from "react-outside-click-handler";
 import ReceiptsTableData from "./ReceiptsTableData";
-import { UserContext } from "../../UserContext";
-import * as api from "../../api";
-import { useHistory } from "react-router-dom";
 
 function ReceiptsTable(props) {
   // Table properties
@@ -43,27 +40,10 @@ function ReceiptsTable(props) {
   });
 
   // Table save / edits
-  const { userObject } = useContext(UserContext);
   const [editTitle, setEditTitle] = useState(false);
-
-  const history = useHistory();
 
   function toggleEditTitle() {
     setEditTitle((prevEditTitle) => !prevEditTitle);
-  }
-
-  // TODO: Handle error
-  async function updateTable() {
-    try {
-      const newCalculation = {
-        title: props.calculationObject.title,
-        receipts: props.calculationObject.receipts,
-      };
-      await api.createCalculation(newCalculation);
-      history.push("/user/" + userObject._id);
-    } catch (err) {
-      console.log(err);
-    }
   }
 
   return (
@@ -174,11 +154,6 @@ function ReceiptsTable(props) {
           </div>
         )}
       </ToolkitProvider>
-
-      {/* Create button TODO: change from publish/save on edit */}
-      {userObject && props.editMode && (
-        <StyledButton onClick={updateTable}>Publish</StyledButton>
-      )}
     </>
   );
 }

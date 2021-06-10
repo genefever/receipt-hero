@@ -1,6 +1,7 @@
 import React, { useState, useRef, useContext, useEffect, useMemo } from "react";
 import Calculator from "../components/Calculator";
 import ReceiptsTable from "../components/ReceiptsTable";
+import { StyledButton } from "../components/Button";
 import { StyledCard } from "../components/Card";
 import { StyledSpinner } from "../components/Spinner";
 import Alert from "react-bootstrap/Alert";
@@ -30,7 +31,7 @@ function Home(props) {
   const history = useHistory();
 
   useEffect(() => {
-    async function getcalculationObjectect(id) {
+    async function getCalculationObject(id) {
       try {
         const res = await api.getCalculation(id);
         if (res.data) {
@@ -45,7 +46,7 @@ function Home(props) {
       // Check if URL contains 'edit'
       if (window.location.href.indexOf("edit") > -1) {
         if (!loadingUserObject) {
-          getcalculationObjectect(id);
+          getCalculationObject(id);
 
           // If the user is logged in and the calculation id is owned by user,
           // allow the user to edit.
@@ -63,8 +64,8 @@ function Home(props) {
         }
       } else {
         // Show a created calculation page.
-        getcalculationObjectect(id);
         setEditMode(false);
+        getCalculationObject(id);
       }
     } else {
       // Show a brand new calculate page.
@@ -126,6 +127,27 @@ function Home(props) {
     });
   }
 
+  // TODO: handle error
+  async function createCalculationObject() {
+    try {
+      const res = await api.createCalculation(calculationObject);
+      if (res.data) {
+        history.push("/calculation/" + res.data.calculationId);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  // TODO: handle error
+  async function updateCalculationObject() {
+    try {
+      await api.updateCalculation(calculationObject);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   return (
     <>
       {/* Alert message - login/signup */}
@@ -171,6 +193,17 @@ function Home(props) {
                   onEditCalculationTitle={editCalculationTitle}
                   editMode={editMode}
                 />
+                {userObject && editMode && (
+                  <StyledButton
+                    $primary
+                    size="lg"
+                    onClick={
+                      id ? updateCalculationObject : createCalculationObject
+                    }
+                  >
+                    {id ? "Save" : "Publish"}
+                  </StyledButton>
+                )}
               </StyledCard>
             </Col>
           </Row>
