@@ -5,6 +5,7 @@ export const UserContext = createContext();
 
 export const UserProvider = (props) => {
   const [userObject, setUserObject] = useState();
+  const [loadingUserObject, setLoadingUserObject] = useState(true);
 
   useEffect(() => {
     async function getAuthenticatedUserObject() {
@@ -13,13 +14,16 @@ export const UserProvider = (props) => {
       if (res.data) {
         setUserObject(res.data);
       }
+      setLoadingUserObject(false);
     }
 
     getAuthenticatedUserObject();
   }, []);
 
   return (
-    <UserContext.Provider value={{ userObject, setUserObject }}>
+    <UserContext.Provider
+      value={{ userObject, setUserObject, loadingUserObject }}
+    >
       {props.children}
     </UserContext.Provider>
   );

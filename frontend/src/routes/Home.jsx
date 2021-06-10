@@ -12,7 +12,7 @@ import { useHistory, useParams } from "react-router-dom";
 import * as api from "../api";
 
 function Home(props) {
-  const { userObject } = useContext(UserContext);
+  const { userObject, loadingUserObject } = useContext(UserContext);
   const defaultCalculationObject = useMemo(() => {
     return {
       title: "Untitled",
@@ -27,7 +27,6 @@ function Home(props) {
   const [editMode, setEditMode] = useState(true);
   const calculatorRef = useRef(); // Used to calculate balance owed
   const { id } = useParams();
-  const [loading, setLoading] = useState(true);
   const history = useHistory();
 
   useEffect(() => {
@@ -43,17 +42,36 @@ function Home(props) {
     }
 
     if (id) {
-      // Show a created calculation page.
-      getcalculationObjectect(id);
-      setEditMode(false);
+      // Check if URL contains 'edit'
+      if (window.location.href.indexOf("edit") > -1) {
+        if (!loadingUserObject) {
+          getcalculationObjectect(id);
+
+          // If the user is logged in and the calculation id is owned by user,
+          // allow the user to edit.
+          if (
+            userObject &&
+            userObject.calculations.some(
+              (calculationId) => calculationId === id
+            )
+          ) {
+            setEditMode(true);
+          } else {
+            // Else redirect to login page.
+            history.push("/login");
+          }
+        }
+      } else {
+        // Show a created calculation page.
+        getcalculationObjectect(id);
+        setEditMode(false);
+      }
     } else {
       // Show a brand new calculate page.
       setCalculationObject(defaultCalculationObject);
       setEditMode(true);
     }
-
-    setLoading(false);
-  }, [id, history, defaultCalculationObject]);
+  }, [id, history, userObject, loadingUserObject, defaultCalculationObject]);
 
   // Adds a new receipt to the calculation's receipts list.
   function addReceipt(newReceipt) {
@@ -111,7 +129,7 @@ function Home(props) {
   return (
     <>
       {/* Alert message - login/signup */}
-      {loading ? (
+      {loadingUserObject ? (
         <StyledSpinner />
       ) : (
         <>

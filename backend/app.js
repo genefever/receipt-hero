@@ -64,7 +64,7 @@ app.use(passport.session());
 // Routes
 app.use("/auth", authRouter);
 app.use("/user", userRouter);
-app.use("/", calculationRouter);
+app.use("/calculation", calculationRouter);
 
 //---------------------------- END OF ROUTES--------------------------------------
 

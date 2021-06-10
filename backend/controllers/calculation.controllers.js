@@ -89,8 +89,19 @@ const deleteCalculation = (req, res) => {
   }
 };
 
+const editCalculation = (req, res) => {
+  if (!req.isAuthenticated()) {
+    res
+      .status(401)
+      .json({ message: "You must be logged in to edit a calculation." });
+  } else {
+    console.log("Welcome");
+  }
+};
+
 module.exports = {
   createCalculation,
   getCalculation,
   deleteCalculation,
+  editCalculation,
 };

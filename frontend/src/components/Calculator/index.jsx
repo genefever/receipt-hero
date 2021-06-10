@@ -3,13 +3,17 @@ import React, {
   useEffect,
   forwardRef,
   useImperativeHandle,
+  useContext,
 } from "react";
 import CalculatorForm from "./CalculatorForm";
 import CalculatorDisplay from "./CalculatorDisplay";
 import { StyledButton } from "../../components/Button";
 import Form from "react-bootstrap/Form";
+import { ThemeContext } from "styled-components";
 
 const Calculator = forwardRef((props, ref) => {
+  const themeContext = useContext(ThemeContext);
+
   const defaultReceiptState = {
     id: 0,
     purchaseDate: "",
@@ -187,9 +191,14 @@ const Calculator = forwardRef((props, ref) => {
         onDeductionsListChange={handleDeductionsListChange}
       />
 
-      {/* Submit Button */}
-      <StyledButton $primary type="submit" block className="mt-2">
-        Submit
+      {/* Add Button */}
+      <StyledButton
+        variant={themeContext.toggleButton}
+        type="submit"
+        block
+        className="mt-2"
+      >
+        Add
       </StyledButton>
     </Form>
   );

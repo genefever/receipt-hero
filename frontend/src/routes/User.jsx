@@ -48,6 +48,10 @@ function User(props) {
     setShowModal(true);
   };
 
+  const handleEditPressed = (id) => {
+    history.push("/calculation/edit/" + id);
+  };
+
   const deleteCalculationObject = async () => {
     if (calculationIdToDelete) {
       // State, before deleting anything.
@@ -100,7 +104,7 @@ function User(props) {
       ),
       events: {
         onClick: (e, column, columnIndex, row, rowIndex) => {
-          history.push("/" + row._id);
+          history.push("/calculation/" + row._id);
         },
       },
     },
@@ -134,7 +138,7 @@ function User(props) {
         return (
           <>
             <StyledIconButtonSpan
-              onClick={() => handleShowModal(row._id)}
+              onClick={() => handleEditPressed(row._id)}
               className="mr-2"
             >
               <MdEdit />

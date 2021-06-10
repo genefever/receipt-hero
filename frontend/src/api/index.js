@@ -16,7 +16,9 @@ export const getUser = (id) => API.get("/user/" + id);
 
 // Calculation
 export const createCalculation = (newCalculation) =>
-  API.post("/create", newCalculation, { withCredentials: true });
-export const getCalculation = (id) => API.get("/" + id);
+  API.post("/calculation/create", newCalculation, { withCredentials: true });
+export const getCalculation = (id) => API.get("/calculation/" + id);
 export const deleteCalculation = (id) =>
-  API.delete("/delete/" + id, { withCredentials: true });
+  API.delete("/calculation/delete/" + id, { withCredentials: true });
+export const editCalculation = (id) =>
+  API.put("/calculation/edit/" + id, { withCredentials: true });

@@ -31,7 +31,7 @@ function App() {
         <NavigationBar theme={theme} toggleTheme={themeToggler} />
         <Wrapper>
           <Switch>
-            <Route path="/" exact component={Home} />
+            <Route exact path="/" component={Home} />
             <Route path="/login">
               {userObject ? <Redirect to="/" /> : <Auth isSignUp={false} />}
             </Route>
@@ -39,8 +39,9 @@ function App() {
               {userObject ? <Redirect to="/" /> : <Auth isSignUp={true} />}
             </Route>
             <Route path="/user/:id" component={User} />
-            <Route path="/:id" component={Home} />
-            <Route path="*" component={NoMatch} />
+            <Route path="/calculation/edit/:id" component={Home} />
+            <Route path="/calculation/:id" component={Home} />
+            <Route component={NoMatch} />
           </Switch>
         </Wrapper>
       </Router>
