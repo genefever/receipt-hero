@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useContext } from "react";
 import BootstrapTable from "react-bootstrap-table-next";
 import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
 import cellEditFactory from "react-bootstrap-table2-editor";
@@ -15,8 +15,15 @@ import Input from "../Input";
 import emptyTable from "../../assets/empty-table.svg";
 import OutsideClickHandler from "react-outside-click-handler";
 import ReceiptsTableData from "./ReceiptsTableData";
+import { ThemeContext } from "styled-components";
+import { UserContext } from "../../UserContext";
+import { useHistory } from "react-router-dom";
 
 function ReceiptsTable(props) {
+  const themeContext = useContext(ThemeContext);
+  const { userObject } = useContext(UserContext);
+  const history = useHistory();
+
   // Table properties
   const columns = ReceiptsTableData(props);
   const printComponentRef = useRef();
@@ -61,44 +68,75 @@ function ReceiptsTable(props) {
       >
         {(toolkitprops) => (
           <div ref={printComponentRef}>
-            <div className="d-inline-flex">
-              {/* Title  */}
-              {editTitle ? (
-                <OutsideClickHandler onOutsideClick={() => setEditTitle(false)}>
-                  <Input
-                    autoFocus
-                    defaultValue={props.calculationObject.title}
-                    handleChange={(e) => props.onEditCalculationTitle(e)}
-                    onKeyPress={(e) => {
-                      if (e.key === "Enter") toggleEditTitle();
-                    }}
-                    onFocus={(e) => {
-                      e.target.select();
-                    }}
-                  />
-                </OutsideClickHandler>
-              ) : (
-                <>
-                  <h4
-                    onClick={() => {
-                      if (props.editMode) toggleEditTitle();
-                    }}
-                  >
-                    {props.calculationObject.title}
-                  </h4>
-                  {props.editMode && (
-                    <StyledIconButtonSpan
-                      onClick={toggleEditTitle}
-                      className="hide-on-print"
-                    >
-                      <MdEdit className="ml-2" />
-                    </StyledIconButtonSpan>
-                  )}
-                </>
-              )}
-            </div>
-
             <Container fluid className="px-0 mb-3 hide-on-print">
+              <Row className="mb-2">
+                <Col xs={12} sm={6}>
+                  <div className="d-inline-flex">
+                    {/* Title  */}
+                    {editTitle ? (
+                      <OutsideClickHandler
+                        onOutsideClick={() => setEditTitle(false)}
+                      >
+                        <Input
+                          autoFocus
+                          defaultValue={props.calculationObject.title}
+                          handleChange={(e) => props.onEditCalculationTitle(e)}
+                          onKeyPress={(e) => {
+                            if (e.key === "Enter") toggleEditTitle();
+                          }}
+                          onFocus={(e) => {
+                            e.target.select();
+                          }}
+                        />
+                      </OutsideClickHandler>
+                    ) : (
+                      <>
+                        <h4
+                          onClick={() => {
+                            if (props.editMode) toggleEditTitle();
+                          }}
+                        >
+                          {props.calculationObject.title}
+                        </h4>
+                        {props.editMode && (
+                          <StyledIconButtonSpan
+                            onClick={toggleEditTitle}
+                            className="hide-on-print"
+                          >
+                            <MdEdit className="ml-2" />
+                          </StyledIconButtonSpan>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </Col>
+                <Col xs={12} sm={6}>
+                  {/* Show the edit calculation button only if user is logged in
+                  and owns the calculation */}
+                  {!props.editMode &&
+                    userObject &&
+                    userObject.calculations.includes(
+                      props.calculationObject._id
+                    ) && (
+                      <div className="float-right">
+                        <StyledButton
+                          variant={themeContext.toggleButton}
+                          className="hide-on-print"
+                          size="sm"
+                          onClick={() => {
+                            history.push(
+                              "/calculation/edit/" + props.calculationObject._id
+                            );
+                          }}
+                        >
+                          <div className="d-flex align-items-center">
+                            <MdEdit className="mr-1" /> Edit
+                          </div>
+                        </StyledButton>
+                      </div>
+                    )}
+                </Col>
+              </Row>
               <Row className="align-items-end">
                 <Col xs={12} sm={6}>
                   <div className="form-inline">

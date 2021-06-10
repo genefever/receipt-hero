@@ -72,7 +72,14 @@ function Home(props) {
       setCalculationObject(defaultCalculationObject);
       setEditMode(true);
     }
-  }, [id, history, userObject, loadingUserObject, defaultCalculationObject]);
+  }, [
+    id,
+    history,
+    userObject,
+    loadingUserObject,
+    defaultCalculationObject,
+    history.location,
+  ]);
 
   // Adds a new receipt to the calculation's receipts list.
   function addReceipt(newReceipt) {
