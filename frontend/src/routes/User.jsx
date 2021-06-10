@@ -10,7 +10,6 @@ import { StyledCard } from "../components/Card";
 import { StyledSpinner } from "../components/Spinner";
 import { FaTrashAlt } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
-import Modal from "react-bootstrap/Modal";
 import { StyledModal } from "../components/Modal";
 import * as api from "../api";
 
@@ -49,7 +48,7 @@ function User(props) {
   };
 
   const handleEditPressed = (id) => {
-    history.push("/calculation/edit/" + id);
+    history.push(`/calculation/${id}/edit`);
   };
 
   const deleteCalculationObject = async () => {
@@ -216,17 +215,17 @@ function User(props) {
           </StyledCard>
 
           <StyledModal show={showModal} onHide={handleCloseModal}>
-            <Modal.Header closeButton>
-              <Modal.Title>Confirm deletion.</Modal.Title>
-            </Modal.Header>
+            <StyledModal.Header closeButton>
+              <StyledModal.Title>Confirm deletion.</StyledModal.Title>
+            </StyledModal.Header>
 
-            <Modal.Body>
+            <StyledModal.Body>
               <p>
                 Are you sure you want to permanently delete this calculation?
               </p>
-            </Modal.Body>
+            </StyledModal.Body>
 
-            <Modal.Footer>
+            <StyledModal.Footer>
               <StyledButton variant="secondary" onClick={handleCloseModal}>
                 Cancel
               </StyledButton>
@@ -239,7 +238,7 @@ function User(props) {
               >
                 Delete
               </StyledButton>
-            </Modal.Footer>
+            </StyledModal.Footer>
           </StyledModal>
         </>
       )}

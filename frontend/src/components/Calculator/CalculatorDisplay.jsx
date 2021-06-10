@@ -3,7 +3,6 @@ import { StyledButton, StyledIconButtonSpan } from "../../components/Button";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import ListGroup from "react-bootstrap/ListGroup";
-import Modal from "react-bootstrap/Modal";
 import { StyledModal } from "../Modal";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Row from "react-bootstrap/Row";
@@ -172,10 +171,12 @@ function CalculatorDisplay(props) {
 
       {/* Modal - Edit deduction */}
       <StyledModal show={showModal} onHide={handleCloseModal} size="sm">
-        <Modal.Header closeButton>
-          <Modal.Title>{deductionModalItem.title} deductions</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
+        <StyledModal.Header closeButton>
+          <StyledModal.Title>
+            {deductionModalItem.title} deductions
+          </StyledModal.Title>
+        </StyledModal.Header>
+        <StyledModal.Body>
           <ListGroup variant="flush">
             {deductionModalItem.list.map((item, index) => (
               <ListGroup.Item key={index} action>
@@ -192,8 +193,8 @@ function CalculatorDisplay(props) {
               </ListGroup.Item>
             ))}
           </ListGroup>
-        </Modal.Body>
-        <Modal.Footer>
+        </StyledModal.Body>
+        <StyledModal.Footer>
           <StyledButton variant="secondary" onClick={handleCloseModal}>
             Cancel
           </StyledButton>
@@ -209,7 +210,7 @@ function CalculatorDisplay(props) {
           >
             Save Changes
           </StyledButton>
-        </Modal.Footer>
+        </StyledModal.Footer>
       </StyledModal>
     </>
   );

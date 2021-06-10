@@ -17,10 +17,10 @@ export const getUser = (id) => API.get("/user/" + id);
 // Calculation
 export const createCalculation = (newCalculation) =>
   API.post("/calculation/create", newCalculation, { withCredentials: true });
-export const getCalculation = (id) => API.get("/calculation/" + id);
+export const getCalculation = (id) => API.get(`/calculation/${id}`);
 export const deleteCalculation = (id) =>
-  API.delete("/calculation/delete/" + id, { withCredentials: true });
+  API.delete(`/calculation/${id}/delete`, { withCredentials: true });
 export const updateCalculation = (calculationObject) =>
-  API.put("/calculation/edit/" + calculationObject._id, calculationObject, {
+  API.put(`/calculation/${calculationObject._id}/edit`, calculationObject, {
     withCredentials: true,
   });

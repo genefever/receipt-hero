@@ -34,7 +34,9 @@ function ReceiptsTable(props) {
     };
     return (
       <StyledButton className="btn-sm" variant="link" onClick={handleClick}>
-        <FaFileCsv /> Export
+        <div className="d-flex align-items-center">
+          <FaFileCsv className="mr-1" /> Export CSV
+        </div>
       </StyledButton>
     );
   };
@@ -125,7 +127,7 @@ function ReceiptsTable(props) {
                           size="sm"
                           onClick={() => {
                             history.push(
-                              "/calculation/edit/" + props.calculationObject._id
+                              `/calculation/${props.calculationObject._id}/edit`
                             );
                           }}
                         >
@@ -137,7 +139,7 @@ function ReceiptsTable(props) {
                     )}
                 </Col>
               </Row>
-              <Row className="align-items-end">
+              <Row>
                 <Col xs={12} sm={6}>
                   <div className="form-inline">
                     <div className="form-group">
@@ -154,7 +156,9 @@ function ReceiptsTable(props) {
                     <ReactToPrint
                       trigger={() => (
                         <StyledButton size="sm" variant="link">
-                          <FaPrint /> Print
+                          <div className="d-flex align-items-center">
+                            <FaPrint className="mr-1" /> Print
+                          </div>
                         </StyledButton>
                       )}
                       content={() => printComponentRef.current}
