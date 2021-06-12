@@ -22,9 +22,14 @@ const Calculator = forwardRef((props, ref) => {
     buyer: "Me",
     meToPay: 0,
     themToPay: 0,
+    deductions: [],
     myDeductions: {
       list: [],
-      inputValue: 0,
+      inputValue: {
+        price: 0,
+        itemName: "",
+        isTaxed: false,
+      },
       sum: 0,
     },
     theirDeductions: {
@@ -34,7 +39,16 @@ const Calculator = forwardRef((props, ref) => {
     },
   };
 
+  const defaultDeductionState = {
+    id: null,
+    price: 0,
+    name: "",
+    user: "Me",
+    isTaxed: false,
+  };
+
   const [receipt, setReceipt] = useState(defaultReceiptState);
+  const [deduction, setDeduction] = useState(defaultDeductionState);
 
   useImperativeHandle(ref, () => ({
     calculateBalanceOwed: calculateBalanceOwed,
@@ -84,46 +98,34 @@ const Calculator = forwardRef((props, ref) => {
       };
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    receipt.theirDeductions.list,
-    receipt.total,
-    receipt.myDeductions.list,
-    receipt.buyer,
-  ]);
+  }, [receipt.total, receipt.deductions, receipt.buyer]);
 
-  function handleInputChange(event, isDeductionInputChange = false) {
+  function formatFloat(value) {
+    let formattedFloat =
+      value.indexOf(".") >= 0
+        ? value.substr(0, value.indexOf(".")) +
+          value.substr(value.indexOf("."), 3)
+        : value;
+
+    if (formattedFloat < 0) {
+      formattedFloat *= -1;
+    } else {
+      formattedFloat *= 1;
+    }
+
+    return formattedFloat;
+  }
+
+  function handleInputChange(event) {
     const { name, value, type } = event.target;
 
     setReceipt((prevValue) => {
       // Handle number input.
       if (type === "number") {
-        let formattedFloat =
-          value.indexOf(".") >= 0
-            ? value.substr(0, value.indexOf(".")) +
-              value.substr(value.indexOf("."), 3)
-            : value;
-
-        if (formattedFloat < 0) {
-          formattedFloat *= -1;
-        } else {
-          formattedFloat *= 1;
-        }
-
-        // Update nested deductions object.
-        if (isDeductionInputChange) {
-          return {
-            ...prevValue,
-            [name]: {
-              ...prevValue[name],
-              inputValue: formattedFloat,
-            },
-          };
-        }
-
         // Update regular number input.
         return {
           ...prevValue,
-          [name]: formattedFloat,
+          [name]: formatFloat(value),
         };
       }
       // Handle date / string input.
@@ -140,21 +142,39 @@ const Calculator = forwardRef((props, ref) => {
   }
 
   function handleDeductionAdd(event) {
-    const { name, value } = event.target;
-    const floatValue = parseFloat(value).toFixed(2);
+    setReceipt((prevReceipt) => {
+      const prevDeductionsList = prevReceipt.deductions;
+      return { ...prevReceipt, deductions: [...prevDeductionsList, deduction] };
+    });
 
-    setReceipt((prevValue) => {
-      const deductionsObj = prevValue[[name]];
-      const deductionsList = deductionsObj.list;
+    setDeduction(defaultDeductionState);
+  }
 
-      return {
-        ...prevValue,
-        [name]: {
-          ...prevValue[name],
-          list: [...deductionsList, floatValue],
-          inputValue: 0,
-        },
-      };
+  // Update nested deductions object.
+  function handleDeductionInputChange(event, eventKey = null) {
+    setDeduction((prevDeduction) => {
+      if (eventKey) {
+        return { ...prevDeduction, user: eventKey };
+      }
+
+      const { name, value, type, checked } = event.target;
+
+      if (type === "number")
+        return { ...prevDeduction, price: formatFloat(value) };
+      else if (type === "checkbox") {
+        const taxRate = 1.0925; // TODO update to be dynamic
+        const newPrice = checked
+          ? prevDeduction.price * taxRate
+          : prevDeduction.price / taxRate;
+
+        return {
+          ...prevDeduction,
+          isTaxed: checked,
+          price: newPrice.toFixed(2),
+        };
+      } else {
+        return { ...prevDeduction, [name]: value };
+      }
     });
   }
 
@@ -179,8 +199,10 @@ const Calculator = forwardRef((props, ref) => {
       <hr />
       <CalculatorForm
         receipt={receipt}
+        deduction={deduction}
         onInputChange={handleInputChange}
         onBuyerChange={handleBuyerButtonChange}
+        onDeductionInputChange={handleDeductionInputChange}
         onDeductionAdd={handleDeductionAdd}
       />
 

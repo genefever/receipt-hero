@@ -33,7 +33,6 @@ export const GlobalStyles = createGlobalStyle`
     input, textarea {
       background-color: ${({ theme }) => theme.body} !important;
       color: ${({ theme }) => theme.text} !important;
-      border-color: ${({ theme }) => theme.borderColor} !important;
     }
 
     .as-text {

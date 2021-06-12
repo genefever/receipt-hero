@@ -14,9 +14,10 @@ const Input = ({
   onKeyPress,
   defaultValue,
   onFocus,
+  lg,
 }) => {
   return (
-    <Form.Group as={as} controlId={controlId}>
+    <Form.Group as={as} controlId={controlId} lg={lg}>
       {label && <Form.Label>{label}</Form.Label>}
       <Form.Control
         name={name}
