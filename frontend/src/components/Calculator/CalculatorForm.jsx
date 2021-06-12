@@ -5,10 +5,10 @@ import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+// import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import ToggleButton from "react-bootstrap/ToggleButton";
 import ToggleButtonGroup from "react-bootstrap/ToggleButtonGroup";
-import Tooltip from "react-bootstrap/Tooltip";
+// import Tooltip from "react-bootstrap/Tooltip";
 import { StyledButton } from "../Button";
 import { ThemeContext } from "styled-components";
 import Input from "../Input";
@@ -114,38 +114,44 @@ function CalculatorForm(props) {
               <InputGroup.Text>$</InputGroup.Text>
             </InputGroup.Prepend>
             <Form.Control
-              name="price"
-              onChange={(event) => props.onDeductionInputChange(event)}
-              value={props.deduction.price || ""}
+              name="amount"
+              onChange={(e) => props.onDeductionInputChange(e)}
+              value={props.deduction.amount || ""}
               type="number"
               min="0"
               step="0.01"
               placeholder="0.00"
             />
             <Form.Control
-              name="name"
+              name="itemName"
               onChange={(e) => props.onDeductionInputChange(e)}
-              value={props.deduction.name}
+              value={props.deduction.itemName}
               placeholder="Item name"
             />
             <DropdownButton
-              name="user"
+              name="personName"
               as={InputGroup.Append}
               variant={themeContext.toggleButton}
-              value={props.deduction.user}
-              title={props.deduction.user}
+              value={props.deduction.personName}
+              title={props.deduction.personName}
               onSelect={(eventKey, event) =>
                 props.onDeductionInputChange(event, eventKey)
               }
             >
-              <Dropdown.Item eventKey="Me">Me</Dropdown.Item>
-              <Dropdown.Item eventKey="Them">Them</Dropdown.Item>
+              {props.receipt.people.map((person, idx) => (
+                <Dropdown.Item
+                  key={idx}
+                  eventKey={{ name: person.name, idx: idx }}
+                >
+                  {person.name}
+                </Dropdown.Item>
+              ))}
             </DropdownButton>
             <InputGroup.Append>
               <StyledButton
                 variant={themeContext.toggleButton}
-                onClick={(event) => {
-                  props.deduction.price && props.onDeductionAdd(event);
+                onClick={(e) => {
+                  props.deduction.amount && props.onDeductionAdd(e);
                 }}
               >
                 Add
