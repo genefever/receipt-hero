@@ -1,13 +1,10 @@
 import React, { useContext } from "react";
-import ButtonToolbar from "react-bootstrap/ButtonToolbar";
 import Col from "react-bootstrap/Col";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 // import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import ToggleButton from "react-bootstrap/ToggleButton";
-import ToggleButtonGroup from "react-bootstrap/ToggleButtonGroup";
 // import Tooltip from "react-bootstrap/Tooltip";
 import { StyledButton } from "../Button";
 import { ThemeContext } from "styled-components";
@@ -68,31 +65,23 @@ function CalculatorForm(props) {
 
         {/* Buyer */}
         <Form.Group as={Col} lg="6">
-          <ButtonToolbar className="d-flex flex-column">
-            <Form.Label>Who Paid?</Form.Label>
-            <ToggleButtonGroup
-              type="radio"
-              name="buyer"
-              defaultValue={props.receipt.buyer}
-              value={props.receipt.buyer}
-              onChange={(event) => props.onBuyerChange(event)}
-            >
-              <ToggleButton
-                value={"Me"}
-                variant={themeContext.toggleButton}
-                size="sm"
+          <Form.Label>Who Paid?</Form.Label>
+          <DropdownButton
+            name="buyer"
+            size="sm"
+            variant={themeContext.toggleButton}
+            value={props.receipt.buyer}
+            title={props.receipt.buyer}
+          >
+            {props.receipt.people.map((person, idx) => (
+              <Dropdown.Item
+                key={idx}
+                onSelect={() => props.onBuyerChange(person)}
               >
-                Me
-              </ToggleButton>
-              <ToggleButton
-                value={"Them"}
-                variant={themeContext.toggleButton}
-                size="sm"
-              >
-                Them
-              </ToggleButton>
-            </ToggleButtonGroup>
-          </ButtonToolbar>
+                {person.name}
+              </Dropdown.Item>
+            ))}
+          </DropdownButton>
         </Form.Group>
       </Form.Row>
 
@@ -134,14 +123,11 @@ function CalculatorForm(props) {
               variant={themeContext.toggleButton}
               value={props.deduction.personName}
               title={props.deduction.personName}
-              onSelect={(eventKey, event) =>
-                props.onDeductionInputChange(event, eventKey)
-              }
             >
               {props.receipt.people.map((person, idx) => (
                 <Dropdown.Item
                   key={idx}
-                  eventKey={{ name: person.name, idx: idx }}
+                  onSelect={(e) => props.onDeductionInputChange(e, person)}
                 >
                   {person.name}
                 </Dropdown.Item>

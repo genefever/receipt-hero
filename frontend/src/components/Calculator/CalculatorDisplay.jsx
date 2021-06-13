@@ -14,10 +14,11 @@ function CalculatorDisplay(props) {
   const [showModal, setShowModal] = useState(false);
 
   const [deductionModalItem, setDeductionModalItem] = useState({
-    name: "", // variable name
-    list: [],
-    title: "", // modal title display name
+    deductions: [],
+    personName: "",
+    personIdx: 0,
   });
+
   const handleShowModal = (deductionItem) => {
     setDeductionModalItem(deductionItem);
     setShowModal(true);
@@ -28,11 +29,13 @@ function CalculatorDisplay(props) {
   };
 
   const deleteDeductionFromModal = (indexToRemove) => {
-    setDeductionModalItem((prevValue) => {
-      const updatedList = prevValue["list"].filter((item, index) => {
-        return index !== indexToRemove;
-      });
-      return { ...prevValue, list: updatedList };
+    setDeductionModalItem((prevDeductionModalItem) => {
+      const updatedDeductions = prevDeductionModalItem.deductions.filter(
+        (item, index) => {
+          return index !== indexToRemove;
+        }
+      );
+      return { ...prevDeductionModalItem, deductions: updatedDeductions };
     });
   };
 
@@ -61,69 +64,38 @@ function CalculatorDisplay(props) {
           </Col>
         </Row>
 
-        {/* Show / hide myDeductions */}
-        {props.receipt.myDeductions.list.length > 0 ? (
-          <Row>
-            <Col md={5}>
-              <small>My deductions:</small>
-            </Col>
-            <Col md={7} className="text-right">
-              - ${" "}
-              <OverlayTrigger
-                placement="bottom"
-                delay={{ show: 0, hide: 0 }}
-                overlay={<Tooltip>Edit</Tooltip>}
-              >
-                <StyledButton
-                  size="sm"
-                  variant="link"
-                  className="px-0"
-                  onClick={() =>
-                    handleShowModal({
-                      name: "myDeductions",
-                      title: "My",
-                      list: props.receipt.myDeductions.list,
-                    })
-                  }
+        {props.receipt.people.map((person, idx) => {
+          return person.deductions.length ? (
+            <Row key={idx}>
+              <Col md={5}>
+                <small>{person.name}'s deductions:</small>
+              </Col>
+              <Col md={7} className="text-right">
+                - ${" "}
+                <OverlayTrigger
+                  placement="bottom"
+                  delay={{ show: 0, hide: 0 }}
+                  overlay={<Tooltip>Edit</Tooltip>}
                 >
-                  {props.receipt.myDeductions.sum.toFixed(2)}
-                </StyledButton>
-              </OverlayTrigger>
-            </Col>
-          </Row>
-        ) : null}
-
-        {/* Show / hide otherDeductions */}
-        {props.receipt.theirDeductions.list.length > 0 ? (
-          <Row>
-            <Col md={5}>
-              <small>Their deductions:</small>
-            </Col>
-            <Col md={7} className="text-right">
-              - ${" "}
-              <OverlayTrigger
-                placement="bottom"
-                delay={{ show: 0, hide: 0 }}
-                overlay={<Tooltip>Edit</Tooltip>}
-              >
-                <StyledButton
-                  size="sm"
-                  variant="link"
-                  className="px-0"
-                  onClick={() =>
-                    handleShowModal({
-                      name: "theirDeductions",
-                      title: "Their",
-                      list: props.receipt.theirDeductions.list,
-                    })
-                  }
-                >
-                  {props.receipt.theirDeductions.sum.toFixed(2)}
-                </StyledButton>
-              </OverlayTrigger>
-            </Col>
-          </Row>
-        ) : null}
+                  <StyledButton
+                    size="sm"
+                    variant="link"
+                    className="px-0"
+                    onClick={() =>
+                      handleShowModal({
+                        personName: person.name,
+                        personIdx: person.idx,
+                        deductions: person.deductions,
+                      })
+                    }
+                  >
+                    {props.calculateDeductionsSum(person.deductions).toFixed(2)}
+                  </StyledButton>
+                </OverlayTrigger>
+              </Col>
+            </Row>
+          ) : null;
+        })}
 
         <Separator className="my-2" />
 
@@ -173,19 +145,20 @@ function CalculatorDisplay(props) {
       <StyledModal show={showModal} onHide={handleCloseModal} size="sm">
         <StyledModal.Header closeButton>
           <StyledModal.Title>
-            {deductionModalItem.title} deductions
+            {deductionModalItem.personName}'s deductions
           </StyledModal.Title>
         </StyledModal.Header>
         <StyledModal.Body>
           <ListGroup variant="flush">
-            {deductionModalItem.list.map((item, index) => (
-              <ListGroup.Item key={index} action>
+            {deductionModalItem.deductions.map((item, idx) => (
+              <ListGroup.Item key={idx} action>
                 <div>
-                  $ {item}
+                  $ {item.amount.toFixed(2)}{" "}
+                  {item.itemName ? "- " + item.itemName : null}
                   <StyledIconButtonSpan
                     $delete
                     className="float-right"
-                    onClick={() => deleteDeductionFromModal(index)}
+                    onClick={() => deleteDeductionFromModal(idx)}
                   >
                     <FaTrashAlt />
                   </StyledIconButtonSpan>
@@ -201,10 +174,7 @@ function CalculatorDisplay(props) {
           <StyledButton
             $primary
             onClick={() => {
-              props.onDeductionsListChange(
-                deductionModalItem.name,
-                deductionModalItem.list
-              );
+              props.onDeductionsListChange(deductionModalItem);
               handleCloseModal();
             }}
           >

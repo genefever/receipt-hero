@@ -56,6 +56,11 @@ export const GlobalStyles = createGlobalStyle`
       color: ${({ theme }) => theme.text};
     }
 
+    .dropdown-toggle,
+    .dropdown-menu {
+      width: 100%;
+    }
+
     /* Print settings */
 
     @page {

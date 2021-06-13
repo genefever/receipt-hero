@@ -75,7 +75,7 @@ const Calculator = forwardRef((props, ref) => {
 
   // Adds every number in the list and returns the sum.
   function calculateDeductionsSum(list) {
-    return list.reduce((acc, item) => acc * 1 + item * 1, 0);
+    return list.reduce((acc, item) => acc * 1 + item.amount * 1, 0);
   }
 
   function calcBalanceOwed(receiptToCalculate) {
@@ -99,8 +99,6 @@ const Calculator = forwardRef((props, ref) => {
         );
       }
     }
-
-    console.log(receiptToCalculate.people);
   }
 
   function calculateBalanceOwed(receiptToCalculate) {
@@ -181,29 +179,29 @@ const Calculator = forwardRef((props, ref) => {
     });
   }
 
-  function handleBuyerChange(event) {
+  function handleBuyerChange(selectedPerson) {
     setReceipt((prevReceipt) => {
       let updatedPeople = prevReceipt.people;
       for (var i = 0; i < updatedPeople.length; i++) {
-        i === event.idx
+        i === selectedPerson.idx
           ? (updatedPeople[i].isBuyer = true)
           : (updatedPeople[i].isBuyer = false);
       }
 
-      return { ...prevReceipt, buyer: event, people: updatedPeople };
+      return {
+        ...prevReceipt,
+        buyer: selectedPerson.name,
+        people: updatedPeople,
+      };
     });
   }
 
-  function handleBuyerButtonChange(event) {
-    setReceipt((prevValue) => {
-      return { ...prevValue, buyer: event };
-    });
-  }
-
-  function handleDeductionAdd(event) {
+  function handleDeductionAdd() {
     setReceipt((prevReceipt) => {
       let updatedPeople = prevReceipt.people;
-      updatedPeople[deduction.personIdx].push(deduction);
+      console.log(updatedPeople[deduction.personIdx]);
+      updatedPeople[deduction.personIdx].deductions.push(deduction);
+      return { ...prevReceipt, people: updatedPeople };
     });
 
     setDeduction(defaultDeductionState);
@@ -224,12 +222,12 @@ const Calculator = forwardRef((props, ref) => {
       const { name, value, type, checked } = event.target;
 
       if (type === "number")
-        return { ...prevDeduction, price: formatFloat(value) };
+        return { ...prevDeduction, amount: formatFloat(value) };
       else if (type === "checkbox") {
         const taxRate = 1.0925; // TODO update to be dynamic
         const newAmount = checked
-          ? prevDeduction.price * taxRate
-          : prevDeduction.price / taxRate;
+          ? prevDeduction.amount * taxRate
+          : prevDeduction.amount / taxRate;
 
         return {
           ...prevDeduction,
@@ -242,12 +240,11 @@ const Calculator = forwardRef((props, ref) => {
     });
   }
 
-  function handleDeductionsListChange(name, updatedList) {
-    setReceipt((prevValue) => {
-      return {
-        ...prevValue,
-        [name]: { ...prevValue[name], list: updatedList },
-      };
+  function handleDeductionsListChange(deductionsObject) {
+    setReceipt((prevReceipt) => {
+      let updatedPeople = prevReceipt.people;
+      updatedPeople[deduction.personIdx].deductions = deductionsObject;
+      return { ...prevReceipt, people: updatedPeople };
     });
   }
 
@@ -274,6 +271,7 @@ const Calculator = forwardRef((props, ref) => {
 
       <CalculatorDisplay
         receipt={receipt}
+        calculateDeductionsSum={calculateDeductionsSum}
         onDeductionsListChange={handleDeductionsListChange}
       />
 
