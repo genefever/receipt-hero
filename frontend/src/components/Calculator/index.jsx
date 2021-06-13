@@ -199,8 +199,23 @@ const Calculator = forwardRef((props, ref) => {
   function handleDeductionAdd() {
     setReceipt((prevReceipt) => {
       let updatedPeople = prevReceipt.people;
-      console.log(updatedPeople[deduction.personIdx]);
       updatedPeople[deduction.personIdx].deductions.push(deduction);
+      return { ...prevReceipt, people: updatedPeople };
+    });
+
+    setDeduction(defaultDeductionState);
+  }
+
+  // Delete a deduction item from the specified person's deductions list.
+  function handleDeductionDelete(personIdx, idxToDelete) {
+    setReceipt((prevReceipt) => {
+      let updatedPeople = prevReceipt.people;
+      updatedPeople[personIdx].deductions = updatedPeople[
+        personIdx
+      ].deductions.filter((ele, idx) => {
+        return idx !== idxToDelete;
+      });
+
       return { ...prevReceipt, people: updatedPeople };
     });
 
@@ -232,19 +247,11 @@ const Calculator = forwardRef((props, ref) => {
         return {
           ...prevDeduction,
           isTaxed: checked,
-          amount: newAmount.toFixed(2),
+          amount: 1 * newAmount.toFixed(2),
         };
       } else {
         return { ...prevDeduction, [name]: value };
       }
-    });
-  }
-
-  function handleDeductionsListChange(deductionsObject) {
-    setReceipt((prevReceipt) => {
-      let updatedPeople = prevReceipt.people;
-      updatedPeople[deduction.personIdx].deductions = deductionsObject;
-      return { ...prevReceipt, people: updatedPeople };
     });
   }
 
@@ -272,7 +279,7 @@ const Calculator = forwardRef((props, ref) => {
       <CalculatorDisplay
         receipt={receipt}
         calculateDeductionsSum={calculateDeductionsSum}
-        onDeductionsListChange={handleDeductionsListChange}
+        onDeductionDelete={handleDeductionDelete}
       />
 
       {/* Add Button */}

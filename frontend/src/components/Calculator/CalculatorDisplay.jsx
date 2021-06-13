@@ -12,31 +12,15 @@ import { FaTrashAlt } from "react-icons/fa";
 
 function CalculatorDisplay(props) {
   const [showModal, setShowModal] = useState(false);
+  const [modalOpenIndex, setModalOpenIndex] = useState(0);
 
-  const [deductionModalItem, setDeductionModalItem] = useState({
-    deductions: [],
-    personName: "",
-    personIdx: 0,
-  });
-
-  const handleShowModal = (deductionItem) => {
-    setDeductionModalItem(deductionItem);
+  const handleShowModal = (personIdx) => {
+    setModalOpenIndex(personIdx);
     setShowModal(true);
   };
 
   const handleCloseModal = () => {
     setShowModal(false);
-  };
-
-  const deleteDeductionFromModal = (indexToRemove) => {
-    setDeductionModalItem((prevDeductionModalItem) => {
-      const updatedDeductions = prevDeductionModalItem.deductions.filter(
-        (item, index) => {
-          return index !== indexToRemove;
-        }
-      );
-      return { ...prevDeductionModalItem, deductions: updatedDeductions };
-    });
   };
 
   const reincludeDeductions =
@@ -81,13 +65,7 @@ function CalculatorDisplay(props) {
                     size="sm"
                     variant="link"
                     className="px-0"
-                    onClick={() =>
-                      handleShowModal({
-                        personName: person.name,
-                        personIdx: person.idx,
-                        deductions: person.deductions,
-                      })
-                    }
+                    onClick={() => handleShowModal(person.idx)}
                   >
                     {props.calculateDeductionsSum(person.deductions).toFixed(2)}
                   </StyledButton>
@@ -145,40 +123,41 @@ function CalculatorDisplay(props) {
       <StyledModal show={showModal} onHide={handleCloseModal} size="sm">
         <StyledModal.Header closeButton>
           <StyledModal.Title>
-            {deductionModalItem.personName}'s deductions
+            {props.receipt.people[modalOpenIndex].name}'s deductions
           </StyledModal.Title>
         </StyledModal.Header>
         <StyledModal.Body>
           <ListGroup variant="flush">
-            {deductionModalItem.deductions.map((item, idx) => (
-              <ListGroup.Item key={idx} action>
-                <div>
-                  $ {item.amount.toFixed(2)}{" "}
-                  {item.itemName ? "- " + item.itemName : null}
-                  <StyledIconButtonSpan
-                    $delete
-                    className="float-right"
-                    onClick={() => deleteDeductionFromModal(idx)}
-                  >
-                    <FaTrashAlt />
-                  </StyledIconButtonSpan>
-                </div>
-              </ListGroup.Item>
-            ))}
+            {props.receipt.people[modalOpenIndex].deductions.map(
+              (item, idx) => (
+                <ListGroup.Item key={idx} action>
+                  <div>
+                    $ {item.amount.toFixed(2)}{" "}
+                    {item.isTaxed ? (
+                      <span style={{ color: "grey" }}>(T)</span>
+                      ) : null}{" "}
+                      {item.itemName ? "- " + item.itemName : null}{" "}
+                      <StyledIconButtonSpan
+                        $delete
+                      className="float-right"
+                      onClick={() =>
+                        props.onDeductionDelete(
+                          props.receipt.people[modalOpenIndex].idx,
+                          idx
+                        )
+                      }
+                    >
+                      <FaTrashAlt />
+                    </StyledIconButtonSpan>
+                  </div>
+                </ListGroup.Item>
+              )
+            )}
           </ListGroup>
         </StyledModal.Body>
         <StyledModal.Footer>
           <StyledButton variant="secondary" onClick={handleCloseModal}>
-            Cancel
-          </StyledButton>
-          <StyledButton
-            $primary
-            onClick={() => {
-              props.onDeductionsListChange(deductionModalItem);
-              handleCloseModal();
-            }}
-          >
-            Save Changes
+            Done
           </StyledButton>
         </StyledModal.Footer>
       </StyledModal>
