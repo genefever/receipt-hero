@@ -8,6 +8,7 @@ import { FaFileCsv, FaPrint, FaTrashAlt } from "react-icons/fa";
 import { BsFillPeopleFill } from "react-icons/bs";
 import { MdEdit } from "react-icons/md";
 import { StyledButton, StyledIconButtonSpan } from "../../components/Button";
+import TotalBalance from "../../components/TotalBalance";
 import ReactToPrint from "react-to-print";
 import Container from "react-bootstrap/Container";
 import ListGroup from "react-bootstrap/ListGroup";
@@ -82,7 +83,7 @@ function ReceiptsTable(props) {
       >
         {(toolkitprops) => (
           <div ref={printComponentRef}>
-            <Container fluid className="px-0 mb-3 hide-on-print">
+            <Container fluid className="px-0">
               {/* Title */}
               <Row>
                 <Col xs={12} sm={6}>
@@ -166,8 +167,8 @@ function ReceiptsTable(props) {
                   </StyledButton>
                 </Col>
               </Row>
-              {/* Search Bar */}
-              <Row>
+              {/* Search Bar and Print/Export Buttons */}
+              <Row className="mb-3 hide-on-print">
                 <Col xs={12} sm={6}>
                   <div className="form-inline">
                     <div className="form-group">
@@ -195,32 +196,42 @@ function ReceiptsTable(props) {
                   </div>
                 </Col>
               </Row>
-            </Container>
-
-            <BootstrapTable
-              {...toolkitprops.baseProps}
-              cellEdit={cellEdit}
-              bordered={false}
-              condensed
-              noDataIndication={() => (
-                <div>
-                  <h4 className="mt-4">
-                    {toolkitprops.searchProps.searchText
-                      ? "No records found."
-                      : props.editMode
-                      ? "Add a receipt to begin."
-                      : "No receipts to show."}
-                  </h4>
-                  <img
-                    className="mx-auto d-block mt-3"
-                    src={emptyTable}
-                    width="270"
-                    height="270"
-                    alt="Empty table."
+              <Row>
+                <Col>
+                  <BootstrapTable
+                    {...toolkitprops.baseProps}
+                    cellEdit={cellEdit}
+                    bordered={false}
+                    condensed
+                    noDataIndication={() => (
+                      <div>
+                        <h4 className="mt-4">
+                          {toolkitprops.searchProps.searchText
+                            ? "No records found."
+                            : props.editMode
+                            ? "Add a receipt to begin."
+                            : "No receipts to show."}
+                        </h4>
+                        <img
+                          className="mx-auto d-block mt-3"
+                          src={emptyTable}
+                          width="270"
+                          height="270"
+                          alt="Empty table."
+                        />
+                      </div>
+                    )}
                   />
-                </div>
-              )}
-            />
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <div className="float-right">
+                    <TotalBalance calculationObject={props.calculationObject} />
+                  </div>
+                </Col>
+              </Row>
+            </Container>
           </div>
         )}
       </ToolkitProvider>

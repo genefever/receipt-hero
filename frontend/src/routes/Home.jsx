@@ -13,7 +13,11 @@ import { useHistory, useParams } from "react-router-dom";
 import * as api from "../api";
 
 function Home(props) {
-  const { userObject, loadingUserObject } = useContext(UserContext);
+  const {
+    userObject,
+    loadingUserObject,
+    getAuthenticatedUserObject,
+  } = useContext(UserContext);
   const defaultCalculationObject = useMemo(() => {
     return {
       title: "Untitled",
@@ -56,11 +60,11 @@ function Home(props) {
     }
 
     if (id) {
-      // Check if URL contains 'edit'
-      if (window.location.href.indexOf("edit") > -1) {
-        if (!loadingUserObject) {
-          getCalculationObject(id);
+      getCalculationObject(id);
 
+      // Check if URL contains 'edit'
+      if (window.location.href.indexOf("edit") !== -1) {
+        if (!loadingUserObject) {
           // If the user is logged in and the calculation id is owned by user,
           // allow the user to edit.
           if (
@@ -78,7 +82,6 @@ function Home(props) {
       } else {
         // Show a created calculation page.
         setEditMode(false);
-        getCalculationObject(id);
       }
     } else {
       // Show a brand new calculate page.
@@ -201,10 +204,10 @@ function Home(props) {
   // TODO: handle error
   async function createCalculationObject() {
     try {
-      const res = await api.createCalculation(calculationObject);
-      if (res.data) {
-        history.push("/calculation/" + res.data.calculationId);
-      }
+      await api.createCalculation(calculationObject);
+      // Refresh the userObject when making changes to it.
+      await getAuthenticatedUserObject();
+      history.push(`/user/${userObject._id}`);
     } catch (err) {
       console.log(err);
     }
@@ -214,6 +217,9 @@ function Home(props) {
   async function updateCalculationObject() {
     try {
       await api.updateCalculation(calculationObject);
+      // Refresh the userObject when making changes to it.
+      await getAuthenticatedUserObject();
+      history.push(`/user/${userObject._id}`);
     } catch (err) {
       console.log(err);
     }
@@ -268,13 +274,7 @@ function Home(props) {
                   onEditCalculationTitle={editCalculationTitle}
                   editMode={editMode}
                 />
-                <div className="float-right">
-                  {calculationObject.people.map((person) => (
-                    <p>
-                      {person.name}: ${person.totalAmount}
-                    </p>
-                  ))}
-                </div>
+
                 {userObject && editMode && (
                   <StyledButton
                     $primary

@@ -11,6 +11,7 @@ const createCalculation = (req, res) => {
       const newCalculation = new Calculation({
         title: req.body.title,
         receipts: req.body.receipts,
+        people: req.body.people,
         userId: req.user._id,
       });
 
@@ -23,7 +24,6 @@ const createCalculation = (req, res) => {
             user.save();
             res.status(201).json({
               message: "Successfully created a new calculation.",
-              calculationId: newCalculation._id,
             });
           }
         });

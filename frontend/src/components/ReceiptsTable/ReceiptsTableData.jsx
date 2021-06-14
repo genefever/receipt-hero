@@ -98,25 +98,23 @@ function ReceiptsTableData(props) {
     {
       dataField: "id", // TODO find a better way to generate id
       text: "",
-      isDummyField: true,
       align: "center",
       editable: false,
       searchable: false,
-      type: "number",
       headerStyle: (colum, colIndex) => {
         return { width: "5%" };
       },
-      formatter: (cellContent, row) => {
-        if (props.editMode)
-          return (
-            <StyledIconButtonSpan
-              $delete
-              className="hide-on-print"
-              onClick={() => props.onDeleteReceipt(row.id)}
-            >
-              <FaTrashAlt />
-            </StyledIconButtonSpan>
-          );
+      formatExtraData: props.editMode, // pass state as extraData to formatter.
+      formatter: (cellContent, row, index, extraData) => {
+        return extraData ? (
+          <StyledIconButtonSpan
+            $delete
+            className="hide-on-print"
+            onClick={() => props.onDeleteReceipt(row.id)}
+          >
+            <FaTrashAlt />
+          </StyledIconButtonSpan>
+        ) : null;
       },
       csvType: Number,
       csvFormatter: (cellContent) => {
