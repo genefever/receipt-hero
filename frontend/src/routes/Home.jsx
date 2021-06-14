@@ -19,27 +19,26 @@ function Home(props) {
       title: "Untitled",
       _id: null,
       receipts: [],
+      people: [
+        {
+          idx: 0,
+          name: "You",
+          totalAmount: 0,
+        },
+        {
+          idx: 1,
+          name: "User 2",
+          totalAmount: 0,
+        },
+      ],
     };
   }, []);
-  const defaultPeopleObject = [
-    {
-      idx: 0,
-      name: "You",
-      totalAmount: 0,
-    },
-    {
-      idx: 1,
-      name: "User 2",
-      totalAmount: 0,
-    },
-  ];
 
   const [calculationObject, setCalculationObject] = useState(
     defaultCalculationObject
   );
   const [showAlert, setShowAlert] = useState(true);
   const [editMode, setEditMode] = useState(true);
-  const [people, setPeople] = useState(defaultPeopleObject);
   const calculatorRef = useRef(); // Used to calculate balance owed
   const { id } = useParams();
   const history = useHistory();
@@ -97,23 +96,45 @@ function Home(props) {
 
   // Adds a new receipt to the calculation's receipts list.
   function addReceipt(newReceipt) {
-    setCalculationObject((prevValue) => {
-      const prevReceipts = prevValue.receipts;
+    setCalculationObject((prevCalcObj) => {
+      const prevReceipts = prevCalcObj.receipts;
       newReceipt.total = parseFloat(newReceipt.total).toFixed(2);
       newReceipt.id = prevReceipts.length + 1;
 
-      return { ...prevValue, receipts: [...prevReceipts, newReceipt] };
+      // Add the new receipt's people amount to the calc object's people's totalAmount.
+      const updatedPeople = [...prevCalcObj.people].map((person) => {
+        return {
+          ...person,
+          totalAmount:
+            person.totalAmount + newReceipt.people[person.idx].amount,
+        };
+      });
+
+      return {
+        ...prevCalcObj,
+        receipts: [...prevReceipts, newReceipt],
+        people: updatedPeople,
+      };
     });
   }
 
   // Edits a receipt in the receipts list with updated balance calculation.
   function editReceipt(newReceipt) {
-    setCalculationObject((prevValue) => {
-      const prevReceipts = prevValue.receipts;
-      const updatedReceipts = prevReceipts.map((receipt) => {
+    setCalculationObject((prevCalcObj) => {
+      let updatedPeople = [...prevCalcObj.people];
+
+      const updatedReceipts = [...prevCalcObj.receipts].map((receipt) => {
         if (receipt.id !== newReceipt.id) {
           return receipt;
         }
+
+        // Remove from totalAmount for each person the old receipt value.
+        updatedPeople = updatedPeople.map((person) => {
+          return {
+            ...person,
+            totalAmount: person.totalAmount - receipt.people[person.idx].amount,
+          };
+        });
 
         const updatedCalculations = calculatorRef.current.calculateBalanceOwed(
           newReceipt
@@ -125,26 +146,55 @@ function Home(props) {
         };
       });
 
-      return { ...prevValue, receipts: updatedReceipts };
+      // Add to totalAmount for each person the new receipt value.
+      updatedPeople = updatedPeople.map((person) => {
+        return {
+          ...person,
+          totalAmount:
+            person.totalAmount + newReceipt.people[person.idx].amount,
+        };
+      });
+
+      return {
+        ...prevCalcObj,
+        receipts: updatedReceipts,
+        people: updatedPeople,
+      };
     });
   }
 
   // Deletes a receipt from the calculation's receipts list.
   function deleteReceipt(idToDelete) {
-    setCalculationObject((prevValue) => {
-      const prevReceipts = prevValue.receipts;
-      const updatedReceipts = prevReceipts.filter((receipt) => {
+    setCalculationObject((prevCalcObj) => {
+      let updatedPeople = [...prevCalcObj.people];
+
+      const updatedReceipts = [...prevCalcObj.receipts].filter((receipt) => {
+        if (idToDelete === receipt.id) {
+          // Update the totalAmount for each person.
+          updatedPeople = updatedPeople.map((person) => {
+            return {
+              ...person,
+              totalAmount:
+                person.totalAmount - receipt.people[person.idx].amount,
+            };
+          });
+        }
+
         return idToDelete !== receipt.id;
       });
 
-      return { ...prevValue, receipts: updatedReceipts };
+      return {
+        ...prevCalcObj,
+        receipts: updatedReceipts,
+        people: updatedPeople,
+      };
     });
   }
 
   function editCalculationTitle(event) {
     const value = event.target.value ? event.target.value : "Untitled";
-    setCalculationObject((prevValue) => {
-      return { ...prevValue, title: value };
+    setCalculationObject((prevCalcObj) => {
+      return { ...prevCalcObj, title: value };
     });
   }
 
@@ -167,20 +217,6 @@ function Home(props) {
     } catch (err) {
       console.log(err);
     }
-  }
-
-  // Updates the people state object.
-  function handlePeopleUpdate(personIdx, key, value) {
-    setPeople(
-      [...people].map((person) => {
-        if (person.idx === personIdx) {
-          return {
-            ...person,
-            [key]: value,
-          };
-        } else return person;
-      })
-    );
   }
 
   return (
@@ -215,7 +251,11 @@ function Home(props) {
             {editMode && (
               <Col md={4}>
                 <StyledCard $main>
-                  <Calculator onAdd={addReceipt} ref={calculatorRef} />
+                  <Calculator
+                    onAdd={addReceipt}
+                    ref={calculatorRef}
+                    calculationObject={calculationObject}
+                  />
                 </StyledCard>
               </Col>
             )}
@@ -227,9 +267,14 @@ function Home(props) {
                   onEditReceipt={editReceipt}
                   onEditCalculationTitle={editCalculationTitle}
                   editMode={editMode}
-                  people={people}
-                  onPeopleUpdate={handlePeopleUpdate}
                 />
+                <div className="float-right">
+                  {calculationObject.people.map((person) => (
+                    <p>
+                      {person.name}: ${person.totalAmount}
+                    </p>
+                  ))}
+                </div>
                 {userObject && editMode && (
                   <StyledButton
                     $primary

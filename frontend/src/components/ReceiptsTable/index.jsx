@@ -232,7 +232,7 @@ function ReceiptsTable(props) {
         </StyledModal.Header>
         <StyledModal.Body>
           <ListGroup variant="flush">
-            {props.people.map((person, idx) => (
+            {props.calculationObject.people.map((person, idx) => (
               <ListGroup.Item key={idx} action>
                 <div>
                   {person.name}

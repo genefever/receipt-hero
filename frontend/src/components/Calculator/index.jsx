@@ -22,22 +22,13 @@ const Calculator = forwardRef((props, ref) => {
     sharedTotal: 0,
     buyer: "You",
     settlement: { amount: 0 },
-    people: [
-      {
-        idx: 0,
-        name: "You",
-        amount: 0,
-        isBuyer: true,
-        deductions: [],
-      },
-      {
-        idx: 1,
-        name: "User 2",
-        amount: 0,
-        isBuyer: false,
-        deductions: [],
-      },
-    ],
+    people: props.calculationObject.people.map((person) => ({
+      idx: person.idx,
+      name: person.name,
+      amount: 0,
+      isBuyer: person.idx === 0 ? true : false,
+      deductions: [],
+    })),
   };
 
   const [receipt, setReceipt] = useState(defaultReceiptState);
@@ -54,7 +45,7 @@ const Calculator = forwardRef((props, ref) => {
   const [deduction, setDeduction] = useState(defaultDeductionState);
 
   useImperativeHandle(ref, () => ({
-    calcBalanceOwed: calcBalanceOwed,
+    calculateBalanceOwed: calculateBalanceOwed,
   }));
 
   // Adds every number in the list and returns the sum.
@@ -62,7 +53,7 @@ const Calculator = forwardRef((props, ref) => {
     return list.reduce((acc, item) => acc * 1 + item.amount * 1, 0);
   }
 
-  function calcBalanceOwed(receiptToCalculate) {
+  function calculateBalanceOwed(receiptToCalculate) {
     // Calculate the credit/debit balance of each user
     let updatedPeople = receiptToCalculate.people;
     let sharedCost = receiptToCalculate.total;
@@ -110,7 +101,7 @@ const Calculator = forwardRef((props, ref) => {
   }
 
   useEffect(() => {
-    const updatedCalculations = calcBalanceOwed(receipt);
+    const updatedCalculations = calculateBalanceOwed(receipt);
     setReceipt((prevReceipt) => {
       return {
         ...prevReceipt,
