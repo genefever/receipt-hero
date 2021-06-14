@@ -20,18 +20,18 @@ const Calculator = forwardRef((props, ref) => {
     storeName: "",
     total: 0,
     sharedTotal: 0,
-    buyer: "Me",
+    buyer: "User 1",
     people: [
       {
         idx: 0,
-        name: "Me",
+        name: "User 1",
         amount: 0,
         isBuyer: true,
         deductions: [],
       },
       {
         idx: 1,
-        name: "Them",
+        name: "User 2",
         amount: 0,
         isBuyer: false,
         deductions: [],
@@ -70,7 +70,7 @@ const Calculator = forwardRef((props, ref) => {
   const [deduction, setDeduction] = useState(defaultDeductionState);
 
   useImperativeHandle(ref, () => ({
-    calculateBalanceOwed: calculateBalanceOwed,
+    calcBalanceOwed: calcBalanceOwed,
   }));
 
   // Adds every number in the list and returns the sum.
@@ -80,69 +80,85 @@ const Calculator = forwardRef((props, ref) => {
 
   function calcBalanceOwed(receiptToCalculate) {
     // Calculate the credit/debit balance of each user
+    let updatedPeople = receiptToCalculate.people;
     let sharedCost = receiptToCalculate.total;
     const numPeople = receiptToCalculate.people.length;
 
     for (var i = 0; i < numPeople; i++) {
-      let person = receiptToCalculate.people[i];
+      let person = updatedPeople[i];
+
+      // Buyer has a positive amount, which means they spent that much.
+      // Other people have a 0 amount because they didn't spend anything.
+      updatedPeople[i].amount = person.isBuyer ? receiptToCalculate.total : 0;
+
+      // Subtract any personal deductions from each person and the total receipt.
       const personDeductionTotal = calculateDeductionsSum(person.deductions);
-      receiptToCalculate.people[i].amount = -1 * personDeductionTotal;
-      sharedCost -= personDeductionTotal;
+      updatedPeople[i].amount -= 1 * personDeductionTotal;
+      sharedCost -= 1 * personDeductionTotal;
     }
 
     const splitReceiptCost = sharedCost / numPeople;
 
+    // Subtract the shared cost from each person who is not the buyer.
+    // This calculates how much each person owes the buyer.
     for (i = 0; i < numPeople; i++) {
-      if (!receiptToCalculate.people[i].isBuyer) {
-        receiptToCalculate.people[i].amount = (-1 * splitReceiptCost).toFixed(
-          2
-        );
-      }
+      updatedPeople[i].amount -= (1 * splitReceiptCost).toFixed(2);
     }
-  }
-
-  function calculateBalanceOwed(receiptToCalculate) {
-    calcBalanceOwed(receiptToCalculate);
-    const myDeductionsSum = calculateDeductionsSum(
-      receiptToCalculate.myDeductions.list
-    );
-    const theirDeductionsSum = calculateDeductionsSum(
-      receiptToCalculate.theirDeductions.list
-    );
-    const deductionSumToInclude =
-      receiptToCalculate.buyer === "Me" ? theirDeductionsSum : myDeductionsSum;
-    const sharedCost =
-      receiptToCalculate.total - myDeductionsSum - theirDeductionsSum;
-    const splitReceiptCost = sharedCost / 2;
-
-    const calculatedBalanceOwed = (
-      splitReceiptCost + deductionSumToInclude
-    ).toFixed(2);
 
     return {
-      meToPay: receiptToCalculate.buyer === "Me" ? "" : calculatedBalanceOwed,
-      themToPay: receiptToCalculate.buyer === "Me" ? calculatedBalanceOwed : "",
-      myDeductions: {
-        ...receiptToCalculate["myDeductions"],
-        sum: myDeductionsSum,
-      },
-      theirDeductions: {
-        ...receiptToCalculate["theirDeductions"],
-        sum: theirDeductionsSum,
-      },
+      sharedTotal: sharedCost,
+      people: updatedPeople,
     };
   }
 
+  // function calculateBalanceOwed(receiptToCalculate) {
+  //   calcBalanceOwed(receiptToCalculate);
+  //   const myDeductionsSum = calculateDeductionsSum(
+  //     receiptToCalculate.myDeductions.list
+  //   );
+  //   const theirDeductionsSum = calculateDeductionsSum(
+  //     receiptToCalculate.theirDeductions.list
+  //   );
+  //   const deductionSumToInclude =
+  //     receiptToCalculate.buyer === "Me" ? theirDeductionsSum : myDeductionsSum;
+  //   const sharedCost =
+  //     receiptToCalculate.total - myDeductionsSum - theirDeductionsSum;
+  //   const splitReceiptCost = sharedCost / 2;
+  //
+  //   const calculatedBalanceOwed = (
+  //     splitReceiptCost + deductionSumToInclude
+  //   ).toFixed(2);
+  //
+  //   return {
+  //     meToPay: receiptToCalculate.buyer === "Me" ? "" : calculatedBalanceOwed,
+  //     themToPay: receiptToCalculate.buyer === "Me" ? calculatedBalanceOwed : "",
+  //     myDeductions: {
+  //       ...receiptToCalculate["myDeductions"],
+  //       sum: myDeductionsSum,
+  //     },
+  //     theirDeductions: {
+  //       ...receiptToCalculate["theirDeductions"],
+  //       sum: theirDeductionsSum,
+  //     },
+  //   };
+  // }
+
   useEffect(() => {
-    const updatedCalculations = calculateBalanceOwed(receipt);
-    setReceipt((prevValue) => {
+    const updatedCalculations = calcBalanceOwed(receipt);
+    setReceipt((prevReceipt) => {
       return {
-        ...prevValue,
+        ...prevReceipt,
         ...updatedCalculations,
       };
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [receipt.total, receipt.deductions, receipt.buyer]);
+    // eslint-disable-next-line
+  }, [
+    receipt.total,
+    receipt.deductions,
+    receipt.buyer,
+    // eslint-disable-next-line
+    JSON.stringify(receipt.people),
+  ]);
 
   function formatFloat(value) {
     let formattedFloat =
@@ -160,6 +176,7 @@ const Calculator = forwardRef((props, ref) => {
     return formattedFloat;
   }
 
+  // Used for setting receipt's purchaseDate, storeName, and receipt total.
   function handleInputChange(event) {
     const { name, value, type } = event.target;
 
@@ -179,13 +196,12 @@ const Calculator = forwardRef((props, ref) => {
     });
   }
 
+  // Sets the receipt's buyer and marks the buyers isBuyer to True.
   function handleBuyerChange(selectedPerson) {
     setReceipt((prevReceipt) => {
       let updatedPeople = prevReceipt.people;
       for (var i = 0; i < updatedPeople.length; i++) {
-        i === selectedPerson.idx
-          ? (updatedPeople[i].isBuyer = true)
-          : (updatedPeople[i].isBuyer = false);
+        updatedPeople[i].isBuyer = i === selectedPerson.idx ? true : false;
       }
 
       return {
@@ -196,6 +212,7 @@ const Calculator = forwardRef((props, ref) => {
     });
   }
 
+  // Adds a deduction object to the person's deductions list.
   function handleDeductionAdd() {
     setReceipt((prevReceipt) => {
       let updatedPeople = prevReceipt.people;
@@ -206,7 +223,7 @@ const Calculator = forwardRef((props, ref) => {
     setDeduction(defaultDeductionState);
   }
 
-  // Delete a deduction item from the specified person's deductions list.
+  // Deletes a deduction item from the person's deductions list.
   function handleDeductionDelete(personIdx, idxToDelete) {
     setReceipt((prevReceipt) => {
       let updatedPeople = prevReceipt.people;
@@ -222,7 +239,7 @@ const Calculator = forwardRef((props, ref) => {
     setDeduction(defaultDeductionState);
   }
 
-  // Update deduction object state.
+  // Updates the deduction object's state.
   function handleDeductionInputChange(event, dropDownValue = null) {
     setDeduction((prevDeduction) => {
       // Set the deduction name from the dropdown.

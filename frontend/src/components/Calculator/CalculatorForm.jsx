@@ -136,8 +136,8 @@ function CalculatorForm(props) {
             <InputGroup.Append>
               <StyledButton
                 variant={themeContext.toggleButton}
-                onClick={(e) => {
-                  props.deduction.amount && props.onDeductionAdd(e);
+                onClick={() => {
+                  props.deduction.amount && props.onDeductionAdd();
                 }}
               >
                 Add

@@ -23,17 +23,6 @@ function CalculatorDisplay(props) {
     setShowModal(false);
   };
 
-  const reincludeDeductions =
-    (props.receipt.buyer === "Me" &&
-      props.receipt.theirDeductions.list.length) ||
-    (props.receipt.buyer === "Them" && props.receipt.myDeductions.list.length);
-  const sharedSplitCost = (
-    (props.receipt.total -
-      props.receipt.myDeductions.sum -
-      props.receipt.theirDeductions.sum) /
-    2
-  ).toFixed(2);
-
   return (
     <>
       <h6>Calculation:</h6>
@@ -82,41 +71,27 @@ function CalculatorDisplay(props) {
             <small>Shared cost (split): </small>
           </Col>
           <Col className="text-right" md={6}>
-            $ {sharedSplitCost}
+            $ {props.receipt.sharedTotal.toFixed(2)}
           </Col>
         </Row>
-
-        {reincludeDeductions ? (
-          <Row>
-            <Col md={6}>
-              <small>
-                {props.receipt.buyer === "Me" ? "Their" : "My"} deductions:{" "}
-              </small>
-            </Col>
-            <Col className="text-right" md={6}>
-              + ${" "}
-              {props.receipt.buyer === "Me"
-                ? props.receipt.theirDeductions.sum.toFixed(2)
-                : props.receipt.myDeductions.sum.toFixed(2)}
-            </Col>
-          </Row>
-        ) : null}
 
         <Separator className="mt-2 mb-3" />
 
-        <Row>
-          <Col md={6}>
-            {props.receipt.buyer === "Me" ? "They owe you" : "You owe them"} :{" "}
-          </Col>
-          <Col className="text-right" md={6}>
-            <h4>
-              ${" "}
-              {props.receipt.buyer === "Me"
-                ? props.receipt.themToPay
-                : props.receipt.meToPay}
-            </h4>
-          </Col>
-        </Row>
+        {props.receipt.people.map((person, idx) => {
+          return person.amount ? (
+            <Row key={idx}>
+              <Col md={6}>
+                {person.name}{" "}
+                {person.amount > 0
+                  ? " is owed:"
+                  : "owes " + props.receipt.buyer + ":"}
+              </Col>
+              <Col md={6} className="text-right">
+                <h6>${" " + Math.abs(person.amount).toFixed(2)}</h6>
+              </Col>
+            </Row>
+          ) : null;
+        })}
       </Container>
 
       {/* Modal - Edit deduction */}
@@ -135,10 +110,10 @@ function CalculatorDisplay(props) {
                     $ {item.amount.toFixed(2)}{" "}
                     {item.isTaxed ? (
                       <span style={{ color: "grey" }}>(T)</span>
-                      ) : null}{" "}
-                      {item.itemName ? "- " + item.itemName : null}{" "}
-                      <StyledIconButtonSpan
-                        $delete
+                    ) : null}{" "}
+                    {item.itemName ? "- " + item.itemName : null}{" "}
+                    <StyledIconButtonSpan
+                      $delete
                       className="float-right"
                       onClick={() =>
                         props.onDeductionDelete(

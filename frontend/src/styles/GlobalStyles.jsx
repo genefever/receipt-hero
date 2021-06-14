@@ -9,6 +9,10 @@ export const GlobalStyles = createGlobalStyle`
       background-color: ${({ theme }) => theme.background};
       color: ${({ theme }) => theme.text};
       // font-family: "Montserrat", sans-serif;
+
+      // Makes text look sharper on the edges.
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     h1,h2,h3,h4,h5,h6,span {
