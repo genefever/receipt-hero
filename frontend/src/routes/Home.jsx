@@ -21,11 +21,25 @@ function Home(props) {
       receipts: [],
     };
   }, []);
+  const defaultPeopleObject = [
+    {
+      idx: 0,
+      name: "You",
+      totalAmount: 0,
+    },
+    {
+      idx: 1,
+      name: "User 2",
+      totalAmount: 0,
+    },
+  ];
+
   const [calculationObject, setCalculationObject] = useState(
     defaultCalculationObject
   );
   const [showAlert, setShowAlert] = useState(true);
   const [editMode, setEditMode] = useState(true);
+  const [people, setPeople] = useState(defaultPeopleObject);
   const calculatorRef = useRef(); // Used to calculate balance owed
   const { id } = useParams();
   const history = useHistory();
@@ -155,6 +169,20 @@ function Home(props) {
     }
   }
 
+  // Updates the people state object.
+  function handlePeopleUpdate(personIdx, key, value) {
+    setPeople(
+      [...people].map((person) => {
+        if (person.idx === personIdx) {
+          return {
+            ...person,
+            [key]: value,
+          };
+        } else return person;
+      })
+    );
+  }
+
   return (
     <>
       {/* Alert message - login/signup */}
@@ -199,6 +227,8 @@ function Home(props) {
                   onEditReceipt={editReceipt}
                   onEditCalculationTitle={editCalculationTitle}
                   editMode={editMode}
+                  people={people}
+                  onPeopleUpdate={handlePeopleUpdate}
                 />
                 {userObject && editMode && (
                   <StyledButton

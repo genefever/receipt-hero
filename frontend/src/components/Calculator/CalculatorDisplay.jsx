@@ -41,7 +41,9 @@ function CalculatorDisplay(props) {
           return person.deductions.length ? (
             <Row key={idx}>
               <Col md={5}>
-                <small>{person.name}'s deductions:</small>
+                <small>
+                  {idx === 0 ? "Your" : `${person.name}'s'`} deductions:
+                </small>
               </Col>
               <Col md={7} className="text-right">
                 - ${" "}
@@ -77,21 +79,16 @@ function CalculatorDisplay(props) {
 
         <Separator className="mt-2 mb-3" />
 
-        {props.receipt.people.map((person, idx) => {
-          return person.amount ? (
-            <Row key={idx}>
-              <Col md={6}>
-                {person.name}{" "}
-                {person.amount > 0
-                  ? " is owed:"
-                  : "owes " + props.receipt.buyer + ":"}
-              </Col>
-              <Col md={6} className="text-right">
-                <h6>${" " + Math.abs(person.amount).toFixed(2)}</h6>
-              </Col>
-            </Row>
-          ) : null;
-        })}
+        <Row>
+          <Col md={6}>
+            {props.receipt.settlement.doesOwe
+              ? `You owe ${props.receipt.buyer}:`
+              : "You lent:"}
+          </Col>
+          <Col className="text-right">
+            <h5>$ {Math.abs(props.receipt.settlement.amount).toFixed(2)}</h5>
+          </Col>
+        </Row>
       </Container>
 
       {/* Modal - Edit deduction */}

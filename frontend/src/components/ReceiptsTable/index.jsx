@@ -4,11 +4,13 @@ import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
 import cellEditFactory from "react-bootstrap-table2-editor";
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
 import "react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit.min.css";
-import { FaFileCsv, FaPrint } from "react-icons/fa";
+import { FaFileCsv, FaPrint, FaTrashAlt } from "react-icons/fa";
+import { BsFillPeopleFill } from "react-icons/bs";
 import { MdEdit } from "react-icons/md";
 import { StyledButton, StyledIconButtonSpan } from "../../components/Button";
 import ReactToPrint from "react-to-print";
 import Container from "react-bootstrap/Container";
+import ListGroup from "react-bootstrap/ListGroup";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Input from "../Input";
@@ -18,11 +20,13 @@ import ReceiptsTableData from "./ReceiptsTableData";
 import { ThemeContext } from "styled-components";
 import { UserContext } from "../../UserContext";
 import { useHistory } from "react-router-dom";
+import { StyledModal } from "../Modal";
 
 function ReceiptsTable(props) {
   const themeContext = useContext(ThemeContext);
   const { userObject } = useContext(UserContext);
   const history = useHistory();
+  const [showModal, setShowModal] = useState(false);
 
   // Table properties
   const columns = ReceiptsTableData(props);
@@ -55,6 +59,14 @@ function ReceiptsTable(props) {
     setEditTitle((prevEditTitle) => !prevEditTitle);
   }
 
+  const handleShowModal = (personIdx) => {
+    setShowModal(true);
+  };
+
+  function handleCloseModal() {
+    setShowModal(false);
+  }
+
   return (
     <>
       <ToolkitProvider
@@ -71,7 +83,8 @@ function ReceiptsTable(props) {
         {(toolkitprops) => (
           <div ref={printComponentRef}>
             <Container fluid className="px-0 mb-3 hide-on-print">
-              <Row className="mb-2">
+              {/* Title */}
+              <Row>
                 <Col xs={12} sm={6}>
                   <div className="d-inline-flex">
                     {/* Title  */}
@@ -139,6 +152,21 @@ function ReceiptsTable(props) {
                     )}
                 </Col>
               </Row>
+              {/* People button */}
+              <Row className="pb-1 mb-2">
+                <Col xs={12} sm={6}>
+                  <StyledButton
+                    className="btn-sm px-0 py-0"
+                    variant="link"
+                    onClick={handleShowModal}
+                  >
+                    <div className="d-flex align-items-center">
+                      <BsFillPeopleFill className="mr-1" /> 2 people
+                    </div>
+                  </StyledButton>
+                </Col>
+              </Row>
+              {/* Search Bar */}
               <Row>
                 <Col xs={12} sm={6}>
                   <div className="form-inline">
@@ -196,6 +224,34 @@ function ReceiptsTable(props) {
           </div>
         )}
       </ToolkitProvider>
+
+      {/* Modal - Edit people */}
+      <StyledModal show={showModal} onHide={handleCloseModal} size="sm">
+        <StyledModal.Header closeButton>
+          <StyledModal.Title>People</StyledModal.Title>
+        </StyledModal.Header>
+        <StyledModal.Body>
+          <ListGroup variant="flush">
+            {props.people.map((person, idx) => (
+              <ListGroup.Item key={idx} action>
+                <div>
+                  {person.name}
+                  {idx >= 2 && (
+                    <StyledIconButtonSpan $delete className="float-right">
+                      {idx >= 2 && <FaTrashAlt />}
+                    </StyledIconButtonSpan>
+                  )}
+                </div>
+              </ListGroup.Item>
+            ))}
+          </ListGroup>
+        </StyledModal.Body>
+        <StyledModal.Footer>
+          <StyledButton variant="secondary" onClick={handleCloseModal}>
+            Done
+          </StyledButton>
+        </StyledModal.Footer>
+      </StyledModal>
     </>
   );
 }

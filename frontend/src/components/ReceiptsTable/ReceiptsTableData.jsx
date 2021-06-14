@@ -1,13 +1,11 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { Type } from "react-bootstrap-table2-editor";
 import { FaTrashAlt } from "react-icons/fa";
-import { ThemeContext } from "styled-components";
 import { StyledIconButtonSpan } from "../../components/Button";
+import { ThemeContext } from "styled-components";
 
 // Returns the formatted table data columns to populate BootstrapTable with.
 function ReceiptsTableData(props) {
-  const [meToPayTotal, setMeToPayTotal] = useState(0);
-  const [themToPayTotal, setThemToPayTotal] = useState(0);
   const themeContext = useContext(ThemeContext);
 
   function formatMonetaryCell(content) {
@@ -20,20 +18,13 @@ function ReceiptsTableData(props) {
     overflow: "hidden",
   };
 
-  const footerStyle = {
-    whiteSpace: "normal",
-    wordWrap: "break-word",
-    fontWeight: "bold",
-  };
-
   return [
     {
       dataField: "purchaseDate",
-      text: "Purchase Date",
+      text: "Date",
       type: "date",
       editable: props.editMode,
       style: cellStyle,
-      sort: true,
       formatter: (cell) => {
         let dateObj = cell;
         if (typeof cell !== "object") {
@@ -55,21 +46,18 @@ function ReceiptsTableData(props) {
       editor: {
         type: Type.DATE,
       },
-      footer: "",
     },
     {
       dataField: "storeName",
-      text: "Store Name",
+      text: "Name",
       style: cellStyle,
       editable: props.editMode,
-      sort: true,
-      footer: "",
     },
     {
       dataField: "buyer",
       text: "Buyer",
       style: cellStyle,
-      sort: true,
+
       editable: props.editMode,
       editor: {
         type: Type.SELECT,
@@ -78,14 +66,12 @@ function ReceiptsTableData(props) {
           { value: "Them", label: "Them" },
         ],
       },
-      footer: "Total:",
     },
     {
       dataField: "total",
       text: "Receipt Total",
       type: "number",
       editable: props.editMode,
-      sort: true,
       style: cellStyle,
       formatter: (cellContent) => {
         return formatMonetaryCell(cellContent);
@@ -94,65 +80,20 @@ function ReceiptsTableData(props) {
         return formatMonetaryCell(cellContent);
       },
       csvType: Number,
-      footer: (columnData) => {
-        const receiptTotal = columnData.reduce(
-          (acc, item) => acc * 1 + item * 1,
-          0
-        );
-        return "$ " + parseFloat(receiptTotal).toFixed(2);
-      },
     },
     {
-      dataField: "meToPay",
-      text: "You Owe Them",
-      type: "number",
+      dataField: "settlement.message",
+      text: "Settlement",
       editable: false,
-      sort: true,
-      style: cellStyle,
-      formatter: (cellContent) => {
-        return formatMonetaryCell(cellContent);
+      style: function callback(cell, row, rowIndex, colIndex) {
+        return {
+          whiteSpace: "normal",
+          wordWrap: "break-word",
+          color: row.settlement.doesOwe
+            ? themeContext.cellColorOrange
+            : themeContext.cellColorGreen,
+        };
       },
-      csvFormatter: (cellContent) => {
-        return formatMonetaryCell(cellContent);
-      },
-      csvType: Number,
-      footer: (columnData) => {
-        const meToPayTotal = columnData.reduce(
-          (acc, item) => acc * 1 + item * 1,
-          0
-        );
-        setTimeout(() => {
-          setMeToPayTotal(meToPayTotal);
-        }, 0);
-        return "$ " + parseFloat(meToPayTotal).toFixed(2);
-      },
-      footerStyle: footerStyle,
-    },
-    {
-      dataField: "themToPay",
-      text: "They Owe You",
-      type: "number",
-      editable: false,
-      sort: true,
-      style: cellStyle,
-      formatter: (cellContent) => {
-        return formatMonetaryCell(cellContent);
-      },
-      csvFormatter: (cellContent) => {
-        return formatMonetaryCell(cellContent);
-      },
-      csvType: Number,
-      footer: (columnData) => {
-        const themToPayTotal = columnData.reduce(
-          (acc, item) => acc * 1 + item * 1,
-          0
-        );
-        setTimeout(() => {
-          setThemToPayTotal(themToPayTotal);
-        }, 0);
-        return "$ " + parseFloat(themToPayTotal).toFixed(2);
-      },
-      footerStyle: footerStyle,
     },
     {
       dataField: "id", // TODO find a better way to generate id
@@ -162,6 +103,9 @@ function ReceiptsTableData(props) {
       editable: false,
       searchable: false,
       type: "number",
+      headerStyle: (colum, colIndex) => {
+        return { width: "5%" };
+      },
       formatter: (cellContent, row) => {
         if (props.editMode)
           return (
@@ -178,28 +122,6 @@ function ReceiptsTableData(props) {
       csvFormatter: (cellContent) => {
         return "";
       },
-      footer: () => {
-        const whoPaysMessage =
-          meToPayTotal > themToPayTotal ? "You owe them" : "They owe you";
-        const diff = Math.abs(themToPayTotal * 1 - meToPayTotal * 1);
-        return diff !== 0
-          ? whoPaysMessage + " $" + parseFloat(diff).toFixed(2)
-          : "";
-      },
-      footerAlign: "center",
-      footerStyle:
-        meToPayTotal || themToPayTotal
-          ? meToPayTotal > themToPayTotal
-            ? {
-                ...footerStyle,
-                backgroundColor: themeContext.cellColorYellow,
-                color: "#2B2B2B",
-              }
-            : {
-                ...footerStyle,
-                backgroundColor: themeContext.cellColorGreen,
-              }
-          : footerStyle,
     },
   ];
 }

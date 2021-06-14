@@ -6,8 +6,8 @@ export const lightTheme = {
   toggleButton: "outline-dark",
   emoji: "🌙",
   borderColor: "#2B2B2B",
-  cellColorGreen: "#D4EDDA",
-  cellColorYellow: "#FDF3CD",
+  cellColorGreen: "#56B65B",
+  cellColorOrange: "#EB9100",
 };
 
 export const darkTheme = {
@@ -18,6 +18,6 @@ export const darkTheme = {
   toggleButton: "outline-light",
   emoji: "☀️",
   borderColor: "#636465",
-  cellColorGreen: "#56B65B",
-  cellColorYellow: "#F9C10B",
+  cellColorGreen: "#59FF00",
+  cellColorOrange: "#FFA500",
 };

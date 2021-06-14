@@ -20,11 +20,12 @@ const Calculator = forwardRef((props, ref) => {
     storeName: "",
     total: 0,
     sharedTotal: 0,
-    buyer: "User 1",
+    buyer: "You",
+    settlement: { amount: 0 },
     people: [
       {
         idx: 0,
-        name: "User 1",
+        name: "You",
         amount: 0,
         isBuyer: true,
         deductions: [],
@@ -37,23 +38,6 @@ const Calculator = forwardRef((props, ref) => {
         deductions: [],
       },
     ],
-    //TODO Delete below when done
-    meToPay: 0,
-    themToPay: 0,
-    myDeductions: {
-      list: [],
-      inputValue: {
-        price: 0,
-        itemName: "",
-        isTaxed: false,
-      },
-      sum: 0,
-    },
-    theirDeductions: {
-      list: [],
-      inputValue: 0,
-      sum: 0,
-    },
   };
 
   const [receipt, setReceipt] = useState(defaultReceiptState);
@@ -105,43 +89,25 @@ const Calculator = forwardRef((props, ref) => {
       updatedPeople[i].amount -= (1 * splitReceiptCost).toFixed(2);
     }
 
+    // Person 0 is always 'you'.
+    const selfAmount = updatedPeople[0].amount;
+    let selfDoesOwe = selfAmount < 0;
+    const settlement = {
+      message: selfDoesOwe
+        ? `You owe ${receiptToCalculate.buyer} $${Math.abs(selfAmount).toFixed(
+            2
+          )}`
+        : `You lent $${Math.abs(selfAmount).toFixed(2)}`,
+      amount: Math.abs(selfAmount).toFixed(2),
+      doesOwe: selfDoesOwe,
+    };
+
     return {
       sharedTotal: sharedCost,
       people: updatedPeople,
+      settlement: settlement,
     };
   }
-
-  // function calculateBalanceOwed(receiptToCalculate) {
-  //   calcBalanceOwed(receiptToCalculate);
-  //   const myDeductionsSum = calculateDeductionsSum(
-  //     receiptToCalculate.myDeductions.list
-  //   );
-  //   const theirDeductionsSum = calculateDeductionsSum(
-  //     receiptToCalculate.theirDeductions.list
-  //   );
-  //   const deductionSumToInclude =
-  //     receiptToCalculate.buyer === "Me" ? theirDeductionsSum : myDeductionsSum;
-  //   const sharedCost =
-  //     receiptToCalculate.total - myDeductionsSum - theirDeductionsSum;
-  //   const splitReceiptCost = sharedCost / 2;
-  //
-  //   const calculatedBalanceOwed = (
-  //     splitReceiptCost + deductionSumToInclude
-  //   ).toFixed(2);
-  //
-  //   return {
-  //     meToPay: receiptToCalculate.buyer === "Me" ? "" : calculatedBalanceOwed,
-  //     themToPay: receiptToCalculate.buyer === "Me" ? calculatedBalanceOwed : "",
-  //     myDeductions: {
-  //       ...receiptToCalculate["myDeductions"],
-  //       sum: myDeductionsSum,
-  //     },
-  //     theirDeductions: {
-  //       ...receiptToCalculate["theirDeductions"],
-  //       sum: theirDeductionsSum,
-  //     },
-  //   };
-  // }
 
   useEffect(() => {
     const updatedCalculations = calcBalanceOwed(receipt);
