@@ -276,7 +276,10 @@ function ReceiptsTable(props) {
                   person.name
                 )}
                 {!modalEditPerson.isEditing && (
-                  <div className="float-right">
+                  <div className="float-right d-flex align-items-center">
+                    {idx === 0 && (
+                      <p className="text-muted mr-3 mb-0">{`(You)`}</p>
+                    )}
                     {idx >= 2 && (
                       <StyledIconButtonSpan $delete className="mr-3">
                         <FaTrashAlt />

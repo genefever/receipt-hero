@@ -27,7 +27,7 @@ function Home(props) {
       people: [
         {
           idx: 0,
-          name: "You",
+          name: "Me",
           totalAmount: 0,
         },
         {
@@ -195,6 +195,7 @@ function Home(props) {
     });
   }
 
+  // Sets the calculationObject's title.
   function editCalculationTitle(event) {
     const value = event.target.value ? event.target.value : "Untitled";
     setCalculationObject((prevCalcObj) => {
@@ -202,17 +203,32 @@ function Home(props) {
     });
   }
 
+  // Called when a calculationObject person's name changes.
   function editPersonName(event, personIdx) {
     const value = event.target.value;
 
     setCalculationObject((prevCalcObj) => {
+      // Change the name of the person in calculationObject.people array.
       let updatedPeople = [...prevCalcObj.people];
       updatedPeople[personIdx].name = value;
 
+      // Change every occurence of the name in calculationObject's receipts.people.
       const updatedReceipts = [...prevCalcObj.receipts].map((receipt) => {
-        let updatedReceiptsPeople = [...receipt.people];
-        updatedReceiptsPeople[personIdx].name = value;
-        return { ...receipt, people: updatedReceiptsPeople };
+        let updatedReceiptPeople = [...receipt.people];
+        let updatedReceiptBuyer = receipt.buyer;
+
+        updatedReceiptPeople[personIdx].name = value;
+
+        // Update the buyer's name if need be.
+        if (updatedReceiptPeople[personIdx].isBuyer) {
+          updatedReceiptBuyer = value;
+        }
+
+        return {
+          ...receipt,
+          people: updatedReceiptPeople,
+          buyer: updatedReceiptBuyer,
+        };
       });
 
       return {

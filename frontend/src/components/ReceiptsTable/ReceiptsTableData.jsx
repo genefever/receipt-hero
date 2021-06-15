@@ -61,6 +61,10 @@ function ReceiptsTableData(props) {
       style: cellStyle,
       sort: true,
       editable: false,
+      formatExtraData: props.calculationObject.receipts, // pass state as extraData to formatter.
+      formatter: (cellContent, row, index, extraData) => {
+        return extraData[index].buyer;
+      },
     },
     {
       dataField: "total",
