@@ -18,6 +18,7 @@ function Home(props) {
     loadingUserObject,
     getAuthenticatedUserObject,
   } = useContext(UserContext);
+
   const defaultCalculationObject = useMemo(() => {
     return {
       title: "Untitled",

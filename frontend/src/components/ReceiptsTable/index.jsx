@@ -226,7 +226,7 @@ function ReceiptsTable(props) {
               </Row>
               <Row>
                 <Col>
-                  <div className="float-right">
+                  <div>
                     <TotalBalance calculationObject={props.calculationObject} />
                   </div>
                 </Col>

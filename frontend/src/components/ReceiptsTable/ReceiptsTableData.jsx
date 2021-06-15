@@ -25,6 +25,7 @@ function ReceiptsTableData(props) {
       type: "date",
       editable: props.editMode,
       style: cellStyle,
+      sort: true,
       formatter: (cell) => {
         let dateObj = cell;
         if (typeof cell !== "object") {
@@ -51,26 +52,21 @@ function ReceiptsTableData(props) {
       dataField: "storeName",
       text: "Name",
       style: cellStyle,
+      sort: true,
       editable: props.editMode,
     },
     {
       dataField: "buyer",
       text: "Buyer",
       style: cellStyle,
-
-      editable: props.editMode,
-      editor: {
-        type: Type.SELECT,
-        options: [
-          { value: "Me", label: "Me" },
-          { value: "Them", label: "Them" },
-        ],
-      },
+      sort: true,
+      editable: false,
     },
     {
       dataField: "total",
       text: "Receipt Total",
       type: "number",
+      sort: true,
       editable: props.editMode,
       style: cellStyle,
       formatter: (cellContent) => {
