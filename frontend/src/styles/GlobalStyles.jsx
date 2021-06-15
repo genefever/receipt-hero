@@ -65,6 +65,11 @@ export const GlobalStyles = createGlobalStyle`
       width: 100%;
     }
 
+    .list-group-item {
+      border: 1px solid #aaa;
+      
+    }
+
     /* Print settings */
 
     @page {

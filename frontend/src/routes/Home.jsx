@@ -103,7 +103,7 @@ function Home(props) {
     setCalculationObject((prevCalcObj) => {
       const prevReceipts = prevCalcObj.receipts;
       newReceipt.total = parseFloat(newReceipt.total).toFixed(2);
-      newReceipt.id = prevReceipts.length + 1;
+      newReceipt.id = prevReceipts.length + 1; // TODO Generate uuid or something
 
       // Add the new receipt's people amount to the calc object's people's totalAmount.
       const updatedPeople = [...prevCalcObj.people].map((person) => {
@@ -202,6 +202,27 @@ function Home(props) {
     });
   }
 
+  function editPersonName(event, personIdx) {
+    const value = event.target.value;
+
+    setCalculationObject((prevCalcObj) => {
+      let updatedPeople = [...prevCalcObj.people];
+      updatedPeople[personIdx].name = value;
+
+      const updatedReceipts = [...prevCalcObj.receipts].map((receipt) => {
+        let updatedReceiptsPeople = [...receipt.people];
+        updatedReceiptsPeople[personIdx].name = value;
+        return { ...receipt, people: updatedReceiptsPeople };
+      });
+
+      return {
+        ...prevCalcObj,
+        people: updatedPeople,
+        receipts: updatedReceipts,
+      };
+    });
+  }
+
   // TODO: handle error
   async function createCalculationObject() {
     try {
@@ -274,6 +295,7 @@ function Home(props) {
                   onEditReceipt={editReceipt}
                   onEditCalculationTitle={editCalculationTitle}
                   editMode={editMode}
+                  onChangePersonName={editPersonName}
                 />
 
                 {userObject && editMode && (

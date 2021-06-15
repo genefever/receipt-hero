@@ -4,8 +4,8 @@ import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
-// import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-// import Tooltip from "react-bootstrap/Tooltip";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 import { StyledButton } from "../Button";
 import { ThemeContext } from "styled-components";
 import Input from "../Input";
@@ -89,62 +89,60 @@ function CalculatorForm(props) {
         {/* Personal Deductions */}
         <Form.Group as={Col}>
           <Form.Label>Deductions</Form.Label>
-          {/* <OverlayTrigger
+          <OverlayTrigger
             placement="bottom"
             delay={{ show: 0, hide: 0 }}
             overlay={
-              <Tooltip>
-            Deduct any personal item costs from the shared receipt.
-              </Tooltip>
+              <Tooltip>Deduct any unshared items from the receipt.</Tooltip>
             }
-          > */}
-          <InputGroup size="sm">
-            <InputGroup.Prepend>
-              <InputGroup.Text>$</InputGroup.Text>
-            </InputGroup.Prepend>
-            <Form.Control
-              name="amount"
-              onChange={(e) => props.onDeductionInputChange(e)}
-              value={props.deduction.amount || ""}
-              type="number"
-              min="0"
-              step="0.01"
-              placeholder="0.00"
-            />
-            <Form.Control
-              name="itemName"
-              onChange={(e) => props.onDeductionInputChange(e)}
-              value={props.deduction.itemName}
-              placeholder="Item name"
-            />
-            <DropdownButton
-              name="personName"
-              as={InputGroup.Append}
-              variant={themeContext.toggleButton}
-              value={props.deduction.personName}
-              title={props.deduction.personName}
-            >
-              {props.receipt.people.map((person, idx) => (
-                <Dropdown.Item
-                  key={idx}
-                  onSelect={(e) => props.onDeductionInputChange(e, person)}
-                >
-                  {person.name}
-                </Dropdown.Item>
-              ))}
-            </DropdownButton>
-            <InputGroup.Append>
-              <StyledButton
+          >
+            <InputGroup size="sm">
+              <InputGroup.Prepend>
+                <InputGroup.Text>$</InputGroup.Text>
+              </InputGroup.Prepend>
+              <Form.Control
+                name="amount"
+                onChange={(e) => props.onDeductionInputChange(e)}
+                value={props.deduction.amount || ""}
+                type="number"
+                min="0"
+                step="0.01"
+                placeholder="0.00"
+              />
+              <Form.Control
+                name="itemName"
+                onChange={(e) => props.onDeductionInputChange(e)}
+                value={props.deduction.itemName}
+                placeholder="Item name"
+              />
+              <DropdownButton
+                name="personIdx"
+                as={InputGroup.Append}
                 variant={themeContext.toggleButton}
-                onClick={() => {
-                  props.deduction.amount && props.onDeductionAdd();
-                }}
+                value={props.receipt.people[props.deduction.personIdx].name}
+                title={props.receipt.people[props.deduction.personIdx].name}
               >
-                Add
-              </StyledButton>
-            </InputGroup.Append>
-          </InputGroup>
-          {/* </OverlayTrigger> */}
+                {props.receipt.people.map((person, idx) => (
+                  <Dropdown.Item
+                    key={idx}
+                    onSelect={(e) => props.onDeductionInputChange(e, person)}
+                  >
+                    {person.name}
+                  </Dropdown.Item>
+                ))}
+              </DropdownButton>
+              <InputGroup.Append>
+                <StyledButton
+                  variant={themeContext.toggleButton}
+                  onClick={() => {
+                    props.deduction.amount && props.onDeductionAdd();
+                  }}
+                >
+                  Add
+                </StyledButton>
+              </InputGroup.Append>
+            </InputGroup>
+          </OverlayTrigger>
 
           <Form.Check
             type="checkbox"

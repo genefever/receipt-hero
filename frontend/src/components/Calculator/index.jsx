@@ -20,7 +20,7 @@ const Calculator = forwardRef((props, ref) => {
     storeName: "",
     total: 0,
     sharedTotal: 0,
-    buyer: "You",
+    buyer: props.calculationObject.people[0].name,
     settlement: { amount: 0 },
     people: props.calculationObject.people.map((person) => ({
       idx: person.idx,
@@ -38,7 +38,6 @@ const Calculator = forwardRef((props, ref) => {
     amount: 0,
     itemName: "",
     personIdx: 0,
-    personName: receipt.people[0].name,
     isTaxed: false,
   };
 
@@ -117,6 +116,25 @@ const Calculator = forwardRef((props, ref) => {
     JSON.stringify(receipt.people),
   ]);
 
+  // Updates the name of receipt's people when a calculationObject's person name changes.
+  useEffect(() => {
+    setReceipt((prevReceipt) => {
+      let updatedPeople = [...prevReceipt.people];
+      for (var i = 0; i < updatedPeople.length; i++) {
+        updatedPeople[i].name = props.calculationObject.people[i].name;
+
+        if (
+          updatedPeople[i].isBuyer &&
+          updatedPeople[i].name !== prevReceipt.buyer
+        ) {
+          handleBuyerChange(updatedPeople[i]);
+        }
+      }
+      return { ...prevReceipt, people: updatedPeople };
+    });
+    // eslint-disable-next-line
+  }, [JSON.stringify(props.calculationObject.people)]);
+
   function formatFloat(value) {
     let formattedFloat =
       value.indexOf(".") >= 0
@@ -156,7 +174,7 @@ const Calculator = forwardRef((props, ref) => {
   // Sets the receipt's buyer and marks the buyers isBuyer to True.
   function handleBuyerChange(selectedPerson) {
     setReceipt((prevReceipt) => {
-      let updatedPeople = prevReceipt.people;
+      let updatedPeople = [...prevReceipt.people];
       for (var i = 0; i < updatedPeople.length; i++) {
         updatedPeople[i].isBuyer = i === selectedPerson.idx ? true : false;
       }
@@ -172,7 +190,7 @@ const Calculator = forwardRef((props, ref) => {
   // Adds a deduction object to the person's deductions list.
   function handleDeductionAdd() {
     setReceipt((prevReceipt) => {
-      let updatedPeople = prevReceipt.people;
+      let updatedPeople = [...prevReceipt.people];
       updatedPeople[deduction.personIdx].deductions.push(deduction);
       return { ...prevReceipt, people: updatedPeople };
     });
@@ -183,7 +201,7 @@ const Calculator = forwardRef((props, ref) => {
   // Deletes a deduction item from the person's deductions list.
   function handleDeductionDelete(personIdx, idxToDelete) {
     setReceipt((prevReceipt) => {
-      let updatedPeople = prevReceipt.people;
+      let updatedPeople = [...prevReceipt.people];
       updatedPeople[personIdx].deductions = updatedPeople[
         personIdx
       ].deductions.filter((ele, idx) => {
@@ -203,7 +221,6 @@ const Calculator = forwardRef((props, ref) => {
       if (dropDownValue) {
         return {
           ...prevDeduction,
-          personName: dropDownValue.name,
           personIdx: dropDownValue.idx,
         };
       }

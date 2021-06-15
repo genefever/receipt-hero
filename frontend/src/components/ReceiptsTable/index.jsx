@@ -55,6 +55,10 @@ function ReceiptsTable(props) {
 
   // Table save / edits
   const [editTitle, setEditTitle] = useState(false);
+  const [modalEditPerson, setModalEditPerson] = useState({
+    isEditing: false,
+    idx: null,
+  });
 
   function toggleEditTitle() {
     setEditTitle((prevEditTitle) => !prevEditTitle);
@@ -66,6 +70,13 @@ function ReceiptsTable(props) {
 
   function handleCloseModal() {
     setShowModal(false);
+  }
+
+  function toggleEditPerson(editIdx = null) {
+    setModalEditPerson((prevModalEditPerson) => ({
+      isEditing: !prevModalEditPerson.isEditing,
+      idx: editIdx,
+    }));
   }
 
   return (
@@ -209,8 +220,8 @@ function ReceiptsTable(props) {
                           {toolkitprops.searchProps.searchText
                             ? "No records found."
                             : props.editMode
-                            ? "Add a receipt to begin."
-                            : "No receipts to show."}
+                              ? "Add a receipt to begin."
+                              : "No receipts to show."}
                         </h4>
                         <img
                           className="mx-auto d-block mt-3"
@@ -239,20 +250,44 @@ function ReceiptsTable(props) {
       {/* Modal - Edit people */}
       <StyledModal show={showModal} onHide={handleCloseModal} size="sm">
         <StyledModal.Header closeButton>
-          <StyledModal.Title>People</StyledModal.Title>
+          <StyledModal.Title as={"h5"}>Split between</StyledModal.Title>
         </StyledModal.Header>
         <StyledModal.Body>
           <ListGroup variant="flush">
             {props.calculationObject.people.map((person, idx) => (
               <ListGroup.Item key={idx} action>
-                <div>
-                  {person.name}
-                  {idx >= 2 && (
-                    <StyledIconButtonSpan $delete className="float-right">
-                      {idx >= 2 && <FaTrashAlt />}
+                {modalEditPerson.isEditing && idx === modalEditPerson.idx ? (
+                  <OutsideClickHandler
+                    onOutsideClick={() => toggleEditPerson()}
+                  >
+                    <Input
+                      autoFocus
+                      defaultValue={person.name}
+                      handleChange={(e) => props.onChangePersonName(e, idx)}
+                      onKeyPress={(e) => {
+                        if (e.key === "Enter") toggleEditPerson();
+                      }}
+                      onFocus={(e) => {
+                        e.target.select();
+                      }}
+                    />
+                  </OutsideClickHandler>
+                ) : (
+                  person.name
+                )}
+                {!modalEditPerson.isEditing && (
+                  <div className="float-right">
+                    {idx >= 2 && (
+                      <StyledIconButtonSpan $delete className="mr-3">
+                        <FaTrashAlt />
+                      </StyledIconButtonSpan>
+                    )}
+
+                    <StyledIconButtonSpan>
+                      <MdEdit onClick={() => toggleEditPerson(idx)} />
                     </StyledIconButtonSpan>
-                  )}
-                </div>
+                  </div>
+                )}
               </ListGroup.Item>
             ))}
           </ListGroup>
