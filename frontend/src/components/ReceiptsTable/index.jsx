@@ -28,6 +28,8 @@ function ReceiptsTable(props) {
   const { userObject } = useContext(UserContext);
   const history = useHistory();
   const [showModal, setShowModal] = useState(false);
+  const isUsersCalculation =
+    userObject && userObject.calculations.includes(props.calculationObject._id);
 
   // Table properties
   const columns = ReceiptsTableData(props);
@@ -140,28 +142,24 @@ function ReceiptsTable(props) {
                 <Col xs={12} sm={6}>
                   {/* Show the edit calculation button only if user is logged in
                   and owns the calculation */}
-                  {!props.editMode &&
-                    userObject &&
-                    userObject.calculations.includes(
-                      props.calculationObject._id
-                    ) && (
-                      <div className="float-right">
-                        <StyledButton
-                          variant={themeContext.toggleButton}
-                          className="hide-on-print"
-                          size="sm"
-                          onClick={() => {
-                            history.push(
-                              `/calculation/${props.calculationObject._id}/edit`
-                            );
-                          }}
-                        >
-                          <div className="d-flex align-items-center">
-                            <MdEdit className="mr-1" /> Edit
-                          </div>
-                        </StyledButton>
-                      </div>
-                    )}
+                  {isUsersCalculation && !props.editMode && (
+                    <div className="float-right">
+                      <StyledButton
+                        variant={themeContext.toggleButton}
+                        className="hide-on-print"
+                        size="sm"
+                        onClick={() => {
+                          history.push(
+                            `/calculation/${props.calculationObject._id}/edit`
+                          );
+                        }}
+                      >
+                        <div className="d-flex align-items-center">
+                          <MdEdit className="mr-1" /> Edit
+                        </div>
+                      </StyledButton>
+                    </div>
+                  )}
                 </Col>
               </Row>
               {/* People button */}
@@ -275,22 +273,25 @@ function ReceiptsTable(props) {
                 ) : (
                   person.name
                 )}
-                {!modalEditPerson.isEditing && (
-                  <div className="float-right d-flex align-items-center">
-                    {idx === 0 && (
-                      <p className="text-muted mr-3 mb-0">{`(You)`}</p>
-                    )}
-                    {idx >= 2 && (
-                      <StyledIconButtonSpan $delete className="mr-3">
-                        <FaTrashAlt />
-                      </StyledIconButtonSpan>
-                    )}
 
-                    <StyledIconButtonSpan>
-                      <MdEdit onClick={() => toggleEditPerson(idx)} />
-                    </StyledIconButtonSpan>
-                  </div>
-                )}
+                {isUsersCalculation &&
+                  props.editMode &&
+                  !modalEditPerson.isEditing && (
+                    <div className="float-right d-flex align-items-center">
+                      {idx === 0 && (
+                        <p className="text-muted mr-3 mb-0">{`(You)`}</p>
+                      )}
+                      {idx >= 2 && (
+                        <StyledIconButtonSpan $delete className="mr-3">
+                          <FaTrashAlt />
+                        </StyledIconButtonSpan>
+                      )}
+
+                      <StyledIconButtonSpan>
+                        <MdEdit onClick={() => toggleEditPerson(idx)} />
+                      </StyledIconButtonSpan>
+                    </div>
+                  )}
               </ListGroup.Item>
             ))}
           </ListGroup>

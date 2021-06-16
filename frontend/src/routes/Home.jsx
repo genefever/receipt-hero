@@ -245,7 +245,7 @@ function Home(props) {
       await api.createCalculation(calculationObject);
       // Refresh the userObject when making changes to it.
       await getAuthenticatedUserObject();
-      history.push(`/user/${userObject._id}`);
+      history.push(`/calculation/${calculationObject._id}`);
     } catch (err) {
       console.log(err);
     }
@@ -257,7 +257,7 @@ function Home(props) {
       await api.updateCalculation(calculationObject);
       // Refresh the userObject when making changes to it.
       await getAuthenticatedUserObject();
-      history.push(`/user/${userObject._id}`);
+      history.push(`/calculation/${calculationObject._id}`);
     } catch (err) {
       console.log(err);
     }
