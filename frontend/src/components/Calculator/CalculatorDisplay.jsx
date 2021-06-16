@@ -42,7 +42,7 @@ function CalculatorDisplay(props) {
             <Row key={idx}>
               <Col md={5}>
                 <small>
-                  {idx === 0 ? "Your" : `${person.name}'s'`} deductions:
+                  {idx === 0 ? "Your" : `${person.name}'s`} deductions:
                 </small>
               </Col>
               <Col md={7} className="text-right">
@@ -70,7 +70,7 @@ function CalculatorDisplay(props) {
 
         <Row>
           <Col md={6}>
-            <small>Shared cost (split): </small>
+            <small>Shared total: </small>
           </Col>
           <Col className="text-right" md={6}>
             $ {props.receipt.sharedTotal.toFixed(2)}
@@ -107,19 +107,19 @@ function CalculatorDisplay(props) {
                     $ {item.amount.toFixed(2)}{" "}
                     {item.isTaxed ? (
                       <span style={{ color: "grey" }}>(T)</span>
-                      ) : null}{" "}
-                      {item.itemName ? "- " + item.itemName : null}{" "}
-                      <StyledIconButtonSpan
-                        $delete
-                        className="float-right"
-                        onClick={() =>
-                          props.onDeductionDelete(
-                            props.receipt.people[modalOpenIndex].idx,
-                            idx
-                          )
-                        }
-                      >
-                        <FaTrashAlt />
+                    ) : null}{" "}
+                    {item.itemName ? "- " + item.itemName : null}{" "}
+                    <StyledIconButtonSpan
+                      $delete
+                      className="float-right"
+                      onClick={() =>
+                        props.onDeductionDelete(
+                          props.receipt.people[modalOpenIndex].idx,
+                          idx
+                        )
+                      }
+                    >
+                      <FaTrashAlt />
                     </StyledIconButtonSpan>
                   </div>
                 </ListGroup.Item>
