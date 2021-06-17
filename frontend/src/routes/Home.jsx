@@ -354,7 +354,7 @@ function Home(props) {
                   <StyledButton
                     $primary
                     size="lg"
-                    onClick={id && createCalculationObject}
+                    onClick={createCalculationObject}
                   >
                     Publish
                   </StyledButton>
