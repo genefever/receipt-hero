@@ -4,14 +4,13 @@ import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
 import cellEditFactory from "react-bootstrap-table2-editor";
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
 import "react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit.min.css";
-import { FaFileCsv, FaPrint, FaTrashAlt } from "react-icons/fa";
+import { FaFileCsv, FaPrint } from "react-icons/fa";
 import { BsFillPeopleFill } from "react-icons/bs";
 import { MdEdit } from "react-icons/md";
 import { StyledButton, StyledIconButtonSpan } from "../../components/Button";
 import TotalBalance from "../../components/TotalBalance";
 import ReactToPrint from "react-to-print";
 import Container from "react-bootstrap/Container";
-import ListGroup from "react-bootstrap/ListGroup";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Input from "../Input";
@@ -21,13 +20,13 @@ import ReceiptsTableData from "./ReceiptsTableData";
 import { ThemeContext } from "styled-components";
 import { UserContext } from "../../UserContext";
 import { useHistory } from "react-router-dom";
-import { StyledModal } from "../Modal";
+import EditPeopleModal from "./EditPeopleModal";
 
 function ReceiptsTable(props) {
   const themeContext = useContext(ThemeContext);
   const { userObject } = useContext(UserContext);
   const history = useHistory();
-  const [showModal, setShowModal] = useState(false);
+
   const isUsersCalculation =
     userObject && userObject.calculations.includes(props.calculationObject._id);
 
@@ -57,15 +56,13 @@ function ReceiptsTable(props) {
 
   // Table save / edits
   const [editTitle, setEditTitle] = useState(false);
-  const [modalEditPerson, setModalEditPerson] = useState({
-    isEditing: false,
-    idx: null,
-  });
 
   function toggleEditTitle() {
     setEditTitle((prevEditTitle) => !prevEditTitle);
   }
 
+  // Modal
+  const [showModal, setShowModal] = useState(false);
   const handleShowModal = (personIdx) => {
     setShowModal(true);
   };
@@ -74,12 +71,11 @@ function ReceiptsTable(props) {
     setShowModal(false);
   }
 
-  function toggleEditPerson(editIdx = null) {
-    setModalEditPerson((prevModalEditPerson) => ({
-      isEditing: !prevModalEditPerson.isEditing,
-      idx: editIdx,
-    }));
-  }
+  const rowEvents = {
+    onClick: (e, row) => {
+      console.log(row);
+    },
+  };
 
   return (
     <>
@@ -218,6 +214,7 @@ function ReceiptsTable(props) {
                     cellEdit={cellEdit}
                     bordered={false}
                     condensed
+                    rowEvents={rowEvents}
                     noDataIndication={() => (
                       <div>
                         <h4 className="mt-4">
@@ -252,62 +249,12 @@ function ReceiptsTable(props) {
       </ToolkitProvider>
 
       {/* Modal - Edit people */}
-      <StyledModal show={showModal} onHide={handleCloseModal} size="sm">
-        <StyledModal.Header closeButton>
-          <StyledModal.Title as={"h5"}>Split between</StyledModal.Title>
-        </StyledModal.Header>
-        <StyledModal.Body>
-          <ListGroup variant="flush">
-            {props.calculationObject.people.map((person, idx) => (
-              <ListGroup.Item key={idx} action>
-                {modalEditPerson.isEditing && idx === modalEditPerson.idx ? (
-                  <OutsideClickHandler onOutsideClick={toggleEditPerson}>
-                    <Input
-                      autoFocus
-                      defaultValue={person.name}
-                      handleChange={(e) => props.onChangePersonName(e, idx)}
-                      onKeyPress={(e) => {
-                        if (e.key === "Enter") {
-                          toggleEditPerson();
-                        }
-                      }}
-                      onFocus={(e) => {
-                        e.target.select();
-                      }}
-                    />
-                  </OutsideClickHandler>
-                ) : (
-                  person.name
-                )}
-
-                {isUsersCalculation &&
-                  props.editMode &&
-                  !modalEditPerson.isEditing && (
-                    <div className="float-right d-flex align-items-center">
-                      {idx === 0 && (
-                        <p className="text-muted mr-3 mb-0">{`(You)`}</p>
-                      )}
-                      {idx >= 2 && (
-                        <StyledIconButtonSpan $delete className="mr-3">
-                          <FaTrashAlt />
-                        </StyledIconButtonSpan>
-                      )}
-
-                      <StyledIconButtonSpan>
-                        <MdEdit onClick={() => toggleEditPerson(idx)} />
-                      </StyledIconButtonSpan>
-                    </div>
-                  )}
-              </ListGroup.Item>
-            ))}
-          </ListGroup>
-        </StyledModal.Body>
-        <StyledModal.Footer>
-          <StyledButton variant="secondary" onClick={handleCloseModal}>
-            Done
-          </StyledButton>
-        </StyledModal.Footer>
-      </StyledModal>
+      <EditPeopleModal
+        {...props}
+        showModal={showModal}
+        isUsersCalculation={isUsersCalculation}
+        onCloseModal={handleCloseModal}
+      />
     </>
   );
 }
