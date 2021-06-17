@@ -12,16 +12,16 @@ function TotalBalance(props) {
 
       if (self.totalAmount > 0) {
         return (
-          <p style={{ color: themeContext.cellColorGreen }}>
+          <h6 style={{ color: themeContext.cellColorGreen }}>
             {otherPerson.name} owes you $
             {Math.abs(otherPerson.totalAmount).toFixed(2)}
-          </p>
+          </h6>
         );
       } else if (otherPerson.totalAmount > 0) {
         return (
-          <p style={{ color: themeContext.cellColorOrange }}>
+          <h5 style={{ color: themeContext.cellColorOrange }}>
             You owe {otherPerson.name} ${Math.abs(self.totalAmount).toFixed(2)}
-          </p>
+          </h5>
         );
       }
 
@@ -31,7 +31,7 @@ function TotalBalance(props) {
 
   return props.calculationObject.receipts.length ? (
     <div>
-      <h5>Total balance:</h5>
+      <h4>Total balance:</h4>
       {generateTotalBalance(props)}
     </div>
   ) : null;
