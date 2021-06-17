@@ -226,36 +226,41 @@ function Home(props) {
   function editPersonName(event, personIdx) {
     const value = event.target.value;
 
-    setCalculationObject((prevCalcObj) => {
-      // Change the name of the person in calculationObject.people array.
-      let updatedPeople = [...prevCalcObj.people];
-      updatedPeople[personIdx].name = value;
+    setCalculationObject(
+      (prevCalcObj) => {
+        // Change the name of the person in calculationObject.people array.
+        let updatedPeople = [...prevCalcObj.people];
+        updatedPeople[personIdx].name = value;
 
-      // Change every occurence of the name in calculationObject's receipts.people.
-      const updatedReceipts = [...prevCalcObj.receipts].map((receipt) => {
-        let updatedReceiptPeople = [...receipt.people];
-        let updatedReceiptBuyer = receipt.buyer;
+        // Change every occurence of the name in calculationObject's receipts.people.
+        const updatedReceipts = [...prevCalcObj.receipts].map((receipt) => {
+          let updatedReceiptPeople = [...receipt.people];
+          let updatedReceiptBuyer = receipt.buyer;
 
-        updatedReceiptPeople[personIdx].name = value;
+          updatedReceiptPeople[personIdx].name = value;
 
-        // Update the buyer's name if need be.
-        if (updatedReceiptPeople[personIdx].isBuyer) {
-          updatedReceiptBuyer = value;
-        }
+          // Update the buyer's name if need be.
+          if (updatedReceiptPeople[personIdx].isBuyer) {
+            updatedReceiptBuyer = value;
+          }
+
+          return {
+            ...receipt,
+            people: updatedReceiptPeople,
+            buyer: updatedReceiptBuyer,
+          };
+        });
 
         return {
-          ...receipt,
-          people: updatedReceiptPeople,
-          buyer: updatedReceiptBuyer,
+          ...prevCalcObj,
+          people: updatedPeople,
+          receipts: updatedReceipts,
         };
-      });
-
-      return {
-        ...prevCalcObj,
-        people: updatedPeople,
-        receipts: updatedReceipts,
-      };
-    });
+      },
+      (latestCalcObjectState) => {
+        if (id) updateCalculationObject(latestCalcObjectState);
+      }
+    );
   }
 
   // TODO: handle error
@@ -280,7 +285,7 @@ function Home(props) {
   }
 
   // Sets the current calculation object's state in the DB.
-  // Called when user is done editing the calculation title or people names.
+  // Called when user is done editing the calculation title.
   function saveCurrentCalculationObject() {
     // Only save to the database if the calcObject state actually got updated.
     if (

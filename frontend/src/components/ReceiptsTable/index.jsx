@@ -224,8 +224,8 @@ function ReceiptsTable(props) {
                           {toolkitprops.searchProps.searchText
                             ? "No records found."
                             : props.editMode
-                            ? "Add a receipt to begin."
-                            : "No receipts to show."}
+                              ? "Add a receipt to begin."
+                              : "No receipts to show."}
                         </h4>
                         <img
                           className="mx-auto d-block mt-3"
@@ -261,19 +261,13 @@ function ReceiptsTable(props) {
             {props.calculationObject.people.map((person, idx) => (
               <ListGroup.Item key={idx} action>
                 {modalEditPerson.isEditing && idx === modalEditPerson.idx ? (
-                  <OutsideClickHandler
-                    onOutsideClick={() => {
-                      props.onSaveCalculationObject();
-                      toggleEditPerson();
-                    }}
-                  >
+                  <OutsideClickHandler onOutsideClick={toggleEditPerson}>
                     <Input
                       autoFocus
                       defaultValue={person.name}
                       handleChange={(e) => props.onChangePersonName(e, idx)}
                       onKeyPress={(e) => {
                         if (e.key === "Enter") {
-                          props.onSaveCalculationObject();
                           toggleEditPerson();
                         }
                       }}
