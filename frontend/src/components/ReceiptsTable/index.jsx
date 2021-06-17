@@ -104,14 +104,20 @@ function ReceiptsTable(props) {
                     {/* Title  */}
                     {editTitle ? (
                       <OutsideClickHandler
-                        onOutsideClick={() => setEditTitle(false)}
+                        onOutsideClick={(e) => {
+                          props.onSaveCalculationObject();
+                          setEditTitle(false);
+                        }}
                       >
                         <Input
                           autoFocus
                           defaultValue={props.calculationObject.title}
                           handleChange={(e) => props.onEditCalculationTitle(e)}
                           onKeyPress={(e) => {
-                            if (e.key === "Enter") toggleEditTitle();
+                            if (e.key === "Enter") {
+                              props.onSaveCalculationObject();
+                              toggleEditTitle();
+                            }
                           }}
                           onFocus={(e) => {
                             e.target.select();
@@ -218,8 +224,8 @@ function ReceiptsTable(props) {
                           {toolkitprops.searchProps.searchText
                             ? "No records found."
                             : props.editMode
-                              ? "Add a receipt to begin."
-                              : "No receipts to show."}
+                            ? "Add a receipt to begin."
+                            : "No receipts to show."}
                         </h4>
                         <img
                           className="mx-auto d-block mt-3"
@@ -256,14 +262,20 @@ function ReceiptsTable(props) {
               <ListGroup.Item key={idx} action>
                 {modalEditPerson.isEditing && idx === modalEditPerson.idx ? (
                   <OutsideClickHandler
-                    onOutsideClick={() => toggleEditPerson()}
+                    onOutsideClick={() => {
+                      props.onSaveCalculationObject();
+                      toggleEditPerson();
+                    }}
                   >
                     <Input
                       autoFocus
                       defaultValue={person.name}
                       handleChange={(e) => props.onChangePersonName(e, idx)}
                       onKeyPress={(e) => {
-                        if (e.key === "Enter") toggleEditPerson();
+                        if (e.key === "Enter") {
+                          props.onSaveCalculationObject();
+                          toggleEditPerson();
+                        }
                       }}
                       onFocus={(e) => {
                         e.target.select();

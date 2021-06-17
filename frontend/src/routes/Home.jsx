@@ -11,6 +11,7 @@ import { BsInfoCircle } from "react-icons/bs";
 import { UserContext } from "../UserContext";
 import { useHistory, useParams } from "react-router-dom";
 import * as api from "../api";
+import { useStateCallback, usePrevious } from "../hooks";
 
 function Home(props) {
   const {
@@ -39,9 +40,10 @@ function Home(props) {
     };
   }, []);
 
-  const [calculationObject, setCalculationObject] = useState(
+  const [calculationObject, setCalculationObject] = useStateCallback(
     defaultCalculationObject
   );
+  const prevState = usePrevious({ calculationObject });
   const [showAlert, setShowAlert] = useState(true);
   const [editMode, setEditMode] = useState(true);
   const calculatorRef = useRef(); // Used to calculate balance owed
@@ -62,7 +64,6 @@ function Home(props) {
 
     if (id) {
       getCalculationObject(id);
-
       // Check if URL contains 'edit'
       if (window.location.href.indexOf("edit") !== -1) {
         if (!loadingUserObject) {
@@ -96,85 +97,50 @@ function Home(props) {
     loadingUserObject,
     defaultCalculationObject,
     history.location,
+    setCalculationObject,
   ]);
 
   // Adds a new receipt to the calculation's receipts list.
   function addReceipt(newReceipt) {
-    setCalculationObject((prevCalcObj) => {
-      const prevReceipts = prevCalcObj.receipts;
-      newReceipt.total = parseFloat(newReceipt.total).toFixed(2);
-      newReceipt.id = prevReceipts.length + 1; // TODO Generate uuid or something
+    setCalculationObject(
+      (prevCalcObj) => {
+        const prevReceipts = prevCalcObj.receipts;
+        newReceipt.total = parseFloat(newReceipt.total).toFixed(2);
+        newReceipt.id = prevReceipts.length + 1; // TODO Generate uuid or something
 
-      // Add the new receipt's people amount to the calc object's people's totalAmount.
-      const updatedPeople = [...prevCalcObj.people].map((person) => {
+        // Add the new receipt's people amount to the calc object's people's totalAmount.
+        const updatedPeople = [...prevCalcObj.people].map((person) => {
+          return {
+            ...person,
+            totalAmount:
+              person.totalAmount + newReceipt.people[person.idx].amount,
+          };
+        });
+
         return {
-          ...person,
-          totalAmount:
-            person.totalAmount + newReceipt.people[person.idx].amount,
+          ...prevCalcObj,
+          receipts: [...prevReceipts, newReceipt],
+          people: updatedPeople,
         };
-      });
-
-      return {
-        ...prevCalcObj,
-        receipts: [...prevReceipts, newReceipt],
-        people: updatedPeople,
-      };
-    });
+      },
+      (latestCalcObjectState) => {
+        if (id) updateCalculationObject(latestCalcObjectState);
+      }
+    );
   }
 
   // Edits a receipt in the receipts list with updated balance calculation.
   function editReceipt(newReceipt) {
-    setCalculationObject((prevCalcObj) => {
-      let updatedPeople = [...prevCalcObj.people];
+    setCalculationObject(
+      (prevCalcObj) => {
+        let updatedPeople = [...prevCalcObj.people];
 
-      const updatedReceipts = [...prevCalcObj.receipts].map((receipt) => {
-        if (receipt.id !== newReceipt.id) {
-          return receipt;
-        }
+        const updatedReceipts = [...prevCalcObj.receipts].map((receipt) => {
+          if (receipt.id !== newReceipt.id) {
+            return receipt;
+          }
 
-        // Remove from totalAmount for each person the old receipt value.
-        updatedPeople = updatedPeople.map((person) => {
-          return {
-            ...person,
-            totalAmount: person.totalAmount - receipt.people[person.idx].amount,
-          };
-        });
-
-        const updatedCalculations = calculatorRef.current.calculateBalanceOwed(
-          newReceipt
-        );
-
-        return {
-          ...newReceipt,
-          ...updatedCalculations,
-        };
-      });
-
-      // Add to totalAmount for each person the new receipt value.
-      updatedPeople = updatedPeople.map((person) => {
-        return {
-          ...person,
-          totalAmount:
-            person.totalAmount + newReceipt.people[person.idx].amount,
-        };
-      });
-
-      return {
-        ...prevCalcObj,
-        receipts: updatedReceipts,
-        people: updatedPeople,
-      };
-    });
-  }
-
-  // Deletes a receipt from the calculation's receipts list.
-  function deleteReceipt(idToDelete) {
-    setCalculationObject((prevCalcObj) => {
-      let updatedPeople = [...prevCalcObj.people];
-
-      const updatedReceipts = [...prevCalcObj.receipts].filter((receipt) => {
-        if (idToDelete === receipt.id) {
-          // Update the totalAmount for each person.
+          // Remove from totalAmount for each person the old receipt value.
           updatedPeople = updatedPeople.map((person) => {
             return {
               ...person,
@@ -182,22 +148,75 @@ function Home(props) {
                 person.totalAmount - receipt.people[person.idx].amount,
             };
           });
-        }
 
-        return idToDelete !== receipt.id;
-      });
+          const updatedCalculations = calculatorRef.current.calculateBalanceOwed(
+            newReceipt
+          );
 
-      return {
-        ...prevCalcObj,
-        receipts: updatedReceipts,
-        people: updatedPeople,
-      };
-    });
+          return {
+            ...newReceipt,
+            ...updatedCalculations,
+          };
+        });
+
+        // Add to totalAmount for each person the new receipt value.
+        updatedPeople = updatedPeople.map((person) => {
+          return {
+            ...person,
+            totalAmount:
+              person.totalAmount + newReceipt.people[person.idx].amount,
+          };
+        });
+
+        return {
+          ...prevCalcObj,
+          receipts: updatedReceipts,
+          people: updatedPeople,
+        };
+      },
+      (latestCalcObjectState) => {
+        if (id) updateCalculationObject(latestCalcObjectState);
+      }
+    );
+  }
+
+  // Deletes a receipt from the calculation's receipts list.
+  function deleteReceipt(idToDelete) {
+    setCalculationObject(
+      (prevCalcObj) => {
+        let updatedPeople = [...prevCalcObj.people];
+
+        const updatedReceipts = [...prevCalcObj.receipts].filter((receipt) => {
+          if (idToDelete === receipt.id) {
+            // Update the totalAmount for each person.
+            updatedPeople = updatedPeople.map((person) => {
+              return {
+                ...person,
+                totalAmount:
+                  person.totalAmount - receipt.people[person.idx].amount,
+              };
+            });
+          }
+
+          return idToDelete !== receipt.id;
+        });
+
+        return {
+          ...prevCalcObj,
+          receipts: updatedReceipts,
+          people: updatedPeople,
+        };
+      },
+      (latestCalcObjectState) => {
+        if (id) updateCalculationObject(latestCalcObjectState);
+      }
+    );
   }
 
   // Sets the calculationObject's title.
   function editCalculationTitle(event) {
     const value = event.target.value ? event.target.value : "Untitled";
+
     setCalculationObject((prevCalcObj) => {
       return { ...prevCalcObj, title: value };
     });
@@ -245,21 +264,37 @@ function Home(props) {
       await api.createCalculation(calculationObject);
       // Refresh the userObject when making changes to it.
       await getAuthenticatedUserObject();
-      history.push(`/calculation/${calculationObject._id}`);
+      history.push(`/user/${userObject._id}`);
     } catch (err) {
       console.log(err);
     }
   }
 
   // TODO: handle error
-  async function updateCalculationObject() {
+  async function updateCalculationObject(latestCalcObjectState) {
     try {
-      await api.updateCalculation(calculationObject);
-      // Refresh the userObject when making changes to it.
-      await getAuthenticatedUserObject();
-      history.push(`/calculation/${calculationObject._id}`);
+      await api.updateCalculation(latestCalcObjectState);
     } catch (err) {
       console.log(err);
+    }
+  }
+
+  // Sets the current calculation object's state in the DB.
+  // Called when user is done editing the calculation title or people names.
+  function saveCurrentCalculationObject() {
+    // Only save to the database if the calcObject state actually got updated.
+    if (
+      JSON.stringify(prevState.calculationObject) !==
+      JSON.stringify(calculationObject)
+    ) {
+      setCalculationObject(
+        (prevCalcObj) => {
+          return { ...prevCalcObj };
+        },
+        (latestCalcObjectState) => {
+          if (id) updateCalculationObject(latestCalcObjectState);
+        }
+      );
     }
   }
 
@@ -312,17 +347,16 @@ function Home(props) {
                   onEditCalculationTitle={editCalculationTitle}
                   editMode={editMode}
                   onChangePersonName={editPersonName}
+                  onSaveCalculationObject={saveCurrentCalculationObject}
                 />
 
-                {userObject && editMode && (
+                {userObject && !id && (
                   <StyledButton
                     $primary
                     size="lg"
-                    onClick={
-                      id ? updateCalculationObject : createCalculationObject
-                    }
+                    onClick={id && createCalculationObject}
                   >
-                    {id ? "Save" : "Publish"}
+                    Publish
                   </StyledButton>
                 )}
               </StyledCard>
