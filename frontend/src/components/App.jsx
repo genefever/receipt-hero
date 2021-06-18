@@ -17,6 +17,7 @@ import { lightTheme, darkTheme } from "../styles/Themes";
 import { useDarkMode } from "../styles/useDarkMode";
 import { Wrapper } from "./Container";
 import { UserContext } from "../UserContext";
+import { ConfigProvider } from "react-avatar";
 
 function App() {
   const [theme, themeToggler, mountedComponent] = useDarkMode();
@@ -26,33 +27,35 @@ function App() {
 
   if (!mountedComponent) return <div />;
   return (
-    <ThemeProvider theme={themeMode}>
-      <GlobalStyles />
-      <Router>
-        <NavigationBar theme={theme} toggleTheme={themeToggler} />
-        <Wrapper>
-          <Switch>
-            <Route exact path="/" component={Home} />
-            <Route path="/login">
-              {userObject ? <Redirect to="/" /> : <Auth isSignUp={false} />}
-            </Route>
-            <Route path="/signup">
-              {userObject ? <Redirect to="/" /> : <Auth isSignUp={true} />}
-            </Route>
-            <Route path="/user/:id" component={User} />
-            <Route path="/calculation/edit/:id" component={Home} />
-            <Route path="/calculation/:id" component={Home} />
-            <Route path="/forgot">
-              <ForgotPassword isResetPassword={false} />
-            </Route>
-            <Route path="/reset/:token">
-              <ForgotPassword isResetPassword={true} />
-            </Route>
-            <Route component={NoMatch} />
-          </Switch>
-        </Wrapper>
-      </Router>
-    </ThemeProvider>
+    <ConfigProvider avatarRedirectUrl="https://avatar-redirect.appspot.com">
+      <ThemeProvider theme={themeMode}>
+        <GlobalStyles />
+        <Router>
+          <NavigationBar theme={theme} toggleTheme={themeToggler} />
+          <Wrapper>
+            <Switch>
+              <Route exact path="/" component={Home} />
+              <Route path="/login">
+                {userObject ? <Redirect to="/" /> : <Auth isSignUp={false} />}
+              </Route>
+              <Route path="/signup">
+                {userObject ? <Redirect to="/" /> : <Auth isSignUp={true} />}
+              </Route>
+              <Route path="/user/:id" component={User} />
+              <Route path="/calculation/edit/:id" component={Home} />
+              <Route path="/calculation/:id" component={Home} />
+              <Route path="/forgot">
+                <ForgotPassword isResetPassword={false} />
+              </Route>
+              <Route path="/reset/:token">
+                <ForgotPassword isResetPassword={true} />
+              </Route>
+              <Route component={NoMatch} />
+            </Switch>
+          </Wrapper>
+        </Router>
+      </ThemeProvider>
+    </ConfigProvider>
   );
 }
 
