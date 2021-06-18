@@ -161,7 +161,14 @@ function Auth(props) {
             />
             {!isSignUp && (
               <div className="mb-4">
-                <Link to="/forgot">Forgot password?</Link>
+                <Link
+                  to={{
+                    pathname: "/forgot",
+                    state: { isResetPassword: false },
+                  }}
+                >
+                  Forgot password?
+                </Link>
               </div>
             )}
             {/* Submit button */}

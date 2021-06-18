@@ -45,7 +45,7 @@ function App() {
             <Route path="/forgot">
               <ForgotPassword isResetPassword={false} />
             </Route>
-            <Route path="/reset">
+            <Route path="/reset/:token">
               <ForgotPassword isResetPassword={true} />
             </Route>
             <Route component={NoMatch} />

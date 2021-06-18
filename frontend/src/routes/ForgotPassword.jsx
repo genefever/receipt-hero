@@ -104,7 +104,7 @@ function ForgotPassword(props) {
           )}
           {/* Submit button */}
           <StyledButton $primary type="submit" size="lg" className="mt-4" block>
-            {isResetPassword ? "Update password" : "Request a recovery link"}
+            {isResetPassword ? "Update password" : "Email me a recovery link"}
           </StyledButton>
           {!isResetPassword && (
             <Link to="/login">
