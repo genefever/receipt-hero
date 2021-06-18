@@ -1,5 +1,6 @@
 require("dotenv").config();
 const User = require("../models/user");
+const nodemailer = require("nodemailer");
 const passport = require("passport");
 require("../config/passportConfig")(passport);
 const async = require("async");
@@ -123,6 +124,7 @@ const forgotPassword = (req, res, next) => {
               message: "Failed to find email for forgot password.",
               error: err,
             });
+            return;
           }
           if (!user) {
             //   req.flash('error', 'No account with that email address exists.');
@@ -130,6 +132,7 @@ const forgotPassword = (req, res, next) => {
             res
               .status(400)
               .json({ message: "No account with that email address exists." });
+            return;
           }
 
           user.resetPasswordToken = token;
@@ -141,16 +144,23 @@ const forgotPassword = (req, res, next) => {
         });
       },
       function (token, user, done) {
-        var smtpTransport = nodemailer.createTransport("SMTP", {
-          service: "SendPulse",
+        var smtpTransport = nodemailer.createTransport({
+          service: "Gmail",
           auth: {
-            user: process.env.SENDPULSE_EMAIL,
-            pass: process.env.SENDPULSE_PASSWORD,
+            type: "OAuth2",
+            user: process.env.GOOGLE_EMAIL_ADDRESS,
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
           },
         });
+
         var mailOptions = {
           to: user.email,
-          from: "passwordreset@receipthero-noreply.com",
+          from: {
+            name: "Receipt Hero",
+            address: "no-reply@receipthero.com",
+          },
           subject: "Receipt Hero Password Reset",
           text:
             "You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n" +

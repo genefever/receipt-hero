@@ -7,6 +7,7 @@ import { SignInContainer } from "../components/Container";
 import { StyledButton } from "../components/Button";
 import { StyledCard } from "../components/Card";
 import { Link } from "react-router-dom";
+import * as api from "../api";
 
 function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -15,8 +16,12 @@ function ForgotPassword() {
     setEmail(e.target.value);
   }
 
-  function handleSubmit(e) {
-    alert("I work");
+  async function handleSubmit() {
+    try {
+      await api.forgotPassword({ email: email });
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   return (
@@ -37,7 +42,12 @@ function ForgotPassword() {
           Please enter the email address associated with your account.
         </p>
         {/* <hr /> */}
-        <Form onSubmit={(e) => handleSubmit(e)}>
+        <Form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSubmit();
+          }}
+        >
           {/* Email */}
           <Input
             name="email"
@@ -49,7 +59,7 @@ function ForgotPassword() {
           />
           {/* Submit button */}
           <StyledButton $primary type="submit" size="lg" className="mt-4" block>
-            Email me a recovery link
+            Request a recovery link
           </StyledButton>
           <Link to="/login">
             <StyledButton variant="link" size="lg" block className="pb-0 mt-2">
