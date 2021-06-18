@@ -42,7 +42,12 @@ function App() {
             <Route path="/user/:id" component={User} />
             <Route path="/calculation/edit/:id" component={Home} />
             <Route path="/calculation/:id" component={Home} />
-            <Route path="/forgot" component={ForgotPassword} />
+            <Route path="/forgot">
+              <ForgotPassword isResetPassword={false} />
+            </Route>
+            <Route path="/reset">
+              <ForgotPassword isResetPassword={true} />
+            </Route>
             <Route component={NoMatch} />
           </Switch>
         </Wrapper>

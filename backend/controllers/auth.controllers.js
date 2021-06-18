@@ -185,7 +185,105 @@ const forgotPassword = (req, res, next) => {
     ],
     function (err) {
       if (err) return next(err);
-      // res.redirect("/forgot");
+    }
+  );
+};
+
+const requestResetPassword = (req, res) => {
+  User.findOne(
+    {
+      resetPasswordToken: req.params.token,
+      resetPasswordExpires: { $gt: Date.now() },
+    },
+    function (err, user) {
+      if (err) {
+        res.status(500).json({
+          message: "Failed while verifying password reset eligibility.",
+          error: err,
+        });
+        return;
+      }
+      if (!user) {
+        //   req.flash('error', 'No account with that email address exists.');
+        // return res.redirect('/forgot');
+        res
+          .status(400)
+          .json({ message: "No account with that email address exists." });
+        return;
+      }
+      // res.render("reset", {
+      //   user: req.user,
+      // });
+    }
+  );
+};
+
+const resetPassword = (req, res) => {
+  async.waterfall(
+    [
+      function (done) {
+        User.findOne(
+          {
+            resetPasswordToken: req.params.token,
+            resetPasswordExpires: { $gt: Date.now() },
+          },
+          function (err, user) {
+            if (!user) {
+              req.flash(
+                "error",
+                "Password reset token is invalid or has expired."
+              );
+              return res.redirect("back");
+            }
+
+            user.password = req.body.password;
+            user.resetPasswordToken = undefined;
+            user.resetPasswordExpires = undefined;
+
+            user.save(function (err) {
+              req.logIn(user, function (err) {
+                done(err, user);
+              });
+            });
+          }
+        );
+      },
+      function (user, done) {
+        var smtpTransport = nodemailer.createTransport({
+          service: "Gmail",
+          auth: {
+            type: "OAuth2",
+            user: process.env.GOOGLE_EMAIL_ADDRESS,
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
+          },
+        });
+        var mailOptions = {
+          to: user.email,
+          from: {
+            name: "Receipt Hero",
+            address: "no-reply@receipthero.com",
+          },
+          subject: "Your password has been changed",
+          text:
+            "Hello,\n\n" +
+            "This is a confirmation that the password for your account " +
+            user.email +
+            " has just been changed.\n",
+        };
+        smtpTransport.sendMail(mailOptions, function (err) {
+          // req.flash("success", "Success! Your password has been changed.");
+          done(err);
+        });
+      },
+    ],
+    function (err) {
+      // res.redirect("/");
+      res.status(500).json({
+        message: "Failed while resetting password.",
+        error: err,
+      });
     }
   );
 };
@@ -222,6 +320,8 @@ module.exports = {
   login,
   logout,
   forgotPassword,
+  resetPassword,
+  requestResetPassword,
   googleAuth,
   googleAuthCallback,
   facebookAuth,

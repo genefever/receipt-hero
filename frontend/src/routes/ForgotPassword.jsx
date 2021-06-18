@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 import logo from "../assets/logo.svg";
@@ -9,16 +9,46 @@ import { StyledCard } from "../components/Card";
 import { Link } from "react-router-dom";
 import * as api from "../api";
 
-function ForgotPassword() {
-  const [email, setEmail] = useState("");
+function ForgotPassword(props) {
+  const [isResetPassword, setIsResetPassword] = useState(props.isSignUp);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
 
-  function handleEmailChange(e) {
-    setEmail(e.target.value);
+  // Update authentication page based on props.isSignUp change.
+  useEffect(() => {
+    setIsResetPassword(props.isResetPassword);
+  }, [props.isResetPassword]);
+
+  function handleFormDataChange(event) {
+    const { name, value } = event.target;
+    setFormData((prevValue) => {
+      return { ...prevValue, [name]: value };
+    });
   }
 
-  async function handleSubmit() {
+  function handleSubmit(event) {
+    event.preventDefault();
+
+    if (isResetPassword) {
+      resetPassword();
+    } else {
+      forgotPassword();
+    }
+  }
+
+  async function resetPassword() {
     try {
-      await api.forgotPassword({ email: email });
+      await api.resetPassword(formData);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async function forgotPassword() {
+    try {
+      await api.forgotPassword(formData);
     } catch (err) {
       console.log(err);
     }
@@ -36,11 +66,13 @@ function ForgotPassword() {
         />
       </Card.Body>
       <StyledCard>
-        <h3>Forgot Password</h3>
+        <h3>{isResetPassword ? "Reset" : "Forgot"} Password</h3>
         <hr />
-        <p className="small">
-          Please enter the email address associated with your account.
-        </p>
+        {!isResetPassword && (
+          <p className="small">
+            Please enter the email address associated with your account.
+          </p>
+        )}
         {/* <hr /> */}
         <Form
           onSubmit={(e) => {
@@ -48,24 +80,44 @@ function ForgotPassword() {
             handleSubmit();
           }}
         >
-          {/* Email */}
-          <Input
-            name="email"
-            value={email}
-            label="Email"
-            type="email"
-            handleChange={(e) => handleEmailChange(e)}
-            controlId={"formBasicEmail"}
-          />
+          {/* Email / Password */}
+          {isResetPassword ? (
+            <div>
+              <Input
+                name="password"
+                value={formData.password}
+                label="New password"
+                type="password"
+                handleChange={(event) => handleFormDataChange(event)}
+                controlId={"formBasicPassword"}
+              />
+            </div>
+          ) : (
+            <Input
+              name="email"
+              value={formData.email}
+              label="Email"
+              type="email"
+              handleChange={(e) => handleFormDataChange(e)}
+              controlId={"formBasicEmail"}
+            />
+          )}
           {/* Submit button */}
           <StyledButton $primary type="submit" size="lg" className="mt-4" block>
-            Request a recovery link
+            {isResetPassword ? "Update password" : "Request a recovery link"}
           </StyledButton>
-          <Link to="/login">
-            <StyledButton variant="link" size="lg" block className="pb-0 mt-2">
-              Back to login
-            </StyledButton>
-          </Link>
+          {!isResetPassword && (
+            <Link to="/login">
+              <StyledButton
+                variant="link"
+                size="lg"
+                block
+                className="pb-0 mt-2"
+              >
+                Back to login
+              </StyledButton>
+            </Link>
+          )}
         </Form>
       </StyledCard>
     </SignInContainer>
