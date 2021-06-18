@@ -161,7 +161,7 @@ function Auth(props) {
             />
             {!isSignUp && (
               <div className="mb-4">
-                <Link to="/signup">Forgot password?</Link>
+                <Link to="/forgot">Forgot password?</Link>
               </div>
             )}
             {/* Submit button */}

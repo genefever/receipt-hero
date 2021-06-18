@@ -1,7 +1,9 @@
-const bcrypt = require("bcrypt");
+require("dotenv").config();
 const User = require("../models/user");
 const passport = require("passport");
 require("../config/passportConfig")(passport);
+const async = require("async");
+const crypto = require("crypto");
 
 const getAuthenticatedUser = (req, res) => {
   res.send(req.user);
@@ -21,12 +23,11 @@ const signup = (req, res, next) => {
         .json({ message: "An account with this email already exists." });
     } else {
       try {
-        const hashedPassword = await bcrypt.hash(req.body.password, 10);
         const newUser = new User({
           firstName: req.body.firstName,
           lastName: req.body.lastName,
           email: req.body.email,
-          password: hashedPassword,
+          password: req.body.password,
         });
 
         newUser.save(function (err) {
@@ -106,6 +107,79 @@ const logout = (req, res, next) => {
   }
 };
 
+const forgotPassword = (req, res, next) => {
+  async.waterfall(
+    [
+      function (done) {
+        crypto.randomBytes(20, function (err, buf) {
+          var token = buf.toString("hex");
+          done(err, token);
+        });
+      },
+      function (token, done) {
+        User.findOne({ email: req.body.email }, function (err, user) {
+          if (err) {
+            res.status(500).json({
+              message: "Failed to find email for forgot password.",
+              error: err,
+            });
+          }
+          if (!user) {
+            //   req.flash('error', 'No account with that email address exists.');
+            // return res.redirect('/forgot');
+            res
+              .status(400)
+              .json({ message: "No account with that email address exists." });
+          }
+
+          user.resetPasswordToken = token;
+          user.resetPasswordExpires = Date.now() + 900000; // 15 minutes
+
+          user.save(function (err) {
+            done(err, token, user);
+          });
+        });
+      },
+      function (token, user, done) {
+        var smtpTransport = nodemailer.createTransport("SMTP", {
+          service: "SendPulse",
+          auth: {
+            user: process.env.SENDPULSE_EMAIL,
+            pass: process.env.SENDPULSE_PASSWORD,
+          },
+        });
+        var mailOptions = {
+          to: user.email,
+          from: "passwordreset@receipthero-noreply.com",
+          subject: "Receipt Hero Password Reset",
+          text:
+            "You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n" +
+            "Please click on the following link, or paste this into your browser to complete the process:\n\n" +
+            "http://" +
+            req.headers.host +
+            "/reset/" +
+            token +
+            "\n\n" +
+            "If you did not request this, please ignore this email and your password will remain unchanged.\n",
+        };
+        smtpTransport.sendMail(mailOptions, function (err) {
+          // req.flash(
+          //   "info",
+          //   "An e-mail has been sent to " +
+          //     user.email +
+          //     " with further instructions."
+          // );
+          done(err, "done");
+        });
+      },
+    ],
+    function (err) {
+      if (err) return next(err);
+      // res.redirect("/forgot");
+    }
+  );
+};
+
 const googleAuth = (req, res, next) => {
   passport.authenticate("google", { scope: ["email", "openid", "profile"] })(
     req,
@@ -137,6 +211,7 @@ module.exports = {
   signup,
   login,
   logout,
+  forgotPassword,
   googleAuth,
   googleAuthCallback,
   facebookAuth,

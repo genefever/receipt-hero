@@ -28,7 +28,9 @@ function ReceiptsTable(props) {
   const history = useHistory();
 
   const isUsersCalculation =
-    userObject && userObject.calculations.includes(props.calculationObject._id);
+    userObject &&
+    userObject.calculations &&
+    userObject.calculations.includes(props.calculationObject._id);
 
   // Table properties
   const columns = ReceiptsTableData(props);

@@ -4,6 +4,7 @@ import Auth from "../routes/Auth";
 import Home from "../routes/Home";
 import User from "../routes/User";
 import NoMatch from "../routes/NoMatch";
+import ForgotPassword from "../routes/ForgotPassword";
 import {
   BrowserRouter as Router,
   Switch,
@@ -41,6 +42,7 @@ function App() {
             <Route path="/user/:id" component={User} />
             <Route path="/calculation/edit/:id" component={Home} />
             <Route path="/calculation/:id" component={Home} />
+            <Route path="/forgot" component={ForgotPassword} />
             <Route component={NoMatch} />
           </Switch>
         </Wrapper>

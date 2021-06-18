@@ -17,7 +17,7 @@ const calculationRouter = require("./routes/calculation.routes");
 // Connect to Mongo DB
 mongoose.connect(
   process.env.DEV_MONGODB_URI,
-  { useNewUrlParser: true, useUnifiedTopology: true },
+  { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true },
   () => console.log("Mongoose is connected.")
 );
 
