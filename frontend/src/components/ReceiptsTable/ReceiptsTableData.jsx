@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { Type } from "react-bootstrap-table2-editor";
 import { FaTrashAlt } from "react-icons/fa";
-import { MdEdit } from "react-icons/md";
+// import { MdEdit } from "react-icons/md";
 import { StyledIconButtonSpan } from "../../components/Button";
 import { ThemeContext } from "styled-components";
 
@@ -106,12 +106,12 @@ function ReceiptsTableData(props) {
       formatter: (cellContent, row, index, extraData) => {
         return extraData ? (
           <div className="text-nowrap">
-            <StyledIconButtonSpan
+            {/* <StyledIconButtonSpan
               onClick={() => props.onShowReceiptModal()}
               className="mr-3"
-            >
+              >
               <MdEdit />
-            </StyledIconButtonSpan>
+            </StyledIconButtonSpan> */}
             <StyledIconButtonSpan
               $delete
               className="hide-on-print"

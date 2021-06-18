@@ -21,7 +21,6 @@ import { ThemeContext } from "styled-components";
 import { UserContext } from "../../UserContext";
 import { useHistory } from "react-router-dom";
 import PeopleModal from "./PeopleModal";
-import ReceiptModal from "./ReceiptModal";
 
 function ReceiptsTable(props) {
   const themeContext = useContext(ThemeContext);
@@ -32,10 +31,7 @@ function ReceiptsTable(props) {
     userObject && userObject.calculations.includes(props.calculationObject._id);
 
   // Table properties
-  const columns = ReceiptsTableData({
-    ...props,
-    onShowReceiptModal: () => handleShowReceiptModal(),
-  });
+  const columns = ReceiptsTableData(props);
   const printComponentRef = useRef();
   const { SearchBar } = Search;
   const ExportCSVButton = (props) => {
@@ -67,25 +63,13 @@ function ReceiptsTable(props) {
 
   // Modal
   const [showPeopleModal, setShowPeopleModal] = useState(false);
-  const [showReceiptModal, setShowReceiptModal] = useState(false);
+
   function handleShowPeopleModal(personIdx) {
     setShowPeopleModal(true);
   }
   function handleClosePeopleModal() {
     setShowPeopleModal(false);
   }
-  function handleShowReceiptModal(personIdx) {
-    setShowReceiptModal(true);
-  }
-  function handleCloseReceiptModal() {
-    setShowReceiptModal(false);
-  }
-
-  const rowEvents = {
-    onClick: (e, row) => {
-      console.log(row);
-    },
-  };
 
   return (
     <>
@@ -224,15 +208,14 @@ function ReceiptsTable(props) {
                     cellEdit={cellEdit}
                     bordered={false}
                     condensed
-                    rowEvents={rowEvents}
                     noDataIndication={() => (
                       <div>
                         <h4 className="mt-4">
                           {toolkitprops.searchProps.searchText
                             ? "No records found."
                             : props.editMode
-                              ? "Add a receipt to begin."
-                              : "No receipts to show."}
+                            ? "Add a receipt to begin."
+                            : "No receipts to show."}
                         </h4>
                         <img
                           className="mx-auto d-block mt-3"
@@ -258,18 +241,12 @@ function ReceiptsTable(props) {
         )}
       </ToolkitProvider>
 
-      {/* Modals */}
-      {/* Edit people */}
+      {/* Modals - Edit people */}
       <PeopleModal
         {...props}
         showModal={showPeopleModal}
         isUsersCalculation={isUsersCalculation}
         onCloseModal={handleClosePeopleModal}
-      />
-      <ReceiptModal
-        {...props}
-        showModal={showReceiptModal}
-        onCloseModal={handleCloseReceiptModal}
       />
     </>
   );
