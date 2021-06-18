@@ -20,7 +20,8 @@ import ReceiptsTableData from "./ReceiptsTableData";
 import { ThemeContext } from "styled-components";
 import { UserContext } from "../../UserContext";
 import { useHistory } from "react-router-dom";
-import EditPeopleModal from "./EditPeopleModal";
+import PeopleModal from "./PeopleModal";
+import ReceiptModal from "./ReceiptModal";
 
 function ReceiptsTable(props) {
   const themeContext = useContext(ThemeContext);
@@ -31,7 +32,10 @@ function ReceiptsTable(props) {
     userObject && userObject.calculations.includes(props.calculationObject._id);
 
   // Table properties
-  const columns = ReceiptsTableData(props);
+  const columns = ReceiptsTableData({
+    ...props,
+    onShowReceiptModal: () => handleShowReceiptModal(),
+  });
   const printComponentRef = useRef();
   const { SearchBar } = Search;
   const ExportCSVButton = (props) => {
@@ -62,13 +66,19 @@ function ReceiptsTable(props) {
   }
 
   // Modal
-  const [showModal, setShowModal] = useState(false);
-  const handleShowModal = (personIdx) => {
-    setShowModal(true);
-  };
-
-  function handleCloseModal() {
-    setShowModal(false);
+  const [showPeopleModal, setShowPeopleModal] = useState(false);
+  const [showReceiptModal, setShowReceiptModal] = useState(false);
+  function handleShowPeopleModal(personIdx) {
+    setShowPeopleModal(true);
+  }
+  function handleClosePeopleModal() {
+    setShowPeopleModal(false);
+  }
+  function handleShowReceiptModal(personIdx) {
+    setShowReceiptModal(true);
+  }
+  function handleCloseReceiptModal() {
+    setShowReceiptModal(false);
   }
 
   const rowEvents = {
@@ -170,7 +180,7 @@ function ReceiptsTable(props) {
                   <StyledButton
                     className="btn-sm px-0 py-0"
                     variant="link"
-                    onClick={handleShowModal}
+                    onClick={handleShowPeopleModal}
                   >
                     <div className="d-flex align-items-center">
                       <BsFillPeopleFill className="mr-1" /> 2 people
@@ -248,12 +258,18 @@ function ReceiptsTable(props) {
         )}
       </ToolkitProvider>
 
-      {/* Modal - Edit people */}
-      <EditPeopleModal
+      {/* Modals */}
+      {/* Edit people */}
+      <PeopleModal
         {...props}
-        showModal={showModal}
+        showModal={showPeopleModal}
         isUsersCalculation={isUsersCalculation}
-        onCloseModal={handleCloseModal}
+        onCloseModal={handleClosePeopleModal}
+      />
+      <ReceiptModal
+        {...props}
+        showModal={showReceiptModal}
+        onCloseModal={handleCloseReceiptModal}
       />
     </>
   );

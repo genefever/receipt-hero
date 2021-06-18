@@ -138,7 +138,7 @@ function User(props) {
           <>
             <StyledIconButtonSpan
               onClick={() => handleEditPressed(row._id)}
-              className="mr-2"
+              className="mr-3"
             >
               <MdEdit />
             </StyledIconButtonSpan>
