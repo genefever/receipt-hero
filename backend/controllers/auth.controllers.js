@@ -68,7 +68,7 @@ const login = (req, res, next) => {
       return next(err);
     }
     if (!user) {
-      return res.status(401).json({ message: "User does not exist." });
+      return res.status(401).json({ message: "Incorrect email or password." });
     }
     req.logIn(user, (err) => {
       if (err) {

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
+import Alert from "react-bootstrap/Alert";
 import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
@@ -18,6 +19,8 @@ function Auth(props) {
 
   const history = useHistory();
   const [isSignUp, setIsSignUp] = useState(props.isSignUp);
+  const [errorMessage, setErrorMessage] = useState();
+
   // Update authentication page based on props.isSignUp change.
   useEffect(() => {
     setIsSignUp(props.isSignUp);
@@ -57,7 +60,7 @@ function Auth(props) {
       setUserObject(res.data.userObject);
       history.push("/");
     } catch (err) {
-      console.log(err);
+      if (err.response) setErrorMessage(err.response.data.message);
     }
   }
 
@@ -68,7 +71,7 @@ function Auth(props) {
       setUserObject(res.data.userObject);
       history.push("/");
     } catch (err) {
-      console.log(err);
+      if (err.response) setErrorMessage(err.response.data.message);
     }
   }
 
@@ -114,6 +117,16 @@ function Auth(props) {
         </StyledButton>
 
         <Separator className="my-3">or</Separator>
+
+        {errorMessage && (
+          <Alert
+            variant="danger"
+            onClose={() => setErrorMessage(null)}
+            dismissible
+          >
+            {errorMessage}
+          </Alert>
+        )}
 
         <StyledCard>
           <Form onSubmit={(event) => handleSubmit(event)}>

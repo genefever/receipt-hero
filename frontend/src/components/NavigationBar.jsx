@@ -15,8 +15,8 @@ import Avatar from "react-avatar";
 
 const StyledNavbar = styled(Navbar)`
   background-color: ${({ theme }) => theme.navbar};
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
+  padding-top: 0.15rem;
+  padding-bottom: 0.15rem;
   line-height: 2rem;
   position: sticky;
 `;
@@ -94,27 +94,27 @@ function NavigationBar(props) {
           {/* Auth Buttons */}
           {userObject ? (
             // User is logged in
-              <NavDropdown
-                title={
-                  <Avatar
-                    googleId={userObject.googleId}
-                    facebookId={userObject.facebookId}
-                    name={`${userObject.firstName} ${userObject.lastName}`}
-                    round={true}
-                    size="33"
-                    className="mr-1"
-                  />
-                }
-                id="navbarScrollingDropdown"
-                alignRight
-                show={showDropdown}
-                onMouseEnter={handleOpen}
-                onMouseLeave={handleClose}
-                className="mr-3"
-              >
-                <NavDropdown.Item as={Link} to={"/user/" + userObject._id}>
-                  My profile
-                </NavDropdown.Item>
+            <NavDropdown
+              title={
+                <Avatar
+                  googleId={userObject.googleId}
+                  facebookId={userObject.facebookId}
+                  name={`${userObject.firstName} ${userObject.lastName}`}
+                  round={true}
+                  size="33"
+                  className="mr-1"
+                />
+              }
+              id="navbarScrollingDropdown"
+              alignRight
+              show={showDropdown}
+              onMouseEnter={handleOpen}
+              onMouseLeave={handleClose}
+              className="mr-3"
+            >
+              <NavDropdown.Item as={Link} to={"/user/" + userObject._id}>
+                My profile
+              </NavDropdown.Item>
 
               <NavDropdown.Item as={Link} to="/">
                 Settings

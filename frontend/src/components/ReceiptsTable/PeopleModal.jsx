@@ -49,8 +49,7 @@ function EditPeopleModal(props) {
                 person.name
               )}
 
-              {props.isUsersCalculation &&
-                props.editMode &&
+              {(!props.id || (props.isUsersCalculation && props.editMode)) &&
                 !modalEditPerson.isEditing && (
                   <div className="float-right d-flex align-items-center">
                     {idx === 0 && (

@@ -289,8 +289,9 @@ function Home(props) {
   function saveCurrentCalculationObject() {
     // Only save to the database if the calcObject state actually got updated.
     if (
+      prevState &&
       JSON.stringify(prevState.calculationObject) !==
-      JSON.stringify(calculationObject)
+        JSON.stringify(calculationObject)
     ) {
       setCalculationObject(
         (prevCalcObj) => {
