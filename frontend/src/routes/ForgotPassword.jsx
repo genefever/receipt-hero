@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Alert from "react-bootstrap/Alert";
 import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 import logo from "../assets/logo.svg";
@@ -11,6 +12,9 @@ import * as api from "../api";
 
 function ForgotPassword(props) {
   const [isResetPassword, setIsResetPassword] = useState(props.isSignUp);
+  const defaultAlertMessage = { message: "", variant: "", heading: "" };
+  const [alertMessage, setAlertMessage] = useState(defaultAlertMessage);
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -28,9 +32,7 @@ function ForgotPassword(props) {
     });
   }
 
-  function handleSubmit(event) {
-    event.preventDefault();
-
+  function handleSubmit() {
     if (isResetPassword) {
       resetPassword();
     } else {
@@ -40,17 +42,32 @@ function ForgotPassword(props) {
 
   async function resetPassword() {
     try {
-      await api.resetPassword(formData);
+      const res = await api.resetPassword(formData);
+      console.log(res);
     } catch (err) {
-      console.log(err);
+      if (err.response)
+        setAlertMessage({
+          message: err.response.data.message,
+          variant: "danger",
+        });
     }
   }
 
   async function forgotPassword() {
     try {
       await api.forgotPassword(formData);
+      setAlertMessage({
+        message:
+          "If your submission matches our records, a link will be sent to the provided email address with information on how to reset your password. The link will only be valid for a short period of time.",
+        variant: "success",
+        heading: "Reset Link Sent",
+      });
     } catch (err) {
-      console.log(err);
+      if (err.response)
+        setAlertMessage({
+          message: err.response.data.message,
+          variant: "danger",
+        });
     }
   }
 
@@ -65,6 +82,22 @@ function ForgotPassword(props) {
           alt="logo"
         />
       </Card.Body>
+      {alertMessage.message && (
+        <Alert
+          variant={alertMessage.variant}
+          onClose={() => setAlertMessage(defaultAlertMessage)}
+          dismissible
+        >
+          {alertMessage.heading && (
+            <>
+              <Alert.Heading>{alertMessage.heading}</Alert.Heading>
+              <hr />
+            </>
+          )}
+
+          {alertMessage.message}
+        </Alert>
+      )}
       <StyledCard>
         <h3>{isResetPassword ? "Reset" : "Forgot"} Password</h3>
         <hr />
@@ -73,7 +106,7 @@ function ForgotPassword(props) {
             Please enter the email address associated with your account.
           </p>
         )}
-        {/* <hr /> */}
+
         <Form
           onSubmit={(e) => {
             e.preventDefault();

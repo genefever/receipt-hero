@@ -119,72 +119,59 @@ const forgotPassword = (req, res, next) => {
       },
       function (token, done) {
         User.findOne({ email: req.body.email }, function (err, user) {
-          if (err) {
-            res.status(500).json({
-              message: "Failed to find email for forgot password.",
-              error: err,
-            });
-            return;
-          }
           if (!user) {
-            //   req.flash('error', 'No account with that email address exists.');
-            // return res.redirect('/forgot');
-            res
-              .status(400)
-              .json({ message: "No account with that email address exists." });
+            done(err, null, null, true);
             return;
           }
-
           user.resetPasswordToken = token;
           user.resetPasswordExpires = Date.now() + 900000; // 15 minutes
 
           user.save(function (err) {
-            done(err, token, user);
+            done(err, token, user, false);
           });
         });
       },
-      function (token, user, done) {
-        var smtpTransport = nodemailer.createTransport({
-          service: "Gmail",
-          auth: {
-            type: "OAuth2",
-            user: process.env.GOOGLE_EMAIL_ADDRESS,
-            clientId: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
-          },
-        });
+      function (token, user, shortCircuit, done) {
+        if (shortCircuit) {
+          done(null, "done");
+        } else {
+          var smtpTransport = nodemailer.createTransport({
+            service: "Gmail",
+            auth: {
+              type: "OAuth2",
+              user: process.env.GOOGLE_EMAIL_ADDRESS,
+              clientId: process.env.GOOGLE_CLIENT_ID,
+              clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+              refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
+            },
+          });
 
-        var mailOptions = {
-          to: user.email,
-          from: {
-            name: "Receipt Hero",
-            address: "no-reply@receipthero.com",
-          },
-          subject: "Receipt Hero Password Reset",
-          text:
-            "You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n" +
-            "Please click on the following link, or paste this into your browser to complete the process:\n\n" +
-            "http://" +
-            req.headers.host +
-            "/reset/" +
-            token +
-            "\n\n" +
-            "If you did not request this, please ignore this email and your password will remain unchanged.\n",
-        };
-        smtpTransport.sendMail(mailOptions, function (err) {
-          // req.flash(
-          //   "info",
-          //   "An e-mail has been sent to " +
-          //     user.email +
-          //     " with further instructions."
-          // );
-          done(err, "done");
-        });
+          var mailOptions = {
+            to: user.email,
+            from: {
+              name: "Receipt Hero",
+              address: "no-reply@receipthero.com",
+            },
+            subject: "Receipt Hero Password Reset",
+            text:
+              "You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n" +
+              "Please click on the following link, or paste this into your browser to complete the process:\n\n" +
+              "http://" +
+              req.headers.host +
+              "/reset/" +
+              token +
+              "\n\n" +
+              "If you did not request this, please ignore this email and your password will remain unchanged.\n",
+          };
+          smtpTransport.sendMail(mailOptions, function (err) {
+            done(err, "done");
+          });
+        }
       },
     ],
     function (err) {
       if (err) return next(err);
+      res.sendStatus(200);
     }
   );
 };
