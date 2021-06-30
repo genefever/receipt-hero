@@ -51,7 +51,21 @@ function App() {
                   <ForgotPassword isResetPassword={false} />
                 )}
               </Route>
+              <Route path="/forgot/done">
+                {userObject ? (
+                  <Redirect to="/" />
+                ) : (
+                  <ForgotPassword isResetPassword={false} />
+                )}
+              </Route>
               <Route path="/reset/:token">
+                {userObject ? (
+                  <Redirect to="/" />
+                ) : (
+                  <ForgotPassword isResetPassword={true} />
+                )}
+              </Route>
+              <Route path="/reset/:token/done">
                 {userObject ? (
                   <Redirect to="/" />
                 ) : (

@@ -162,9 +162,9 @@ const forgotPassword = (req, res, next) => {
               "/reset/" +
               token +
               "\n\n" +
-              "If you did not request this, please ignore this email and your password will remain unchanged.\n" +
-              "Thank you,\n" +
-              "The Receipt Hero team",
+              "If you did not request this, please ignore this email and your password will remain unchanged.\n\n" +
+              "Thanks,\n" +
+              "The Receipt Hero Team",
           };
           smtpTransport.sendMail(mailOptions, function (err) {
             done(err, "done");
@@ -191,9 +191,7 @@ const resetPassword = (req, res) => {
           },
           function (err, user) {
             if (!user) {
-              done(
-                new Error("Password reset token is invalid or has expired.")
-              );
+              done(err, null, true);
               return;
             }
 
@@ -203,52 +201,57 @@ const resetPassword = (req, res) => {
 
             user.save(function (err) {
               req.logIn(user, function (err) {
-                done(err, user);
+                done(err, user, false);
               });
             });
           }
         );
       },
-      function (user, done) {
-        var smtpTransport = nodemailer.createTransport({
-          service: "Gmail",
-          auth: {
-            type: "OAuth2",
-            user: process.env.GOOGLE_EMAIL_ADDRESS,
-            clientId: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
-          },
-        });
-        var mailOptions = {
-          to: user.email,
-          from: {
-            name: "Receipt Hero",
-            address: "no-reply@receipthero.com",
-          },
-          subject: "Your password has been changed",
-          text:
-            "Hello,\n\n" +
-            "This is a confirmation that the password for your account " +
-            user.email +
-            " has just been changed.\n\n" +
-            "Thank you,\n" +
-            "The Receipt Hero team",
-        };
-        smtpTransport.sendMail(mailOptions, function (err) {
-          done(err);
-        });
+      function (user, shortCircuit, done) {
+        if (shortCircuit) {
+          done(true); // 'true' signifies that there was an error.
+        } else {
+          var smtpTransport = nodemailer.createTransport({
+            service: "Gmail",
+            auth: {
+              type: "OAuth2",
+              user: process.env.GOOGLE_EMAIL_ADDRESS,
+              clientId: process.env.GOOGLE_CLIENT_ID,
+              clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+              refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
+            },
+          });
+          var mailOptions = {
+            to: user.email,
+            from: {
+              name: "Receipt Hero",
+              address: "no-reply@receipthero.com",
+            },
+            subject: "Your password has been changed",
+            text:
+              "Hello,\n\n" +
+              "This is a confirmation that the password for your account " +
+              user.email +
+              " has just been changed.\n\n" +
+              "Thanks,\n" +
+              "The Receipt Hero Team",
+          };
+          smtpTransport.sendMail(mailOptions, function (err) {
+            done(err);
+          });
+        }
       },
     ],
     function (err) {
       if (err) {
         res.status(401).json({
-          error: err,
+          message: "Password reset token is invalid or has expired.",
         });
+      } else {
+        res
+          .status(200)
+          .json({ message: "Success! Your password has been changed." });
       }
-      res
-        .status(200)
-        .json({ message: "Success! Your password has been changed." });
     }
   );
 };
@@ -286,7 +289,6 @@ module.exports = {
   logout,
   forgotPassword,
   resetPassword,
-  // requestResetPassword,
   googleAuth,
   googleAuthCallback,
   facebookAuth,

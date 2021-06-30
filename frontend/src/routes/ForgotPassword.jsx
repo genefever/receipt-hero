@@ -7,14 +7,15 @@ import Input from "../components/Input";
 import { SignInContainer } from "../components/Container";
 import { StyledButton } from "../components/Button";
 import { StyledCard } from "../components/Card";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useHistory } from "react-router-dom";
 import * as api from "../api";
 
 function ForgotPassword(props) {
-  const [isResetPassword, setIsResetPassword] = useState(props.isSignUp);
-  const defaultAlertMessage = { message: "", variant: "", heading: "" };
-  const [alertMessage, setAlertMessage] = useState(defaultAlertMessage);
+  const [isResetPassword, setIsResetPassword] = useState(props.isResetPassword);
+  const [isDone, setIsDone] = useState(false);
+  const [errorMessage, setErrorMessage] = useState();
   const { token } = useParams();
+  const history = useHistory();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -25,6 +26,15 @@ function ForgotPassword(props) {
   useEffect(() => {
     setIsResetPassword(props.isResetPassword);
   }, [props.isResetPassword]);
+
+  // Check URL to see if it contains "done". Set isDone based on URL.
+  useEffect(() => {
+    if (window.location.href.indexOf("done") !== -1) {
+      setIsDone(true);
+    } else {
+      setIsDone(false);
+    }
+  }, [history.location]);
 
   function handleFormDataChange(event) {
     const { name, value } = event.target;
@@ -44,31 +54,18 @@ function ForgotPassword(props) {
   async function resetPassword() {
     try {
       await api.resetPassword(token, formData);
+      history.push(`/reset/${token}/done`);
     } catch (err) {
-      if (err.response)
-        setAlertMessage({
-          message: err.response.data.message,
-          variant: "danger",
-          heading: "",
-        });
+      if (err.response) setErrorMessage(err.response.data.message);
     }
   }
 
   function forgotPassword() {
     try {
       api.forgotPassword(formData);
-      setAlertMessage({
-        message:
-          "If your submission matches our records, a link will be sent to the provided email address with information on how to reset your password. The link will only be valid for a short period of time.",
-        variant: "success",
-        heading: "Reset Link Sent",
-      });
+      history.push("/forgot/done");
     } catch (err) {
-      if (err.response)
-        setAlertMessage({
-          message: err.response.data.message,
-          variant: "danger",
-        });
+      if (err.response) setErrorMessage(err.response.data.message);
     }
   }
 
@@ -83,76 +80,91 @@ function ForgotPassword(props) {
           alt="logo"
         />
       </Card.Body>
-      {alertMessage.message && (
+
+      {errorMessage && (
         <Alert
-          variant={alertMessage.variant}
-          onClose={() => setAlertMessage(defaultAlertMessage)}
+          variant="danger"
+          onClose={() => setErrorMessage(null)}
           dismissible
         >
-          {alertMessage.heading && (
-            <>
-              <Alert.Heading>{alertMessage.heading}</Alert.Heading>
-              <hr />
-            </>
-          )}
-
-          {alertMessage.message}
+          {errorMessage}
         </Alert>
       )}
       <StyledCard>
-        <h3>{isResetPassword ? "Reset" : "Forgot"} Password</h3>
+        {isDone ? (
+          <h3>Password Reset {isResetPassword ? "Complete" : "Sent"}</h3>
+        ) : (
+          <h3>{isResetPassword ? "Reset" : "Forgot"} Password</h3>
+        )}
         <hr />
-        {!isResetPassword && (
+        {!isDone && !isResetPassword && (
           <p className="small">
             Please enter the email address associated with your account.
           </p>
         )}
 
-        <Form
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleSubmit();
-          }}
-        >
-          {/* Email / Password */}
-          {isResetPassword ? (
-            <div>
-              <Input
-                name="password"
-                value={formData.password}
-                label="New password"
-                type="password"
-                handleChange={(event) => handleFormDataChange(event)}
-                controlId={"formBasicPassword"}
-              />
-            </div>
+        {isDone ? (
+          isResetPassword ? (
+            <p>Your password has been set.</p>
           ) : (
-            <Input
-              name="email"
-              value={formData.email}
-              label="Email"
-              type="email"
-              handleChange={(e) => handleFormDataChange(e)}
-              controlId={"formBasicEmail"}
-            />
-          )}
-          {/* Submit button */}
-          <StyledButton $primary type="submit" size="lg" className="mt-4" block>
-            {isResetPassword ? "Update password" : "Email me a recovery link"}
+            <p>
+              If your submission matches our records, a link will be sent to the
+              provided email address with information on how to reset your
+              password. The link will only be valid for 15 minutes.
+            </p>
+          )
+        ) : (
+          <Form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit();
+            }}
+          >
+            {/* Email / Password */}
+            {isResetPassword ? (
+              <div>
+                <Input
+                  name="password"
+                  value={formData.password}
+                  label="New password"
+                  type="password"
+                  handleChange={(event) => handleFormDataChange(event)}
+                  controlId={"formBasicPassword"}
+                />
+              </div>
+            ) : (
+              <Input
+                name="email"
+                value={formData.email}
+                label="Email"
+                type="email"
+                handleChange={(e) => handleFormDataChange(e)}
+                controlId={"formBasicEmail"}
+              />
+            )}
+            {/* Submit button */}
+            <StyledButton
+              $primary
+              type="submit"
+              size="lg"
+              className="mt-4"
+              block
+            >
+              {isResetPassword ? "Update password" : "Email me a recovery link"}
+            </StyledButton>
+          </Form>
+        )}
+
+        <Link to="/login">
+          <StyledButton
+            variant={isDone ? "success" : "link"}
+            size="lg"
+            block
+            className={isDone ? "mt-4" : "pb-0 mt-3"}
+          >
+            Back to login
           </StyledButton>
-          {!isResetPassword && (
-            <Link to="/login">
-              <StyledButton
-                variant="link"
-                size="lg"
-                block
-                className="pb-0 mt-2"
-              >
-                Back to login
-              </StyledButton>
-            </Link>
-          )}
-        </Form>
+        </Link>
       </StyledCard>
     </SignInContainer>
   );

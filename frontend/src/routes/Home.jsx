@@ -96,7 +96,7 @@ function Home(props) {
     userObject,
     loadingUserObject,
     defaultCalculationObject,
-    history.location,
+    history.location, // This tracks URL name change (i.e. from edit to not edit)
     setCalculationObject,
   ]);
 
