@@ -14,6 +14,7 @@ function ForgotPassword(props) {
   const [isResetPassword, setIsResetPassword] = useState(props.isResetPassword);
   const [isDone, setIsDone] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
+  const [isLoading, setLoading] = useState(false);
   const { token } = useParams();
   const history = useHistory();
 
@@ -44,6 +45,7 @@ function ForgotPassword(props) {
   }
 
   function handleSubmit() {
+    setLoading(true);
     if (isResetPassword) {
       resetPassword();
     } else {
@@ -58,15 +60,17 @@ function ForgotPassword(props) {
     } catch (err) {
       if (err.response) setErrorMessage(err.response.data.message);
     }
+    setLoading(false);
   }
 
-  function forgotPassword() {
+  async function forgotPassword() {
     try {
-      api.forgotPassword(formData);
+      await api.forgotPassword(formData);
       history.push("/forgot/done");
     } catch (err) {
       if (err.response) setErrorMessage(err.response.data.message);
     }
+    setLoading(false);
   }
 
   return (
@@ -81,12 +85,9 @@ function ForgotPassword(props) {
         />
       </Card.Body>
 
+      {/* Alert Error Message */}
       {errorMessage && (
-        <Alert
-          variant="danger"
-          onClose={() => setErrorMessage(null)}
-          dismissible
-        >
+        <Alert variant="danger" onClose={() => setErrorMessage(null)}>
           {errorMessage}
         </Alert>
       )}
@@ -115,10 +116,14 @@ function ForgotPassword(props) {
           )
         ) : (
           <Form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSubmit();
-            }}
+            onSubmit={
+              !isLoading
+                ? (e) => {
+                    e.preventDefault();
+                    handleSubmit();
+                  }
+                : null
+            }
           >
             {/* Email / Password */}
             {isResetPassword ? (
@@ -149,22 +154,29 @@ function ForgotPassword(props) {
               size="lg"
               className="mt-4"
               block
+              disabled={isLoading}
             >
-              {isResetPassword ? "Update password" : "Email me a recovery link"}
+              {isLoading
+                ? "Loading..."
+                : isResetPassword
+                ? "Update password"
+                : "Email me a recovery link"}
             </StyledButton>
           </Form>
         )}
 
-        <Link to="/login">
-          <StyledButton
-            variant={isDone ? "success" : "link"}
-            size="lg"
-            block
-            className={isDone ? "mt-4" : "pb-0 mt-3"}
-          >
-            Back to login
-          </StyledButton>
-        </Link>
+        {!isLoading && (
+          <Link to="/login">
+            <StyledButton
+              variant={isDone ? "success" : "link"}
+              size="lg"
+              block
+              className={isDone ? "mt-4" : "pb-0 mt-3"}
+            >
+              Back to login
+            </StyledButton>
+          </Link>
+        )}
       </StyledCard>
     </SignInContainer>
   );

@@ -162,7 +162,7 @@ const forgotPassword = (req, res, next) => {
               "/reset/" +
               token +
               "\n\n" +
-              "If you did not request this, please ignore this email and your password will remain unchanged.\n\n" +
+              "If you did not request this, please ignore this email and your password will remain unchanged.\n\n\n" +
               "Thanks,\n" +
               "The Receipt Hero Team",
           };
@@ -221,18 +221,19 @@ const resetPassword = (req, res) => {
               refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
             },
           });
-          var mailOptions = {
+          let mailOptions = {
             to: user.email,
             from: {
               name: "Receipt Hero",
               address: "no-reply@receipthero.com",
             },
             subject: "Your password has been changed",
+
             text:
               "Hello,\n\n" +
               "This is a confirmation that the password for your account " +
               user.email +
-              " has just been changed.\n\n" +
+              " has just been changed.\n\n\n" +
               "Thanks,\n" +
               "The Receipt Hero Team",
           };
@@ -245,7 +246,7 @@ const resetPassword = (req, res) => {
     function (err) {
       if (err) {
         res.status(401).json({
-          message: "Password reset token is invalid or has expired.",
+          message: "The password reset link is invalid or has expired.",
         });
       } else {
         res

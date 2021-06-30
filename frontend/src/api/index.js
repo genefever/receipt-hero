@@ -11,10 +11,9 @@ export const signUp = (formData) =>
 export const logout = () => API.get("/auth/logout", { withCredentials: true });
 export const getAuthenticatedUser = () =>
   API.get("/auth/getuser", { withCredentials: true });
-export const forgotPassword = (formData) =>
-  API.post("/auth/forgot", formData, { withCredentials: true });
+export const forgotPassword = (formData) => API.post("/auth/forgot", formData);
 export const resetPassword = (token, formData) =>
-  API.post(`/auth/reset/${token}`, formData, { withCredentials: true });
+  API.post(`/auth/reset/${token}`, formData);
 
 // User
 export const getUser = (id) => API.get("/user/" + id);

@@ -53,7 +53,6 @@ function Auth(props) {
     }
   }
 
-  // TODO: Handle error
   async function signUp() {
     try {
       const res = await api.signUp(formData);
@@ -64,7 +63,6 @@ function Auth(props) {
     }
   }
 
-  // TODO: Handle error
   async function login() {
     try {
       const res = await api.login(formData);
