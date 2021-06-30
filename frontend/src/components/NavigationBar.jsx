@@ -94,31 +94,31 @@ function NavigationBar(props) {
           {/* Auth Buttons */}
           {userObject ? (
             // User is logged in
-            <NavDropdown
-              title={
-                <Avatar
-                  googleId={userObject.googleId}
-                  facebookId={userObject.facebookId}
-                  name={`${userObject.firstName} ${userObject.lastName}`}
-                  round={true}
-                  size="33"
-                  className="mr-1"
-                />
-              }
-              id="navbarScrollingDropdown"
-              alignRight
-              show={showDropdown}
-              onMouseEnter={handleOpen}
-              onMouseLeave={handleClose}
-              className="mr-3"
-            >
-              <NavDropdown.Item as={Link} to={"/user/" + userObject._id}>
-                My profile
-              </NavDropdown.Item>
+              <NavDropdown
+                title={
+                  <Avatar
+                    googleId={userObject.googleId}
+                    facebookId={userObject.facebookId}
+                    name={`${userObject.firstName} ${userObject.lastName}`}
+                    round={true}
+                    size="33"
+                    className="mr-1"
+                  />
+                }
+                id="navbarScrollingDropdown"
+                alignRight
+                show={showDropdown}
+                onMouseEnter={handleOpen}
+                onMouseLeave={handleClose}
+                className="mr-3"
+              >
+                <NavDropdown.Item as={Link} to={"/user/" + userObject._id}>
+                  My profile
+                </NavDropdown.Item>
 
-              <NavDropdown.Item as={Link} to="/">
-                Settings
-              </NavDropdown.Item>
+                <NavDropdown.Item as={Link} to="/user/settings">
+                  Settings
+                </NavDropdown.Item>
 
               <NavDropdown.Divider />
               <NavDropdown.Item onClick={logout}>Log out</NavDropdown.Item>

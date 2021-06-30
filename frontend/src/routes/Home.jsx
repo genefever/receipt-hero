@@ -72,8 +72,7 @@ function Home(props) {
           // If the user is logged in and the calculation id is owned by user,
           // allow the user to edit.
           if (
-            userObject &&
-            userObject.calculations.some(
+            userObject?.calculations?.some(
               (calculationId) => calculationId === id
             )
           ) {
