@@ -9,6 +9,7 @@ import { SignInContainer } from "../components/Container";
 import { StyledCard } from "../components/Card";
 import { StyledButton } from "../components/Button";
 import logo from "../assets/logo.svg";
+import { IoWarningOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import * as api from "../api";
 import { useHistory } from "react-router-dom";
@@ -59,7 +60,8 @@ function Auth(props) {
       setUserObject(res.data.userObject);
       history.push("/");
     } catch (err) {
-      if (err.response) setErrorMessage(err.response.data.message);
+      if (err.response?.data?.message)
+        setErrorMessage(err.response.data.message);
     }
   }
 
@@ -69,7 +71,8 @@ function Auth(props) {
       setUserObject(res.data.userObject);
       history.push("/");
     } catch (err) {
-      if (err.response) setErrorMessage(err.response.data.message);
+      if (err.response?.data?.message)
+        setErrorMessage(err.response.data.message);
     }
   }
 
@@ -116,12 +119,15 @@ function Auth(props) {
 
         <Separator className="my-3">or</Separator>
 
+        {/* Alert Error Message */}
         {errorMessage && (
           <Alert
             variant="danger"
             onClose={() => setErrorMessage(null)}
             dismissible
+            className="d-flex align-items-center"
           >
+            <IoWarningOutline className="mr-2" />
             {errorMessage}
           </Alert>
         )}

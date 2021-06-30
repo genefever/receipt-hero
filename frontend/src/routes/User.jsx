@@ -6,9 +6,11 @@ import "react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit.min.c
 import inkpot from "../assets/inkpot.svg";
 import { Link, useParams, useHistory } from "react-router-dom";
 import { StyledButton, StyledIconButtonSpan } from "../components/Button";
+import Alert from "react-bootstrap/Alert";
 import { StyledCard } from "../components/Card";
 import { StyledSpinner } from "../components/Spinner";
 import { FaTrashAlt } from "react-icons/fa";
+import { IoWarningOutline } from "react-icons/io5";
 import { MdEdit } from "react-icons/md";
 import { StyledModal } from "../components/Modal";
 import * as api from "../api";
@@ -19,6 +21,7 @@ function User(props) {
   const [calculationIdToDelete, setCalculationIdToDelete] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState();
   const history = useHistory();
 
   useEffect(() => {
@@ -78,7 +81,11 @@ function User(props) {
           };
         });
 
-        // TODO: Show error message
+        if (err.response?.data?.message) {
+          setErrorMessage(err.response.data.message);
+        } else {
+          setErrorMessage("Whoops! An unexpected error occurred.");
+        }
       }
     }
   };
@@ -160,6 +167,19 @@ function User(props) {
         <StyledSpinner />
       ) : (
         <>
+          {/* Alert Error Message */}
+          {errorMessage && (
+            <Alert
+              variant="danger"
+              onClose={() => setErrorMessage(null)}
+              className="d-flex align-items-center"
+              dismissible
+            >
+              <IoWarningOutline className="mr-2" />
+              {errorMessage}
+            </Alert>
+          )}
+
           <StyledCard $main>
             <ToolkitProvider
               keyField="_id"

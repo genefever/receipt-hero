@@ -44,7 +44,9 @@ const getCalculation = (req, res) => {
         err: err,
       });
     if (!doc) {
-      return res.status(404).json({ message: "Calculation doesn't exist." });
+      return res.status(404).json({
+        message: "The calculation you're looking for does not exist.",
+      });
     }
     res.send(doc);
   });
@@ -62,14 +64,14 @@ const deleteCalculation = (req, res) => {
         if (err)
           res
             .status(500)
-            .json({ err: err, message: "Failed to delete calculation." });
+            .json({
+              err: err,
+              message: "Whoops! An unexpected error occurred.",
+            });
         else {
           // Remove the calculation id from the User's calculations reference array.
           User.updateOne(
             { _id: req.user._id },
-            // {
-            //   calculations: { $in: [req.params.id] },
-            // },
             {
               $pullAll: { calculations: [req.params.id] },
             },
@@ -77,8 +79,7 @@ const deleteCalculation = (req, res) => {
               if (err)
                 res.status(500).json({
                   err: err,
-                  message:
-                    "Failed to remove calculation reference from User's calculations.",
+                  message: "Whoops! An unexpected error occurred.",
                 });
             }
           );

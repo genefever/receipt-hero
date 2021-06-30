@@ -8,6 +8,7 @@ import Alert from "react-bootstrap/Alert";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import { BsInfoCircle } from "react-icons/bs";
+import { IoWarningOutline } from "react-icons/io5";
 import { UserContext } from "../UserContext";
 import { useHistory, useParams } from "react-router-dom";
 import * as api from "../api";
@@ -46,6 +47,7 @@ function Home(props) {
   const prevState = usePrevious({ calculationObject });
   const [showAlert, setShowAlert] = useState(true);
   const [editMode, setEditMode] = useState(true);
+  const [errorMessage, setErrorMessage] = useState();
   const calculatorRef = useRef(); // Used to calculate balance owed
   const { id } = useParams();
   const history = useHistory();
@@ -263,7 +265,7 @@ function Home(props) {
     );
   }
 
-  // TODO: handle error
+  // Creates and saves a calculation object for the user.
   async function createCalculationObject() {
     try {
       await api.createCalculation(calculationObject);
@@ -271,16 +273,24 @@ function Home(props) {
       await getAuthenticatedUserObject();
       history.push(`/user/${userObject._id}`);
     } catch (err) {
-      console.log(err);
+      if (err.response?.data?.message) {
+        setErrorMessage(err.response.data.message);
+      } else {
+        setErrorMessage("An unexpected error occurred.");
+      }
     }
   }
 
-  // TODO: handle error
+  // Updates the user's calculation object.
   async function updateCalculationObject(latestCalcObjectState) {
     try {
       await api.updateCalculation(latestCalcObjectState);
     } catch (err) {
-      console.log(err);
+      if (err.response?.data?.message) {
+        setErrorMessage(err.response.data.message);
+      } else {
+        setErrorMessage("An unexpected error occurred.");
+      }
     }
   }
 
@@ -306,11 +316,11 @@ function Home(props) {
 
   return (
     <>
-      {/* Alert message - login/signup */}
       {loadingUserObject ? (
         <StyledSpinner />
       ) : (
         <>
+          {/* Alert message - login/signup */}
           {/* Show alert only when user is not logged and is in the homepage. */}
           {!userObject && showAlert && editMode && (
             <Alert
@@ -328,6 +338,18 @@ function Home(props) {
                 sign up
               </Alert.Link>{" "}
               to save your calculations.
+            </Alert>
+          )}
+
+          {errorMessage && (
+            <Alert
+              variant="danger"
+              dismissible
+              onClose={() => setErrorMessage(null)}
+              className="d-flex align-items-center"
+            >
+              <IoWarningOutline className="mr-2" />
+              {errorMessage}
             </Alert>
           )}
 

@@ -4,6 +4,7 @@ import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 import logo from "../assets/logo.svg";
 import Input from "../components/Input";
+import { IoWarningOutline } from "react-icons/io5";
 import { SignInContainer } from "../components/Container";
 import { StyledButton } from "../components/Button";
 import { StyledCard } from "../components/Card";
@@ -58,7 +59,8 @@ function ForgotPassword(props) {
       await api.resetPassword(token, formData);
       history.push(`/reset/${token}/done`);
     } catch (err) {
-      if (err.response) setErrorMessage(err.response.data.message);
+      if (err.response?.data?.message)
+        setErrorMessage(err.response.data.message);
     }
     setLoading(false);
   }
@@ -68,7 +70,8 @@ function ForgotPassword(props) {
       await api.forgotPassword(formData);
       history.push("/forgot/done");
     } catch (err) {
-      if (err.response) setErrorMessage(err.response.data.message);
+      if (err.response?.data?.message)
+        setErrorMessage(err.response.data.message);
     }
     setLoading(false);
   }
@@ -87,7 +90,12 @@ function ForgotPassword(props) {
 
       {/* Alert Error Message */}
       {errorMessage && (
-        <Alert variant="danger" onClose={() => setErrorMessage(null)}>
+        <Alert
+          variant="danger"
+          onClose={() => setErrorMessage(null)}
+          className="d-flex align-items-center"
+        >
+          <IoWarningOutline className="mr-2" />
           {errorMessage}
         </Alert>
       )}
