@@ -154,14 +154,17 @@ const forgotPassword = (req, res, next) => {
             },
             subject: "Receipt Hero Password Reset",
             text:
+              "Hello,\n\n" +
               "You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n" +
               "Please click on the following link, or paste this into your browser to complete the process:\n\n" +
-              "http://" +
-              req.headers.host +
+              "http://" + // TODO: Change to https
+              req.headers.host + // TODO: check if this will still work
               "/reset/" +
               token +
               "\n\n" +
-              "If you did not request this, please ignore this email and your password will remain unchanged.\n",
+              "If you did not request this, please ignore this email and your password will remain unchanged.\n" +
+              "Thank you,\n" +
+              "The Receipt Hero team",
           };
           smtpTransport.sendMail(mailOptions, function (err) {
             done(err, "done");
@@ -176,35 +179,7 @@ const forgotPassword = (req, res, next) => {
   );
 };
 
-const requestResetPassword = (req, res) => {
-  User.findOne(
-    {
-      resetPasswordToken: req.params.token,
-      resetPasswordExpires: { $gt: Date.now() },
-    },
-    function (err, user) {
-      if (err) {
-        res.status(500).json({
-          message: "Failed while verifying password reset eligibility.",
-          error: err,
-        });
-        return;
-      }
-      if (!user) {
-        //   req.flash('error', 'No account with that email address exists.');
-        // return res.redirect('/forgot');
-        res
-          .status(400)
-          .json({ message: "No account with that email address exists." });
-        return;
-      }
-      // res.render("reset", {
-      //   user: req.user,
-      // });
-    }
-  );
-};
-
+// Post request - Saves user's new password if password token is valid.
 const resetPassword = (req, res) => {
   async.waterfall(
     [
@@ -216,11 +191,10 @@ const resetPassword = (req, res) => {
           },
           function (err, user) {
             if (!user) {
-              req.flash(
-                "error",
-                "Password reset token is invalid or has expired."
+              done(
+                new Error("Password reset token is invalid or has expired.")
               );
-              return res.redirect("back");
+              return;
             }
 
             user.password = req.body.password;
@@ -257,20 +231,24 @@ const resetPassword = (req, res) => {
             "Hello,\n\n" +
             "This is a confirmation that the password for your account " +
             user.email +
-            " has just been changed.\n",
+            " has just been changed.\n\n" +
+            "Thank you,\n" +
+            "The Receipt Hero team",
         };
         smtpTransport.sendMail(mailOptions, function (err) {
-          // req.flash("success", "Success! Your password has been changed.");
           done(err);
         });
       },
     ],
     function (err) {
-      // res.redirect("/");
-      res.status(500).json({
-        message: "Failed while resetting password.",
-        error: err,
-      });
+      if (err) {
+        res.status(401).json({
+          error: err,
+        });
+      }
+      res
+        .status(200)
+        .json({ message: "Success! Your password has been changed." });
     }
   );
 };
@@ -308,7 +286,7 @@ module.exports = {
   logout,
   forgotPassword,
   resetPassword,
-  requestResetPassword,
+  // requestResetPassword,
   googleAuth,
   googleAuthCallback,
   facebookAuth,

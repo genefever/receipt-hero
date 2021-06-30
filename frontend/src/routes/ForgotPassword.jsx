@@ -7,13 +7,14 @@ import Input from "../components/Input";
 import { SignInContainer } from "../components/Container";
 import { StyledButton } from "../components/Button";
 import { StyledCard } from "../components/Card";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import * as api from "../api";
 
 function ForgotPassword(props) {
   const [isResetPassword, setIsResetPassword] = useState(props.isSignUp);
   const defaultAlertMessage = { message: "", variant: "", heading: "" };
   const [alertMessage, setAlertMessage] = useState(defaultAlertMessage);
+  const { token } = useParams();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -42,20 +43,20 @@ function ForgotPassword(props) {
 
   async function resetPassword() {
     try {
-      const res = await api.resetPassword(formData);
-      console.log(res);
+      await api.resetPassword(token, formData);
     } catch (err) {
       if (err.response)
         setAlertMessage({
           message: err.response.data.message,
           variant: "danger",
+          heading: "",
         });
     }
   }
 
-  async function forgotPassword() {
+  function forgotPassword() {
     try {
-      await api.forgotPassword(formData);
+      api.forgotPassword(formData);
       setAlertMessage({
         message:
           "If your submission matches our records, a link will be sent to the provided email address with information on how to reset your password. The link will only be valid for a short period of time.",

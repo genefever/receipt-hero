@@ -13,8 +13,8 @@ export const getAuthenticatedUser = () =>
   API.get("/auth/getuser", { withCredentials: true });
 export const forgotPassword = (formData) =>
   API.post("/auth/forgot", formData, { withCredentials: true });
-export const resetPassword = (formData) =>
-  API.post("/auth/reset", formData, { withCredentials: true });
+export const resetPassword = (token, formData) =>
+  API.post(`/auth/reset/${token}`, formData, { withCredentials: true });
 
 // User
 export const getUser = (id) => API.get("/user/" + id);

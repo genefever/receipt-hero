@@ -45,10 +45,18 @@ function App() {
               <Route path="/calculation/edit/:id" component={Home} />
               <Route path="/calculation/:id" component={Home} />
               <Route path="/forgot">
-                <ForgotPassword isResetPassword={false} />
+                {userObject ? (
+                  <Redirect to="/" />
+                ) : (
+                  <ForgotPassword isResetPassword={false} />
+                )}
               </Route>
               <Route path="/reset/:token">
-                <ForgotPassword isResetPassword={true} />
+                {userObject ? (
+                  <Redirect to="/" />
+                ) : (
+                  <ForgotPassword isResetPassword={true} />
+                )}
               </Route>
               <Route component={NoMatch} />
             </Switch>
