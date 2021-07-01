@@ -62,12 +62,10 @@ const deleteCalculation = (req, res) => {
       { _id: req.params.id, userId: req.user._id },
       (err, calculation) => {
         if (err)
-          res
-            .status(500)
-            .json({
-              err: err,
-              message: "Whoops! An unexpected error occurred.",
-            });
+          res.status(500).json({
+            err: err,
+            message: "Whoops! An unexpected error occurred.",
+          });
         else {
           // Remove the calculation id from the User's calculations reference array.
           User.updateOne(

@@ -17,6 +17,8 @@ export const resetPassword = (token, formData) =>
 
 // User
 export const getUser = (id) => API.get("/user/" + id);
+export const updateUser = (userObject) =>
+  API.put("/user/settings", userObject, { withCredentials: true }); // TODO
 
 // Calculation
 export const createCalculation = (newCalculation) =>

@@ -52,6 +52,7 @@ function ForgotPassword(props) {
     } else {
       forgotPassword();
     }
+    setLoading(false);
   }
 
   async function resetPassword() {
@@ -62,7 +63,6 @@ function ForgotPassword(props) {
       if (err.response?.data?.message)
         setErrorMessage(err.response.data.message);
     }
-    setLoading(false);
   }
 
   async function forgotPassword() {
@@ -73,7 +73,6 @@ function ForgotPassword(props) {
       if (err.response?.data?.message)
         setErrorMessage(err.response.data.message);
     }
-    setLoading(false);
   }
 
   return (

@@ -8,6 +8,7 @@ import { StyledButton } from "../../components/Button";
 import { StyledCard } from "../../components/Card";
 import { UserContext } from "../../UserContext";
 import ProfilePanel from "./ProfilePanel";
+import * as api from "../../api";
 
 function Settings() {
   const [paneName, setPaneName] = useState("Profile");
@@ -18,6 +19,7 @@ function Settings() {
   };
   const [userSettings, setUserSettings] = useState(defaultUserSettings);
   const { userObject } = useContext(UserContext);
+  const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
     setUserSettings((prevValue) => {
@@ -31,7 +33,13 @@ function Settings() {
   }, [userObject]);
 
   // Save userSettings to userObject.
-  function handleSubmit() {}
+  async function handleSubmit() {
+    setLoading(true);
+    try {
+      await api.updateUser({ ...userObject, ...userSettings });
+    } catch (err) {}
+    setLoading(false);
+  }
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -78,7 +86,16 @@ function Settings() {
               </Nav>
             </Col>
             <Col sm={9}>
-              <Form onSubmit={handleSubmit}>
+              <Form
+                onSubmit={
+                  !isLoading
+                    ? (e) => {
+                        e.preventDefault();
+                        handleSubmit();
+                      }
+                    : null
+                }
+              >
                 <Tab.Content>
                   <Tab.Pane eventKey="Profile">
                     <ProfilePanel
@@ -91,8 +108,14 @@ function Settings() {
                   </Tab.Pane>
                 </Tab.Content>
                 {/* Save Button */}
-                <StyledButton $primary type="submit" className="mt-2" size="lg">
-                  Save
+                <StyledButton
+                  $primary
+                  type="submit"
+                  className="mt-2"
+                  size="lg"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Loading..." : "Save"}
                 </StyledButton>
               </Form>
             </Col>

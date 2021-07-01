@@ -24,6 +24,7 @@ function ProfilePanel(props) {
             required
             name="lastName"
             value={props.userSettings.lastName}
+            handleChange={props.handleChange}
           />
         </Col>
       </Form.Row>
