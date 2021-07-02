@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useContext } from "react";
+import React, { useState, useCallback, useContext, useRef } from "react";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
@@ -11,6 +11,7 @@ import RangeSlider from "react-bootstrap-range-slider";
 import { StyledButton } from "../../components/Button";
 import { StyledModal } from "../../components/Modal";
 import { ThemeContext } from "styled-components";
+import { MdEdit } from "react-icons/md";
 import {
   createAvatarComponent,
   SrcSource,
@@ -44,8 +45,10 @@ function ProfilePane(props) {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState();
   const [showModal, setShowModal] = useState(false);
   const themeContext = useContext(ThemeContext);
+  // Create a reference to the hidden file input element
+  const hiddenFileInput = useRef(null);
 
-  const onFileChange = async (e) => {
+  const handleFileChange = async (e) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       let imageDataUrl = await readFile(file);
@@ -72,7 +75,6 @@ function ProfilePane(props) {
         imageSource,
         croppedAreaPixels
       );
-      console.log("donee", { croppedImage });
 
       props.handleChangeImage(croppedImage);
     } catch (e) {
@@ -86,20 +88,51 @@ function ProfilePane(props) {
     setShowModal(false);
   }
 
+  const editImageButtonStyle = {
+    border: "1px solid" + themeContext.borderColor,
+    background: themeContext.body,
+    color: themeContext.text,
+    position: "absolute",
+    bottom: 0,
+    right: -10,
+    borderRadius: "10%",
+  };
+
   return (
     <>
       <Form.Group>
-        <Avatar
-          size={150}
-          src={props.userSettings.profileImage}
-          googleId={props.userObject.googleId}
-          facebookId={props.userObject.facebookId}
-          name={`${props.userSettings.firstName} ${props.userSettings.lastName}`}
-          round={true}
-          className="my-2"
-        />
+        <div style={{ display: "inline-block", position: "relative" }}>
+          <Avatar
+            size={150}
+            src={props.userSettings.profileImage}
+            googleId={props.userObject.googleId}
+            facebookId={props.userObject.facebookId}
+            name={`${props.userSettings.firstName} ${props.userSettings.lastName}`}
+            round={true}
+            className="my-2"
+          />
 
-        <Form.File className="mt-3" accept="image/*" onChange={onFileChange} />
+          <StyledButton
+            style={editImageButtonStyle}
+            className="py-0 px-1"
+            size="sm"
+            onClick={(e) => {
+              // Programatically click the hidden file input element
+              // when the Button component is clicked
+              hiddenFileInput.current.click();
+            }}
+          >
+            <div className="d-flex align-items-center">
+              <MdEdit className="mr-1" /> Edit
+            </div>
+          </StyledButton>
+          <Form.File
+            accept="image/*"
+            onChange={handleFileChange}
+            ref={hiddenFileInput}
+            hidden
+          />
+        </div>
       </Form.Group>
       <Form.Row>
         <Col lg={5} md={6} sm={8}>
