@@ -6,12 +6,6 @@ import NoMatch from "../routes/NoMatch";
 import Settings from "../routes/Settings/index";
 import User from "../routes/User";
 import ForgotPassword from "../routes/ForgotPassword";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Redirect,
-} from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 import { GlobalStyles } from "../styles/GlobalStyles";
 import { lightTheme, darkTheme } from "../styles/Themes";
@@ -20,6 +14,12 @@ import { Wrapper } from "./Container";
 import { UserContext } from "../UserContext";
 import { ConfigProvider } from "react-avatar";
 import { StyledSpinner } from "../components/Spinner";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+} from "react-router-dom";
 
 function App() {
   const [theme, themeToggler, mountedComponent] = useDarkMode();

@@ -5,7 +5,7 @@ export const lightTheme = {
   navbar: "#5b5656",
   toggleButton: "outline-dark",
   emoji: "🌙",
-  borderColor: "#2B2B2B",
+  borderColor: "#d3d3d3",
   cellColorGreen: "#49a94e",
   cellColorOrange: "#FF5F1F",
 };

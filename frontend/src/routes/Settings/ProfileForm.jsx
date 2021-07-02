@@ -2,10 +2,33 @@ import React from "react";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Input from "../../components/Input";
+import {
+  createAvatarComponent,
+  SrcSource,
+  GoogleSource,
+  FacebookSource,
+} from "react-avatar";
 
-function ProfilePanel(props) {
+const Avatar = createAvatarComponent({
+  sources: [SrcSource, GoogleSource, FacebookSource],
+});
+
+function ProfileForm(props) {
   return (
     <>
+      <Form.Group>
+        <Avatar
+          size={150}
+          src={"http://www.fillmurray.com/400/400"}
+          googleId={props.userObject.googleId}
+          facebookId={props.userObject.facebookId}
+          name={`${props.userObject.firstName} ${props.userObject.lastName}`}
+          round={true}
+          className="my-2"
+        />
+
+        <Form.File className="mt-3" />
+      </Form.Group>
       <Form.Row>
         <Col lg={5} md={6} sm={8}>
           <Input
@@ -43,4 +66,4 @@ function ProfilePanel(props) {
   );
 }
 
-export default ProfilePanel;
+export default ProfileForm;
