@@ -51,17 +51,25 @@ function ProfilePane(props) {
   const handleFileChange = async (e) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-      let imageDataUrl = await readFile(file);
+      const fileSize = file.size / 1024 / 1024; // in MiB
 
-      // apply rotation if needed
-      const orientation = await getOrientation(file);
-      const rotation = ORIENTATION_TO_ANGLE[orientation];
-      if (rotation) {
-        imageDataUrl = await getRotatedImage(imageDataUrl, rotation);
+      // Check file size is under 1 MB.
+      if (fileSize > 1) {
+        props.setErrorMessage("Picture must be smaller than 1 MB.");
+        e.target.value = null;
+      } else {
+        let imageDataUrl = await readFile(file);
+
+        // apply rotation if needed
+        const orientation = await getOrientation(file);
+        const rotation = ORIENTATION_TO_ANGLE[orientation];
+        if (rotation) {
+          imageDataUrl = await getRotatedImage(imageDataUrl, rotation);
+        }
+
+        setImageSource(imageDataUrl);
+        setShowModal(true);
       }
-
-      setImageSource(imageDataUrl);
-      setShowModal(true);
     }
   };
 

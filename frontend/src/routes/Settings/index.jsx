@@ -89,7 +89,7 @@ function Settings() {
         <Alert
           variant="danger"
           onClose={() => setErrorMessage(null)}
-          className="d-flex align-items-center"
+          className="d-flex align-items-center mb-0 mt-3"
           dismissible
         >
           <IoWarningOutline className="mr-2" />
@@ -144,14 +144,14 @@ function Settings() {
               >
                 <Tab.Content>
                   <Tab.Pane eventKey="Profile">
-                    <h3>Edit {paneName}</h3>
+                    <h3 className="mb-2">Edit {paneName}</h3>
                     <AlertMessage />
                     <ProfilePane
                       userObject={userObject}
                       userSettings={userSettings}
                       handleChange={handleChange}
                       handleChangeImage={handleChangeImage}
-                      className="mt-4"
+                      setErrorMessage={setErrorMessage}
                     />
                   </Tab.Pane>
                   <Tab.Pane eventKey="Settings">
