@@ -268,7 +268,7 @@ const googleAuth = (req, res, next) => {
 const googleAuthCallback = (req, res, next) => {
   passport.authenticate("google", {
     successRedirect: "http://localhost:3000/",
-    failureRedirect: "http://localhost:3000/login",
+    failureRedirect: "http://localhost:3000/login", // TODO Change host
   })(req, res, next);
 };
 

@@ -9,7 +9,7 @@ import { StyledButton } from "../../components/Button";
 import { StyledCard } from "../../components/Card";
 import { UserContext } from "../../UserContext";
 import { ThemeContext } from "styled-components";
-import ProfileForm from "./ProfileForm";
+import ProfilePane from "./ProfilePane";
 import { IoWarningOutline } from "react-icons/io5";
 import { FcCheckmark } from "react-icons/fc";
 import { StyledModal } from "../../components/Modal";
@@ -23,6 +23,7 @@ function Settings() {
     firstName: "",
     lastName: "",
     email: "",
+    profileImage: null,
   };
   const [userSettings, setUserSettings] = useState(defaultUserSettings);
   const [isLoading, setLoading] = useState(false);
@@ -37,6 +38,7 @@ function Settings() {
         firstName: userObject.firstName,
         lastName: userObject.lastName,
         email: userObject.email,
+        profileImage: userObject.profileImage,
       };
     });
   }, [userObject]);
@@ -61,6 +63,13 @@ function Settings() {
 
     setUserSettings((prevValue) => {
       return { ...prevValue, [name]: value };
+    });
+  }
+
+  // Called when profile image changes
+  function handleChangeImage(imageUrl) {
+    setUserSettings((prevValue) => {
+      return { ...prevValue, profileImage: imageUrl };
     });
   }
 
@@ -97,7 +106,7 @@ function Settings() {
           <Row>
             <Col
               sm={3}
-              style={{ "border-right": "1px solid" + themeContext.borderColor }}
+              style={{ borderRight: "1px solid" + themeContext.borderColor }}
             >
               <Nav variant="pills" className="flex-column">
                 <Nav.Item>
@@ -135,12 +144,13 @@ function Settings() {
               >
                 <Tab.Content>
                   <Tab.Pane eventKey="Profile">
-                    <h3>My {paneName}</h3>
+                    <h3>Edit {paneName}</h3>
                     <AlertMessage />
-                    <ProfileForm
+                    <ProfilePane
                       userObject={userObject}
                       userSettings={userSettings}
                       handleChange={handleChange}
+                      handleChangeImage={handleChangeImage}
                       className="mt-4"
                     />
                   </Tab.Pane>

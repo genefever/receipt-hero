@@ -236,7 +236,7 @@ function User(props) {
 
           <StyledModal show={showModal} onHide={handleCloseModal}>
             <StyledModal.Header closeButton>
-              <StyledModal.Title>Confirm deletion.</StyledModal.Title>
+              <StyledModal.Title>Confirm deletion</StyledModal.Title>
             </StyledModal.Header>
 
             <StyledModal.Body>

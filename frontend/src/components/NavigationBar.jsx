@@ -16,10 +16,11 @@ import {
   SrcSource,
   GoogleSource,
   FacebookSource,
+  ValueSource,
 } from "react-avatar";
 
 const Avatar = createAvatarComponent({
-  sources: [SrcSource, GoogleSource, FacebookSource],
+  sources: [SrcSource, GoogleSource, FacebookSource, ValueSource], // image fallback order
 });
 
 const StyledNavbar = styled(Navbar)`
@@ -103,35 +104,36 @@ function NavigationBar(props) {
           {/* Auth Buttons */}
           {userObject ? (
             // User is logged in
-            <NavDropdown
-              title={
-                <Avatar
-                  googleId={userObject.googleId}
-                  facebookId={userObject.facebookId}
-                  name={`${userObject.firstName} ${userObject.lastName}`}
-                  round={true}
-                  size="33"
-                  className="mr-1"
-                />
-              }
-              id="navbarScrollingDropdown"
-              alignRight
-              show={showDropdown}
-              onMouseEnter={handleOpen}
-              onMouseLeave={handleClose}
-              className="mr-3"
-            >
-              <NavDropdown.Item as={Link} to={"/user/" + userObject._id}>
-                My profile
-              </NavDropdown.Item>
+              <NavDropdown
+                title={
+                  <Avatar
+                    src={userObject.profileImage}
+                    googleId={userObject.googleId}
+                    facebookId={userObject.facebookId}
+                    name={`${userObject.firstName} ${userObject.lastName}`}
+                    round={true}
+                    size="33"
+                    className="mr-1"
+                  />
+                }
+                id="navbarScrollingDropdown"
+                alignRight
+                show={showDropdown}
+                onMouseEnter={handleOpen}
+                onMouseLeave={handleClose}
+                className="mr-3"
+              >
+                <NavDropdown.Item as={Link} to={"/user/" + userObject._id}>
+                  My Calculations
+                </NavDropdown.Item>
 
-              <NavDropdown.Item as={Link} to="/user/settings">
-                Settings
-              </NavDropdown.Item>
+                <NavDropdown.Item as={Link} to="/user/settings">
+                  Settings
+                </NavDropdown.Item>
 
-              <NavDropdown.Divider />
-              <NavDropdown.Item onClick={logout}>Log out</NavDropdown.Item>
-            </NavDropdown>
+                <NavDropdown.Divider />
+                <NavDropdown.Item onClick={logout}>Log Out</NavDropdown.Item>
+              </NavDropdown>
           ) : (
             // User is not logged in
             <>

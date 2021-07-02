@@ -16,7 +16,7 @@ import { useHistory } from "react-router-dom";
 import { UserContext } from "../UserContext";
 
 function Auth(props) {
-  const { setUserObject } = useContext(UserContext);
+  const { setUserObject, getAuthenticatedUserObject } = useContext(UserContext);
 
   const history = useHistory();
   const [isSignUp, setIsSignUp] = useState(props.isSignUp);
@@ -58,6 +58,7 @@ function Auth(props) {
     try {
       const res = await api.signUp(formData);
       setUserObject(res.data.userObject);
+      getAuthenticatedUserObject();
       history.push("/");
     } catch (err) {
       if (err.response?.data?.message)
@@ -69,6 +70,7 @@ function Auth(props) {
     try {
       const res = await api.login(formData);
       setUserObject(res.data.userObject);
+      getAuthenticatedUserObject();
       history.push("/");
     } catch (err) {
       if (err.response?.data?.message)
