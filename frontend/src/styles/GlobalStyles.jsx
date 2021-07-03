@@ -67,7 +67,6 @@ export const GlobalStyles = createGlobalStyle`
 
     .list-group-item {
       border: 1px solid #aaa;
-
     }
 
     /* Print settings */

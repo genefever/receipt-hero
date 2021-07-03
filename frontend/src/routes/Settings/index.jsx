@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useCallback } from "react";
 import Alert from "react-bootstrap/Alert";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
@@ -18,7 +18,7 @@ import * as api from "../../api";
 function Settings() {
   const { userObject, getAuthenticatedUserObject } = useContext(UserContext);
   const themeContext = useContext(ThemeContext);
-  const [paneName, setPaneName] = useState("Profile");
+
   const defaultUserSettings = {
     firstName: "",
     lastName: "",
@@ -31,7 +31,7 @@ function Settings() {
   const [errorMessage, setErrorMessage] = useState();
 
   // Sets userSettings with userObject values.
-  useEffect(() => {
+  const initializeUserSettings = useCallback(() => {
     setUserSettings((prevValue) => {
       return {
         ...prevValue,
@@ -42,6 +42,10 @@ function Settings() {
       };
     });
   }, [userObject]);
+
+  useEffect(() => {
+    initializeUserSettings();
+  }, [userObject, initializeUserSettings]);
 
   // Save userSettings to backend.
   async function handleSubmit() {
@@ -74,9 +78,9 @@ function Settings() {
   }
 
   // Called when a tab is pressed.
-  function handleSelect(eventKey) {
-    setPaneName(eventKey);
-    setErrorMessage("");
+  function handleSelect() {
+    setErrorMessage(null);
+    initializeUserSettings(); // revert any unsaved changes.
   }
 
   function handleCloseModal() {
@@ -85,17 +89,15 @@ function Settings() {
 
   function AlertMessage() {
     return errorMessage ? (
-      <Col lg={5} md={6} sm={8} className="px-0">
-        <Alert
-          variant="danger"
-          onClose={() => setErrorMessage(null)}
-          className="d-flex align-items-center mb-0 mt-3"
-          dismissible
-        >
-          <IoWarningOutline className="mr-2" />
-          {errorMessage}
-        </Alert>
-      </Col>
+      <Alert
+        variant="danger"
+        onClose={() => setErrorMessage(null)}
+        className="d-flex align-items-center"
+        dismissible
+      >
+        <IoWarningOutline className="mr-2" />
+        {errorMessage}
+      </Alert>
     ) : null;
   }
 
@@ -110,22 +112,12 @@ function Settings() {
             >
               <Nav variant="pills" className="flex-column">
                 <Nav.Item>
-                  <Nav.Link
-                    eventKey="Profile"
-                    onSelect={(eventKey) => {
-                      handleSelect(eventKey);
-                    }}
-                  >
+                  <Nav.Link eventKey="Profile" onSelect={handleSelect}>
                     Profile
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link
-                    eventKey="Settings"
-                    onSelect={(eventKey) => {
-                      handleSelect(eventKey);
-                    }}
-                  >
+                  <Nav.Link eventKey="Settings" onSelect={handleSelect}>
                     Settings
                   </Nav.Link>
                 </Nav.Item>
@@ -144,7 +136,8 @@ function Settings() {
               >
                 <Tab.Content>
                   <Tab.Pane eventKey="Profile">
-                    <h3 className="mb-2">Edit {paneName}</h3>
+                    <h3 className="mb-2">Edit Profile</h3>
+                    <hr />
                     <AlertMessage />
                     <ProfilePane
                       userObject={userObject}

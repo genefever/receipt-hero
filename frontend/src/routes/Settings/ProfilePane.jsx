@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useContext, useRef } from "react";
 import Col from "react-bootstrap/Col";
+import Dropdown from "react-bootstrap/Dropdown";
 import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
 import Input from "../../components/Input";
@@ -55,8 +56,7 @@ function ProfilePane(props) {
 
       // Check file size is under 1 MB.
       if (fileSize > 1) {
-        props.setErrorMessage("Picture must be smaller than 1 MB.");
-        e.target.value = null;
+        props.setErrorMessage("Please upload a picture smaller than 1 MB.");
       } else {
         let imageDataUrl = await readFile(file);
 
@@ -70,6 +70,8 @@ function ProfilePane(props) {
         setImageSource(imageDataUrl);
         setShowModal(true);
       }
+
+      e.target.value = null; // Clear the file from the file input
     }
   };
 
@@ -85,9 +87,12 @@ function ProfilePane(props) {
       );
 
       props.handleChangeImage(croppedImage);
-    } catch (e) {
-      // TODO
-      console.error(e);
+    } catch (err) {
+      if (err.response?.data?.message) {
+        props.setErrorMessage(err.response.data.message);
+      } else {
+        props.setErrorMessage("An unexpected error occurred.");
+      }
     }
   }, [props, imageSource, croppedAreaPixels]);
 
@@ -101,49 +106,15 @@ function ProfilePane(props) {
     background: themeContext.body,
     color: themeContext.text,
     position: "absolute",
-    bottom: 0,
-    right: -10,
+    bottom: 10,
+    right: 140,
     borderRadius: "10%",
   };
 
   return (
     <>
-      <Form.Group>
-        <div style={{ display: "inline-block", position: "relative" }}>
-          <Avatar
-            size={150}
-            src={props.userSettings.profileImage}
-            googleId={props.userObject.googleId}
-            facebookId={props.userObject.facebookId}
-            name={`${props.userSettings.firstName} ${props.userSettings.lastName}`}
-            round={true}
-            className="my-2"
-          />
-
-          <StyledButton
-            style={editImageButtonStyle}
-            className="py-0 px-1"
-            size="sm"
-            onClick={(e) => {
-              // Programatically click the hidden file input element
-              // when the Button component is clicked
-              hiddenFileInput.current.click();
-            }}
-          >
-            <div className="d-flex align-items-center">
-              <MdEdit className="mr-1" /> Edit
-            </div>
-          </StyledButton>
-          <Form.File
-            accept="image/*"
-            onChange={handleFileChange}
-            ref={hiddenFileInput}
-            hidden
-          />
-        </div>
-      </Form.Group>
-      <Form.Row>
-        <Col lg={5} md={6} sm={8}>
+      <Row>
+        <Col xs={{ span: 12, order: 2 }} md={{ span: 7, order: 1 }}>
           <Input
             label="First Name"
             required
@@ -151,10 +122,7 @@ function ProfilePane(props) {
             value={props.userSettings.firstName}
             handleChange={props.handleChange}
           />
-        </Col>
-      </Form.Row>
-      <Form.Row>
-        <Col lg={5} md={6} sm={8}>
+
           <Input
             label="Last Name"
             required
@@ -162,10 +130,7 @@ function ProfilePane(props) {
             value={props.userSettings.lastName}
             handleChange={props.handleChange}
           />
-        </Col>
-      </Form.Row>
-      <Form.Row>
-        <Col lg={5} md={6} sm={8}>
+
           <Input
             label="Email"
             required
@@ -174,7 +139,66 @@ function ProfilePane(props) {
             handleChange={props.handleChange}
           />
         </Col>
-      </Form.Row>
+        <Col xs={{ span: 12, order: 1 }} md={{ span: 5, order: 2 }}>
+          <Form.Group>
+            <Form.Label>Profile Image</Form.Label>
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <Avatar
+                size={200}
+                src={props.userSettings.profileImage}
+                googleId={props.userObject.googleId}
+                facebookId={props.userObject.facebookId}
+                name={`${props.userSettings.firstName} ${props.userSettings.lastName}`}
+                round={true}
+                className="my-2"
+                style={{ flex: "0 0 auto" }} // Prevents crushing Avatar circle on shrink.
+              />
+              <Dropdown>
+                <Dropdown.Toggle
+                  style={editImageButtonStyle}
+                  bsPrefix="py-0 px-1"
+                >
+                  <div className="d-flex align-items-center">
+                    <MdEdit className="mr-1" /> Edit
+                  </div>
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu>
+                  <Dropdown.Item
+                    onClick={(e) => {
+                      // Programatically click the hidden file input element
+                      // when the Button component is clicked
+                      hiddenFileInput.current.click();
+                    }}
+                  >
+                    Upload a photo
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (
+                        window.confirm(
+                          "Are you sure you want to reset your current avatar?"
+                        )
+                      ) {
+                        props.handleChangeImage(null);
+                      }
+                    }}
+                  >
+                    Revert to original
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+                <Form.File
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  ref={hiddenFileInput}
+                  hidden
+                />
+              </Dropdown>
+            </div>
+          </Form.Group>
+        </Col>
+      </Row>
 
       {/* Modal - Crop image */}
       <StyledModal show={showModal} onHide={handleCloseModal}>
