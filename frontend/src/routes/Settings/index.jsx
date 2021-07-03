@@ -10,6 +10,7 @@ import { StyledCard } from "../../components/Card";
 import { UserContext } from "../../UserContext";
 import { ThemeContext } from "styled-components";
 import ProfilePane from "./ProfilePane";
+import PasswordPane from "./PasswordPane";
 import { IoWarningOutline } from "react-icons/io5";
 import { FcCheckmark } from "react-icons/fc";
 import { StyledModal } from "../../components/Modal";
@@ -117,8 +118,8 @@ function Settings() {
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link eventKey="Settings" onSelect={handleSelect}>
-                    Settings
+                  <Nav.Link eventKey="Password" onSelect={handleSelect}>
+                    Password
                   </Nav.Link>
                 </Nav.Item>
               </Nav>
@@ -128,9 +129,9 @@ function Settings() {
                 onSubmit={
                   !isLoading
                     ? (e) => {
-                        e.preventDefault();
-                        handleSubmit();
-                      }
+                      e.preventDefault();
+                      handleSubmit();
+                    }
                     : null
                 }
               >
@@ -147,8 +148,15 @@ function Settings() {
                       setErrorMessage={setErrorMessage}
                     />
                   </Tab.Pane>
-                  <Tab.Pane eventKey="Settings">
-                    <p>Settings</p>
+                  <Tab.Pane eventKey="Password">
+                    <h3 className="mb-2">Change Password</h3>
+                    <hr />
+                    <AlertMessage />
+                    <PasswordPane
+                      userObject={userObject}
+                      userSettings={userSettings}
+                      setErrorMessage={setErrorMessage}
+                    />
                   </Tab.Pane>
                 </Tab.Content>
                 {/* Save Button */}
