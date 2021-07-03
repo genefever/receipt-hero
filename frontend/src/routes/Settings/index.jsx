@@ -1,7 +1,6 @@
 import React, { useState, useContext, useEffect, useCallback } from "react";
 import Alert from "react-bootstrap/Alert";
 import Col from "react-bootstrap/Col";
-import Form from "react-bootstrap/Form";
 import Nav from "react-bootstrap/Nav";
 import Row from "react-bootstrap/Row";
 import Tab from "react-bootstrap/Tab";
@@ -48,7 +47,7 @@ function Settings() {
     initializeUserSettings();
   }, [userObject, initializeUserSettings]);
 
-  // Save userSettings to backend.
+  // Saves userSettings to backend.
   async function handleSubmit() {
     setLoading(true);
     try {
@@ -84,6 +83,7 @@ function Settings() {
     initializeUserSettings(); // revert any unsaved changes.
   }
 
+  // Closes the "Successfully saved" modal.
   function handleCloseModal() {
     setShowModal(false);
   }
@@ -125,51 +125,32 @@ function Settings() {
               </Nav>
             </Col>
             <Col sm={9} className="pl-4">
-              <Form
-                onSubmit={
-                  !isLoading
-                    ? (e) => {
-                      e.preventDefault();
-                      handleSubmit();
-                    }
-                    : null
-                }
-              >
-                <Tab.Content>
-                  <Tab.Pane eventKey="Profile">
-                    <h3 className="mb-2">Edit Profile</h3>
-                    <hr />
-                    <AlertMessage />
-                    <ProfilePane
-                      userObject={userObject}
-                      userSettings={userSettings}
-                      handleChange={handleChange}
-                      handleChangeImage={handleChangeImage}
-                      setErrorMessage={setErrorMessage}
-                    />
-                  </Tab.Pane>
-                  <Tab.Pane eventKey="Password">
-                    <h3 className="mb-2">Change Password</h3>
-                    <hr />
-                    <AlertMessage />
-                    <PasswordPane
-                      userObject={userObject}
-                      userSettings={userSettings}
-                      setErrorMessage={setErrorMessage}
-                    />
-                  </Tab.Pane>
-                </Tab.Content>
-                {/* Save Button */}
-                <StyledButton
-                  $primary
-                  type="submit"
-                  className="mt-2"
-                  size="lg"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Loading..." : "Save"}
-                </StyledButton>
-              </Form>
+              <Tab.Content>
+                <Tab.Pane eventKey="Profile">
+                  <h3 className="mb-2">Edit Profile</h3>
+                  <hr />
+                  <AlertMessage />
+                  <ProfilePane
+                    userObject={userObject}
+                    userSettings={userSettings}
+                    handleChange={handleChange}
+                    handleChangeImage={handleChangeImage}
+                    setErrorMessage={setErrorMessage}
+                    isLoading={isLoading}
+                    handleSubmit={handleSubmit}
+                  />
+                </Tab.Pane>
+                <Tab.Pane eventKey="Password">
+                  <h3 className="mb-2">Change Password</h3>
+                  <hr />
+                  <AlertMessage />
+                  <PasswordPane
+                    userObject={userObject}
+                    userSettings={userSettings}
+                    setErrorMessage={setErrorMessage}
+                  />
+                </Tab.Pane>
+              </Tab.Content>
             </Col>
           </Row>
         </Tab.Container>

@@ -113,92 +113,113 @@ function ProfilePane(props) {
 
   return (
     <>
-      <Row>
-        <Col xs={{ span: 12, order: 2 }} md={{ span: 7, order: 1 }}>
-          <Input
-            label="First Name"
-            required
-            name="firstName"
-            value={props.userSettings.firstName}
-            handleChange={props.handleChange}
-          />
+      <Form
+        onSubmit={
+          !props.isLoading
+            ? (e) => {
+                e.preventDefault();
+                props.handleSubmit();
+              }
+            : null
+        }
+      >
+        <Row>
+          <Col xs={{ span: 12, order: 2 }} md={{ span: 7, order: 1 }}>
+            <Input
+              label="First Name"
+              required
+              name="firstName"
+              value={props.userSettings.firstName}
+              handleChange={props.handleChange}
+            />
 
-          <Input
-            label="Last Name"
-            required
-            name="lastName"
-            value={props.userSettings.lastName}
-            handleChange={props.handleChange}
-          />
+            <Input
+              label="Last Name"
+              required
+              name="lastName"
+              value={props.userSettings.lastName}
+              handleChange={props.handleChange}
+            />
 
-          <Input
-            label="Email"
-            required
-            name="email"
-            value={props.userSettings.email}
-            handleChange={props.handleChange}
-          />
-        </Col>
-        <Col xs={{ span: 12, order: 1 }} md={{ span: 5, order: 2 }}>
-          <Form.Group>
-            <Form.Label>Profile Image</Form.Label>
-            <div style={{ display: "flex", justifyContent: "center" }}>
-              <Avatar
-                size={200}
-                src={props.userSettings.profileImage}
-                googleId={props.userObject.googleId}
-                facebookId={props.userObject.facebookId}
-                name={`${props.userSettings.firstName} ${props.userSettings.lastName}`}
-                round={true}
-                className="my-2"
-                style={{ flex: "0 0 auto" }} // Prevents crushing Avatar circle on shrink.
-              />
-              <Dropdown>
-                <Dropdown.Toggle
-                  style={editImageButtonStyle}
-                  bsPrefix="py-0 px-1"
-                >
-                  <div className="d-flex align-items-center">
-                    <MdEdit className="mr-1" /> Edit
-                  </div>
-                </Dropdown.Toggle>
-
-                <Dropdown.Menu>
-                  <Dropdown.Item
-                    onClick={(e) => {
-                      // Programatically click the hidden file input element
-                      // when the Button component is clicked
-                      hiddenFileInput.current.click();
-                    }}
-                  >
-                    Upload a photo
-                  </Dropdown.Item>
-                  <Dropdown.Item
-                    onClick={(e) => {
-                      e.preventDefault();
-                      if (
-                        window.confirm(
-                          "Are you sure you want to reset your current avatar?"
-                        )
-                      ) {
-                        props.handleChangeImage(null);
-                      }
-                    }}
-                  >
-                    Revert to original
-                  </Dropdown.Item>
-                </Dropdown.Menu>
-                <Form.File
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  ref={hiddenFileInput}
-                  hidden
+            <Input
+              label="Email"
+              required
+              name="email"
+              value={props.userSettings.email}
+              handleChange={props.handleChange}
+            />
+          </Col>
+          <Col xs={{ span: 12, order: 1 }} md={{ span: 5, order: 2 }}>
+            <Form.Group>
+              <Form.Label>Profile Image</Form.Label>
+              <div style={{ display: "flex", justifyContent: "center" }}>
+                <Avatar
+                  size={200}
+                  src={props.userSettings.profileImage}
+                  googleId={props.userObject.googleId}
+                  facebookId={props.userObject.facebookId}
+                  name={`${props.userSettings.firstName} ${props.userSettings.lastName}`}
+                  round={true}
+                  className="my-2"
+                  style={{ flex: "0 0 auto" }} // Prevents crushing Avatar circle on shrink.
                 />
-              </Dropdown>
-            </div>
-          </Form.Group>
-        </Col>
-      </Row>
+                <Dropdown>
+                  <Dropdown.Toggle
+                    style={editImageButtonStyle}
+                    bsPrefix="py-0 px-1"
+                  >
+                    <div className="d-flex align-items-center">
+                      <MdEdit className="mr-1" /> Edit
+                    </div>
+                  </Dropdown.Toggle>
+
+                  <Dropdown.Menu>
+                    <Dropdown.Item
+                      onClick={(e) => {
+                        // Programatically click the hidden file input element
+                        // when the Button component is clicked
+                        hiddenFileInput.current.click();
+                      }}
+                    >
+                      Upload a photo
+                    </Dropdown.Item>
+                    <Dropdown.Item
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (
+                          window.confirm(
+                            "Are you sure you want to reset your current avatar?"
+                          )
+                        ) {
+                          props.handleChangeImage(null);
+                        }
+                      }}
+                    >
+                      Revert to original
+                    </Dropdown.Item>
+                  </Dropdown.Menu>
+                  <Form.File
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    ref={hiddenFileInput}
+                    hidden
+                  />
+                </Dropdown>
+              </div>
+            </Form.Group>
+          </Col>
+        </Row>
+        {/* Save Button */}
+        <StyledButton
+          $primary
+          type="submit"
+          className="mt-2"
+          size="lg"
+          disabled={props.isLoading}
+        >
+          {props.isLoading ? "Loading..." : "Save"}
+        </StyledButton>
+      </Form>
 
       {/* Modal - Crop image */}
       <StyledModal show={showModal} onHide={handleCloseModal}>
