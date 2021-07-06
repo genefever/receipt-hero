@@ -46,32 +46,36 @@ function ForgotPassword(props) {
   }
 
   function handleSubmit() {
-    setLoading(true);
     if (isResetPassword) {
       resetPassword();
     } else {
       forgotPassword();
     }
-    setLoading(false);
   }
 
   async function resetPassword() {
     try {
-      await api.resetPassword(token, formData);
+      setLoading(true);
+      await api.resetPassword(formData, token);
+      setLoading(false);
       history.push(`/reset/${token}/done`);
     } catch (err) {
       if (err.response?.data?.message)
         setErrorMessage(err.response.data.message);
+      setLoading(false);
     }
   }
 
   async function forgotPassword() {
     try {
+      setLoading(true);
       await api.forgotPassword(formData);
+      setLoading(false);
       history.push("/forgot/done");
     } catch (err) {
       if (err.response?.data?.message)
         setErrorMessage(err.response.data.message);
+      setLoading(false);
     }
   }
 

@@ -25,7 +25,15 @@ function Settings() {
     email: "",
     profileImage: null,
   };
+
+  const defaultPassword = {
+    currentPassword: "",
+    newPassword: "",
+    confirmNewPassword: "",
+  };
+
   const [userSettings, setUserSettings] = useState(defaultUserSettings);
+  const [password, setPassword] = useState(defaultPassword);
   const [isLoading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
@@ -48,11 +56,24 @@ function Settings() {
   }, [userObject, initializeUserSettings]);
 
   // Saves userSettings to backend.
-  async function handleSubmit() {
+  async function handleSubmitUserSettings() {
     setLoading(true);
     try {
       await api.updateUser({ ...userObject, ...userSettings });
       getAuthenticatedUserObject();
+      setShowModal(true);
+    } catch (err) {
+      if (err.response?.data?.message)
+        setErrorMessage(err.response.data.message);
+    }
+    setLoading(false);
+  }
+
+  // Saves new password to backend.
+  async function handleSubmitPassword() {
+    setLoading(true);
+    try {
+      await api.updatePassword(password);
       setShowModal(true);
     } catch (err) {
       if (err.response?.data?.message)
@@ -77,14 +98,25 @@ function Settings() {
     });
   }
 
+  // Called when password input value changes.
+  function handlePasswordChange(event) {
+    const { name, value } = event.target;
+    setPassword((prevValue) => {
+      return { ...prevValue, [name]: value };
+    });
+  }
+
   // Called when a tab is pressed.
   function handleSelect() {
     setErrorMessage(null);
     initializeUserSettings(); // revert any unsaved changes.
+    setPassword(defaultPassword);
   }
 
   // Closes the "Successfully saved" modal.
   function handleCloseModal() {
+    setErrorMessage(null);
+    setPassword(defaultPassword);
     setShowModal(false);
   }
 
@@ -137,7 +169,7 @@ function Settings() {
                     handleChangeImage={handleChangeImage}
                     setErrorMessage={setErrorMessage}
                     isLoading={isLoading}
-                    handleSubmit={handleSubmit}
+                    handleSubmitUserSettings={handleSubmitUserSettings}
                   />
                 </Tab.Pane>
                 <Tab.Pane eventKey="Password">
@@ -148,6 +180,10 @@ function Settings() {
                     userObject={userObject}
                     userSettings={userSettings}
                     setErrorMessage={setErrorMessage}
+                    password={password}
+                    handlePasswordChange={handlePasswordChange}
+                    isLoading={isLoading}
+                    handleSubmitPassword={handleSubmitPassword}
                   />
                 </Tab.Pane>
               </Tab.Content>

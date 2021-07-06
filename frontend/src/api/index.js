@@ -12,8 +12,10 @@ export const logout = () => API.get("/auth/logout", { withCredentials: true });
 export const getAuthenticatedUser = () =>
   API.get("/auth/getuser", { withCredentials: true });
 export const forgotPassword = (formData) => API.post("/auth/forgot", formData);
-export const resetPassword = (token, formData) =>
+export const resetPassword = (formData, token) =>
   API.post(`/auth/reset/${token}`, formData);
+export const updatePassword = (formData) =>
+  API.put(`/auth/reset`, formData, { withCredentials: true });
 
 // User
 export const getUser = (id) => API.get("/user/" + id);

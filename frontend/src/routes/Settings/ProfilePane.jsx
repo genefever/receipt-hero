@@ -40,12 +40,14 @@ function readFile(file) {
 }
 
 function ProfilePane(props) {
+  const themeContext = useContext(ThemeContext);
   const [imageSource, setImageSource] = useState();
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState();
   const [showModal, setShowModal] = useState(false);
-  const themeContext = useContext(ThemeContext);
+  // Toggle dropdown on hover
+  const [showDropdown, setShowDropdown] = useState(false);
   // Create a reference to the hidden file input element
   const hiddenFileInput = useRef(null);
 
@@ -106,8 +108,10 @@ function ProfilePane(props) {
     background: themeContext.body,
     color: themeContext.text,
     position: "absolute",
-    bottom: 10,
-    right: 140,
+    bottom: 0,
+    right: 0,
+    // bottom: 10,
+    // right: 140,
     borderRadius: "10%",
   };
 
@@ -118,7 +122,7 @@ function ProfilePane(props) {
           !props.isLoading
             ? (e) => {
                 e.preventDefault();
-                props.handleSubmit();
+                props.handleSubmitUserSettings();
               }
             : null
         }
@@ -163,7 +167,15 @@ function ProfilePane(props) {
                   className="my-2"
                   style={{ flex: "0 0 auto" }} // Prevents crushing Avatar circle on shrink.
                 />
-                <Dropdown>
+                <Dropdown
+                  show={showDropdown}
+                  onMouseEnter={() => {
+                    setShowDropdown(true);
+                  }}
+                  onMouseLeave={() => {
+                    setShowDropdown(false);
+                  }}
+                >
                   <Dropdown.Toggle
                     style={editImageButtonStyle}
                     bsPrefix="py-0 px-1"

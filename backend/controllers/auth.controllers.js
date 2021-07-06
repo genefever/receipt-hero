@@ -5,6 +5,7 @@ const passport = require("passport");
 require("../config/passportConfig")(passport);
 const async = require("async");
 const crypto = require("crypto");
+const bcrypt = require("bcrypt");
 
 const getAuthenticatedUser = (req, res) => {
   res.send(req.user);
@@ -179,6 +180,98 @@ const forgotPassword = (req, res, next) => {
   );
 };
 
+// Post request - Check user's credentials before updating password.
+const updatePassword = (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res
+      .status(401)
+      .json({ message: "You must be logged in to change your password." });
+  } else {
+    User.findById(req.user._id, function (err, user) {
+      if (!user) {
+        return res.status(404).json({ message: "User could not be found." });
+      }
+
+      if (user.password == null) {
+        return res.status(401).json({
+          message:
+            "Your current password is not correct. Please enter your current password correctly!",
+        });
+      }
+
+      bcrypt.compare(req.body.currentPassword, user.password, (err, result) => {
+        if (err) {
+          return res.status(500).json({
+            err: err,
+            message: "An unexpected error occurred.",
+          });
+        } else if (result !== true) {
+          return res.status(401).json({
+            message:
+              "Your current password is not correct. Please enter your current password correctly!",
+          });
+        }
+      });
+
+      if (req.body.newPassword !== req.body.confirmNewPassword) {
+        return res.status(401).json({
+          message:
+            "'New Password' does not match 'Confirm New Password'. Please make sure they both match!",
+        });
+      }
+
+      user.password = req.body.newPassword;
+
+      user.save(function (err) {
+        if (err) {
+          return res.status(500).json({
+            err: err,
+            message: "An unexpected error occurred.",
+          });
+        }
+
+        var smtpTransport = nodemailer.createTransport({
+          service: "Gmail",
+          auth: {
+            type: "OAuth2",
+            user: process.env.GOOGLE_EMAIL_ADDRESS,
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
+          },
+        });
+        let mailOptions = {
+          to: user.email,
+          from: {
+            name: "Receipt Hero",
+            address: "no-reply@receipthero.com",
+          },
+          subject: "Your password has been changed",
+
+          text:
+            "Hello,\n\n" +
+            "This is a confirmation that the password for your account " +
+            user.email +
+            " has just been changed.\n\n\n" +
+            "Thanks,\n" +
+            "The Receipt Hero Team",
+        };
+        smtpTransport.sendMail(mailOptions, function (err) {
+          if (err) {
+            return res.status(500).json({
+              err: err,
+              message: "An unexpected error occurred.",
+            });
+          }
+          return res.status(201).json({
+            message: "Successfully updated new password.",
+          });
+        });
+      });
+    });
+  }
+};
+
 // Post request - Saves user's new password if password token is valid.
 const resetPassword = (req, res) => {
   async.waterfall(
@@ -289,6 +382,7 @@ module.exports = {
   login,
   logout,
   forgotPassword,
+  updatePassword,
   resetPassword,
   googleAuth,
   googleAuthCallback,

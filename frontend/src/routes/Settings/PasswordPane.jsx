@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
@@ -6,21 +6,6 @@ import Input from "../../components/Input";
 import { StyledButton } from "../../components/Button";
 
 function PasswordPane(props) {
-  const defaultPassword = {
-    currentPassword: "",
-    newPassword: "",
-    confirmNewPassword: "",
-  };
-
-  const [password, setPassword] = useState(defaultPassword);
-
-  function handlePasswordChange(event) {
-    const { name, value } = event.target;
-    setPassword((prevValue) => {
-      return { ...prevValue, [name]: value };
-    });
-  }
-
   return (
     <>
       <Form
@@ -28,7 +13,7 @@ function PasswordPane(props) {
           !props.isLoading
             ? (e) => {
                 e.preventDefault();
-                // props.handleSubmit();
+                props.handleSubmitPassword();
               }
             : null
         }
@@ -40,8 +25,8 @@ function PasswordPane(props) {
               required
               name="currentPassword"
               type="password"
-              value={password.currentPassword}
-              handleChange={(e) => handlePasswordChange(e)}
+              value={props.password.currentPassword}
+              handleChange={(e) => props.handlePasswordChange(e)}
             />
 
             <Input
@@ -49,8 +34,8 @@ function PasswordPane(props) {
               required
               name="newPassword"
               type="password"
-              value={password.newPassword}
-              handleChange={(e) => handlePasswordChange(e)}
+              value={props.password.newPassword}
+              handleChange={(e) => props.handlePasswordChange(e)}
             />
 
             <Input
@@ -58,8 +43,8 @@ function PasswordPane(props) {
               required
               name="confirmNewPassword"
               type="password"
-              value={password.confirmNewPassword}
-              handleChange={(e) => handlePasswordChange(e)}
+              value={props.password.confirmNewPassword}
+              handleChange={(e) => props.handlePasswordChange(e)}
             />
           </Col>
           <Col md={5} />
