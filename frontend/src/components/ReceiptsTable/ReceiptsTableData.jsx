@@ -94,7 +94,7 @@ function ReceiptsTableData(props) {
       },
     },
     {
-      dataField: "id", // TODO find a better way to generate id
+      dataField: "id",
       text: "",
       align: "center",
       editable: false,

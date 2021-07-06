@@ -13,6 +13,7 @@ import { UserContext } from "../UserContext";
 import { useHistory, useParams } from "react-router-dom";
 import * as api from "../api";
 import { useStateCallback, usePrevious } from "../hooks";
+import { v1 as uuidv1 } from "uuid";
 
 function Home(props) {
   const {
@@ -107,7 +108,7 @@ function Home(props) {
       (prevCalcObj) => {
         const prevReceipts = prevCalcObj.receipts;
         newReceipt.total = parseFloat(newReceipt.total).toFixed(2);
-        newReceipt.id = prevReceipts.length + 1; // TODO Generate uuid or something
+        newReceipt.id = uuidv1(); // Creates an RFC version 1 (timestamp) UUID.
 
         // Add the new receipt's people amount to the calc object's people's totalAmount.
         const updatedPeople = [...prevCalcObj.people].map((person) => {

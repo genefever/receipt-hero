@@ -20,7 +20,7 @@ export const updatePassword = (formData) =>
 // User
 export const getUser = (id) => API.get("/user/" + id);
 export const updateUser = (userObject) =>
-  API.put("/user/settings", userObject, { withCredentials: true }); // TODO
+  API.put("/user/settings", userObject, { withCredentials: true });
 
 // Calculation
 export const createCalculation = (newCalculation) =>
