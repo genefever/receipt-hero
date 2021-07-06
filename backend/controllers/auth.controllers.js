@@ -205,68 +205,69 @@ const updatePassword = (req, res) => {
             err: err,
             message: "An unexpected error occurred.",
           });
-        } else if (result !== true) {
+        }
+
+        if (result !== true) {
           return res.status(401).json({
             message:
               "Your current password is not correct. Please enter your current password correctly!",
           });
-        }
-      });
-
-      if (req.body.newPassword !== req.body.confirmNewPassword) {
-        return res.status(401).json({
-          message:
-            "'New Password' does not match 'Confirm New Password'. Please make sure they both match!",
-        });
-      }
-
-      user.password = req.body.newPassword;
-
-      user.save(function (err) {
-        if (err) {
-          return res.status(500).json({
-            err: err,
-            message: "An unexpected error occurred.",
+        } else if (req.body.newPassword !== req.body.confirmNewPassword) {
+          return res.status(401).json({
+            message:
+              "'New Password' does not match 'Confirm New Password'. Please make sure they both match!",
           });
-        }
+        } else {
+          user.password = req.body.newPassword;
 
-        var smtpTransport = nodemailer.createTransport({
-          service: "Gmail",
-          auth: {
-            type: "OAuth2",
-            user: process.env.GOOGLE_EMAIL_ADDRESS,
-            clientId: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
-          },
-        });
-        let mailOptions = {
-          to: user.email,
-          from: {
-            name: "Receipt Hero",
-            address: "no-reply@receipthero.com",
-          },
-          subject: "Your password has been changed",
+          user.save(function (err) {
+            if (err) {
+              return res.status(500).json({
+                err: err,
+                message: "An unexpected error occurred.",
+              });
+            }
 
-          text:
-            "Hello,\n\n" +
-            "This is a confirmation that the password for your account " +
-            user.email +
-            " has just been changed.\n\n\n" +
-            "Thanks,\n" +
-            "The Receipt Hero Team",
-        };
-        smtpTransport.sendMail(mailOptions, function (err) {
-          if (err) {
-            return res.status(500).json({
-              err: err,
-              message: "An unexpected error occurred.",
+            var smtpTransport = nodemailer.createTransport({
+              service: "Gmail",
+              auth: {
+                type: "OAuth2",
+                user: process.env.GOOGLE_EMAIL_ADDRESS,
+                clientId: process.env.GOOGLE_CLIENT_ID,
+                clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+                refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
+              },
             });
-          }
-          return res.status(201).json({
-            message: "Successfully updated new password.",
+            let mailOptions = {
+              to: user.email,
+              from: {
+                name: "Receipt Hero",
+                address: "no-reply@receipthero.com",
+              },
+              subject: "Your password has been changed",
+
+              text:
+                "Hello,\n\n" +
+                "This is a confirmation that the password for your account " +
+                user.email +
+                " has just been changed.\n\n\n" +
+                "Thanks,\n" +
+                "The Receipt Hero Team",
+            };
+            smtpTransport.sendMail(mailOptions, function (err) {
+              if (err) {
+                return res.status(500).json({
+                  err: err,
+                  message: "An unexpected error occurred.",
+                });
+              } else {
+                return res.status(201).json({
+                  message: "Successfully updated new password.",
+                });
+              }
+            });
           });
-        });
+        }
       });
     });
   }
