@@ -69,6 +69,15 @@ export const GlobalStyles = createGlobalStyle`
       border: 1px solid #aaa;
     }
 
+    .nav.nav-pills .nav-link {
+      color: ${({ theme }) => theme.text} !important;
+    }
+
+    .nav.nav-pills .nav-link.active {
+      color: #fff !important;
+      background-color: ${({ theme }) => theme.tabPane} !important;
+    }
+
     /* Print settings */
 
     @page {

@@ -8,6 +8,7 @@ export const lightTheme = {
   borderColor: "#d3d3d3",
   cellColorGreen: "#49a94e",
   cellColorOrange: "#FF5F1F",
+  tabPane: "#9d9a9a",
 };
 
 export const darkTheme = {
@@ -20,4 +21,5 @@ export const darkTheme = {
   borderColor: "#636465",
   cellColorGreen: "#39FF14", //"#59FF00",
   cellColorOrange: "#FFA500",
+  tabPane: "#757677",
 };
