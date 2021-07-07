@@ -1,17 +1,28 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import Col from "react-bootstrap/Col";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Form from "react-bootstrap/Form";
+import FormControl from "react-bootstrap/FormControl";
 import InputGroup from "react-bootstrap/InputGroup";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import { StyledButton } from "../Button";
 import { ThemeContext } from "styled-components";
 import Input from "../Input";
+import { StyledModal } from "../Modal";
 
 function CalculatorForm(props) {
   const themeContext = useContext(ThemeContext);
+  const [showModal, setShowModal] = useState(false);
+
+  const handleShowModal = (personIdx) => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
 
   return (
     <>
@@ -56,7 +67,6 @@ function CalculatorForm(props) {
               value={props.receipt.total || ""}
               type="number"
               min="0.01"
-              step="0.01"
               required
               placeholder="0.00"
             />
@@ -106,7 +116,6 @@ function CalculatorForm(props) {
                 value={props.deduction.amount || ""}
                 type="number"
                 min="0"
-                step="0.01"
                 placeholder="0.00"
               />
               <Form.Control
@@ -144,17 +153,82 @@ function CalculatorForm(props) {
             </InputGroup>
           </OverlayTrigger>
 
-          <Form.Check
-            type="checkbox"
-            checked={props.deduction.isTaxed}
-            label="Include tax with item price"
-            className="mt-1 small text-muted"
-            onChange={(e) => {
-              props.onDeductionInputChange(e);
-            }}
-          />
+          <Form.Check className="mt-1 text-muted">
+            <div className="d-flex align-items-center">
+              <Form.Check.Input
+                id="taxRateCheckbox"
+                type="checkbox"
+                checked={props.deduction.isTaxed}
+                onChange={(e) => {
+                  props.onDeductionInputChange(e);
+                }}
+              />
+              <Form.Check.Label htmlFor="taxRateCheckbox" className="mt-1">
+                Include{" "}
+                <StyledButton
+                  variant="link"
+                  className="py-0 px-0 pb-1"
+                  onClick={handleShowModal}
+                >
+                  tax
+                </StyledButton>{" "}
+                with item price
+              </Form.Check.Label>
+            </div>
+          </Form.Check>
         </Form.Group>
       </Form.Row>
+
+      {/* Modal - Edit tax rate */}
+      <StyledModal show={showModal} onHide={handleCloseModal} size="sm">
+        <StyledModal.Header closeButton>
+          <StyledModal.Title>Edit tax rate</StyledModal.Title>
+        </StyledModal.Header>
+        <StyledModal.Body>
+          <Form.Label>Tax Rate</Form.Label>
+
+          <InputGroup>
+            <FormControl
+              type="number"
+              required
+              name="taxRate"
+              value={props.taxRate}
+              onChange={(e) => {
+                props.onTaxRateChange(e);
+              }}
+              className="text-right"
+              autoFocus
+              onFocus={(e) => {
+                e.target.select();
+              }}
+              onKeyPress={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  props.onTaxRateSubmit();
+                  handleCloseModal(); // TODO Only close modal if valid input.
+                }
+              }}
+            />
+            <InputGroup.Append>
+              <InputGroup.Text>%</InputGroup.Text>
+            </InputGroup.Append>
+          </InputGroup>
+          <Form.Text className="text-muted">
+            Enter a number between 0 and 100.
+          </Form.Text>
+          <StyledButton
+            variant="secondary"
+            className="mt-4 mb-1 float-right"
+            onClick={(e) => {
+              e.preventDefault();
+              props.onTaxRateSubmit();
+              handleCloseModal(); // TODO only close modal if valid input.
+            }}
+          >
+            Done
+          </StyledButton>
+        </StyledModal.Body>
+      </StyledModal>
     </>
   );
 }

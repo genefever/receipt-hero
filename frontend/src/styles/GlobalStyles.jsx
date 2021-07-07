@@ -78,6 +78,18 @@ export const GlobalStyles = createGlobalStyle`
       background-color: ${({ theme }) => theme.tabPane} !important;
     }
 
+    /* Chrome, Safari, Edge, Opera - Removes increment button for number text input. */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    /* Firefox */
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+
     /* Print settings */
 
     @page {
