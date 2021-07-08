@@ -38,6 +38,7 @@ const Calculator = forwardRef((props, ref) => {
   const defaultDeductionState = {
     id: null,
     amount: 0,
+    amountWithTax: 0,
     itemName: "",
     personIdx: 0,
     isTaxed: false,
@@ -51,7 +52,11 @@ const Calculator = forwardRef((props, ref) => {
 
   // Adds every number in the list and returns the sum.
   function calculateDeductionsSum(list) {
-    return list.reduce((acc, item) => acc * 1 + item.amount * 1, 0);
+    return list.reduce(
+      (acc, item) =>
+        acc * 1 + (item.isTaxed ? item.amountWithTax : item.amount) * 1,
+      0
+    );
   }
 
   function calculateBalanceOwed(receiptToCalculate) {
@@ -229,17 +234,31 @@ const Calculator = forwardRef((props, ref) => {
 
       const { name, value, type, checked } = event.target;
 
-      if (type === "number")
-        return { ...prevDeduction, amount: formatFloat(value) };
-      else if (type === "checkbox") {
-        const newAmount = checked
-          ? prevDeduction.amount * (taxRate / 100 + 1)
-          : prevDeduction.amount / (taxRate / 100 + 1);
+      if (type === "number") {
+        let amount = 0;
+        let amountWithTax = 0;
+
+        // Update amount and amountWithTax according to current isTaxed state.
+        if (prevDeduction.isTaxed) {
+          amountWithTax = formatFloat(value);
+          amount = (amountWithTax / (taxRate / 100 + 1)).toFixed(2);
+        } else {
+          amount = formatFloat(value);
+          amountWithTax = (amount * (taxRate / 100 + 1)).toFixed(2);
+        }
 
         return {
           ...prevDeduction,
+          amount: amount,
+          amountWithTax: amountWithTax,
+        };
+      } else if (type === "checkbox") {
+        const amountWithTax = 1 * (prevDeduction.amount * (taxRate / 100 + 1));
+
+        return {
+          ...prevDeduction,
+          amountWithTax: amountWithTax.toFixed(2),
           isTaxed: checked,
-          amount: 1 * newAmount.toFixed(2),
         };
       } else {
         return { ...prevDeduction, [name]: value };
@@ -251,6 +270,7 @@ const Calculator = forwardRef((props, ref) => {
   const [taxRate, setTaxRate] = useState(9.25);
   const { userObject } = useContext(UserContext);
 
+  // Set taxRate based on userObject's taxRate or local storage taxRate if available.
   useEffect(() => {
     if (userObject?.taxRate) {
       setTaxRate(userObject.taxRate);
@@ -275,6 +295,17 @@ const Calculator = forwardRef((props, ref) => {
     } else {
       window.localStorage.setItem("taxRate", taxRate);
     }
+
+    // Update the deductions input field with the new tax rate.
+    const dummyEvent = {
+      target: {
+        name: null,
+        value: null,
+        type: "checkbox",
+        checked: deduction.isTaxed,
+      },
+    };
+    handleDeductionInputChange(dummyEvent);
   };
 
   return (

@@ -113,7 +113,11 @@ function CalculatorForm(props) {
               <Form.Control
                 name="amount"
                 onChange={(e) => props.onDeductionInputChange(e)}
-                value={props.deduction.amount || ""}
+                value={
+                  (props.deduction.isTaxed
+                    ? props.deduction.amountWithTax
+                    : props.deduction.amount) || ""
+                }
                 type="number"
                 min="0"
                 placeholder="0.00"
