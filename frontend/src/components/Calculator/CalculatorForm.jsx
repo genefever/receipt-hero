@@ -114,9 +114,11 @@ function CalculatorForm(props) {
                 name="amount"
                 onChange={(e) => props.onDeductionInputChange(e)}
                 value={
-                  (props.deduction.isTaxed
-                    ? props.deduction.amountWithTax
-                    : props.deduction.amount) || ""
+                  props.deduction.isTaxed
+                    ? props.deduction.amountWithTax !== "0.00"
+                      ? props.deduction.amountWithTax
+                      : ""
+                    : props.deduction.amount || ""
                 }
                 type="number"
                 min="0"
