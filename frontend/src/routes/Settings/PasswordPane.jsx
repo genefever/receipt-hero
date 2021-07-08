@@ -1,65 +1,77 @@
 import React from "react";
 import Col from "react-bootstrap/Col";
-import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
-import Input from "../../components/Input";
+import { Formik } from "formik";
+import * as yup from "yup";
+import { FormTextField } from "../../components/Form";
 import { StyledButton } from "../../components/Button";
+
+const schema = yup.object({
+  currentPassword: yup.string().required("Required"),
+  newPassword: yup.string().required("Required"),
+  confirmNewPassword: yup.string().required("Required"),
+});
+
+const defaultPassword = {
+  currentPassword: "",
+  newPassword: "",
+  confirmNewPassword: "",
+};
 
 function PasswordPane(props) {
   return (
     <>
-      <Form
-        onSubmit={
-          !props.isLoading
-            ? (e) => {
-                e.preventDefault();
-                props.handleSubmitPassword();
-              }
-            : null
-        }
+      <Formik
+        validationSchema={schema}
+        initialValues={defaultPassword}
+        onSubmit={(values, { setSubmitting, resetForm }) => {
+          props.handleSubmitPassword(values).then(() => {
+            setSubmitting(false);
+            resetForm(defaultPassword);
+          });
+        }}
       >
-        <Row>
-          <Col md={7}>
-            <Input
-              label="Current Password"
-              required
-              name="currentPassword"
-              type="password"
-              value={props.password.currentPassword}
-              handleChange={(e) => props.handlePasswordChange(e)}
-            />
+        {({ handleSubmit, handleChange, isSubmitting, isValid }) => (
+          <Form noValidate onSubmit={handleSubmit}>
+            <Form.Row>
+              <FormTextField
+                as={Col}
+                md={7}
+                label="Current Password"
+                name="currentPassword"
+                type="password"
+              />
 
-            <Input
-              label="New Password"
-              required
-              name="newPassword"
-              type="password"
-              value={props.password.newPassword}
-              handleChange={(e) => props.handlePasswordChange(e)}
-            />
+              <FormTextField
+                as={Col}
+                md={7}
+                label="New Password"
+                name="newPassword"
+                type="password"
+              />
 
-            <Input
-              label="Confirm New Password"
-              required
-              name="confirmNewPassword"
-              type="password"
-              value={props.password.confirmNewPassword}
-              handleChange={(e) => props.handlePasswordChange(e)}
-            />
-          </Col>
-          <Col md={5} />
-        </Row>
-        {/* Save Button */}
-        <StyledButton
-          $primary
-          type="submit"
-          className="mt-2"
-          size="lg"
-          disabled={props.isLoading}
-        >
-          {props.isLoading ? "Loading..." : "Save"}
-        </StyledButton>
-      </Form>
+              <FormTextField
+                as={Col}
+                md={7}
+                label="Confirm New Password"
+                name="confirmNewPassword"
+                type="password"
+              />
+            </Form.Row>
+
+            {/* Save Button */}
+            <StyledButton
+              $primary
+              type="submit"
+              className="mt-2"
+              size="lg"
+              disabled={!isValid || isSubmitting}
+            >
+              {isSubmitting ? "Loading..." : "Save"}
+            </StyledButton>
+          </Form>
+        )}
+      </Formik>
     </>
   );
 }

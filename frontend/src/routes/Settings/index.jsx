@@ -26,14 +26,7 @@ function Settings() {
     profileImage: null,
   };
 
-  const defaultPassword = {
-    currentPassword: "",
-    newPassword: "",
-    confirmNewPassword: "",
-  };
-
   const [userSettings, setUserSettings] = useState(defaultUserSettings);
-  const [password, setPassword] = useState(defaultPassword);
   const [isLoading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
@@ -70,8 +63,7 @@ function Settings() {
   }
 
   // Saves new password to backend.
-  async function handleSubmitPassword() {
-    setLoading(true);
+  async function handleSubmitPassword(password) {
     try {
       await api.updatePassword(password);
       setShowModal(true);
@@ -79,7 +71,6 @@ function Settings() {
       if (err.response?.data?.message)
         setErrorMessage(err.response.data.message);
     }
-    setLoading(false);
   }
 
   // Called when input textfield value changes.
@@ -98,25 +89,15 @@ function Settings() {
     });
   }
 
-  // Called when password input value changes.
-  function handlePasswordChange(event) {
-    const { name, value } = event.target;
-    setPassword((prevValue) => {
-      return { ...prevValue, [name]: value };
-    });
-  }
-
   // Called when a tab is pressed.
   function handleSelect() {
     setErrorMessage(null);
     initializeUserSettings(); // revert any unsaved changes.
-    setPassword(defaultPassword);
   }
 
   // Closes the "Successfully saved" modal.
   function handleCloseModal() {
     setErrorMessage(null);
-    setPassword(defaultPassword);
     setShowModal(false);
   }
 
@@ -176,15 +157,7 @@ function Settings() {
                   <h3 className="mb-2">Change Password</h3>
                   <hr />
                   <AlertMessage />
-                  <PasswordPane
-                    userObject={userObject}
-                    userSettings={userSettings}
-                    setErrorMessage={setErrorMessage}
-                    password={password}
-                    handlePasswordChange={handlePasswordChange}
-                    isLoading={isLoading}
-                    handleSubmitPassword={handleSubmitPassword}
-                  />
+                  <PasswordPane handleSubmitPassword={handleSubmitPassword} />
                 </Tab.Pane>
               </Tab.Content>
             </Col>
