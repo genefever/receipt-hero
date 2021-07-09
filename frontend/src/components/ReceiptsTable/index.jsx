@@ -13,7 +13,7 @@ import ReactToPrint from "react-to-print";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import Input from "../Input";
+import Form from "react-bootstrap/Form";
 import emptyTable from "../../assets/empty-table.svg";
 import OutsideClickHandler from "react-outside-click-handler";
 import ReceiptsTableData from "./ReceiptsTableData";
@@ -101,20 +101,22 @@ function ReceiptsTable(props) {
                           setEditTitle(false);
                         }}
                       >
-                        <Input
-                          autoFocus
-                          defaultValue={props.calculationObject.title}
-                          handleChange={(e) => props.onEditCalculationTitle(e)}
-                          onKeyPress={(e) => {
-                            if (e.key === "Enter") {
-                              props.onSaveCalculationObject();
-                              toggleEditTitle();
-                            }
-                          }}
-                          onFocus={(e) => {
-                            e.target.select();
-                          }}
-                        />
+                        <Form.Group>
+                          <Form.Control
+                            autoFocus
+                            defaultValue={props.calculationObject.title}
+                            onChange={(e) => props.onEditCalculationTitle(e)}
+                            onKeyPress={(e) => {
+                              if (e.key === "Enter") {
+                                props.onSaveCalculationObject();
+                                toggleEditTitle();
+                              }
+                            }}
+                            onFocus={(e) => {
+                              e.target.select();
+                            }}
+                          />
+                        </Form.Group>
                       </OutsideClickHandler>
                     ) : (
                       <>

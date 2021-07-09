@@ -150,13 +150,7 @@ function ProfilePane(props) {
           });
         }}
       >
-        {({
-          handleSubmit,
-          handleChange,
-          isSubmitting,
-          values,
-          setFieldValue,
-        }) => (
+        {({ handleSubmit, isSubmitting, values, setFieldValue }) => (
           <Form noValidate onSubmit={handleSubmit}>
             <Row>
               <Col xs={{ span: 12, order: 2 }} md={{ span: 7, order: 1 }}>

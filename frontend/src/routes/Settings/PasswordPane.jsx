@@ -32,7 +32,7 @@ function PasswordPane(props) {
           });
         }}
       >
-        {({ handleSubmit, handleChange, isSubmitting }) => (
+        {({ handleSubmit, isSubmitting }) => (
           <Form noValidate onSubmit={handleSubmit}>
             <Form.Row>
               <FormTextField

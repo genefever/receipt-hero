@@ -136,7 +136,7 @@ function ForgotPassword(props) {
             }}
             innerRef={formRef}
           >
-            {({ handleSubmit, handleChange, isSubmitting }) => (
+            {({ handleSubmit, isSubmitting }) => (
               <Form noValidate onSubmit={handleSubmit}>
                 {/* Email / Password */}
                 {isResetPassword ? (
@@ -160,8 +160,8 @@ function ForgotPassword(props) {
                   {isSubmitting
                     ? "Loading..."
                     : isResetPassword
-                      ? "Update password"
-                      : "Email me a recovery link"}
+                    ? "Update password"
+                    : "Email me a recovery link"}
                 </StyledButton>
               </Form>
             )}

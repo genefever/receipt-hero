@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { StyledModal } from "../Modal";
-import Input from "../Input";
+import Form from "react-bootstrap/Form";
 import ListGroup from "react-bootstrap/ListGroup";
 import { FaTrashAlt } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
@@ -31,19 +31,21 @@ function EditPeopleModal(props) {
             <ListGroup.Item key={idx} action>
               {modalEditPerson.isEditing && idx === modalEditPerson.idx ? (
                 <OutsideClickHandler onOutsideClick={toggleEditPerson}>
-                  <Input
-                    autoFocus
-                    defaultValue={person.name}
-                    handleChange={(e) => props.onChangePersonName(e, idx)}
-                    onKeyPress={(e) => {
-                      if (e.key === "Enter") {
-                        toggleEditPerson();
-                      }
-                    }}
-                    onFocus={(e) => {
-                      e.target.select();
-                    }}
-                  />
+                  <Form.Group>
+                    <Form.Control
+                      autoFocus
+                      defaultValue={person.name}
+                      handleChange={(e) => props.onChangePersonName(e, idx)}
+                      onKeyPress={(e) => {
+                        if (e.key === "Enter") {
+                          toggleEditPerson();
+                        }
+                      }}
+                      onFocus={(e) => {
+                        e.target.select();
+                      }}
+                    />
+                  </Form.Group>
                 </OutsideClickHandler>
               ) : (
                 person.name

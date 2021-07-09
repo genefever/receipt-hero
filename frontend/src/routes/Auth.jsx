@@ -153,7 +153,7 @@ function Auth(props) {
               setSubmitting(false);
             }}
           >
-            {({ handleSubmit, handleChange, isSubmitting }) => (
+            {({ handleSubmit, isSubmitting }) => (
               <Form noValidate onSubmit={handleSubmit}>
                 {/* Name */}
                 {isSignUp && (
