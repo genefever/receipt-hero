@@ -6,6 +6,7 @@ import * as yup from "yup";
 import { FormTextField } from "../../components/Form";
 import { StyledButton } from "../../components/Button";
 
+// Formik validation schema
 const schema = yup.object({
   currentPassword: yup.string().required("Required"),
   newPassword: yup.string().required("Required"),

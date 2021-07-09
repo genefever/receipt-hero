@@ -3,7 +3,9 @@ import Col from "react-bootstrap/Col";
 import Dropdown from "react-bootstrap/Dropdown";
 import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
-import Input from "../../components/Input";
+import { Formik } from "formik";
+import * as yup from "yup";
+import { FormTextField } from "../../components/Form";
 import Cropper from "react-easy-crop";
 import { getOrientation } from "get-orientation/browser";
 import { getCroppedImage, getRotatedImage } from "./canvasUtils";
@@ -31,6 +33,20 @@ const ORIENTATION_TO_ANGLE = {
   "8": -90,
 };
 
+// Formik validation schema
+const schema = yup.object({
+  firstName: yup
+    .string()
+    .max(15, "Must be 15 characters or less")
+    .required("Required"),
+  lastName: yup
+    .string()
+    .max(20, "Must be 20 characters or less")
+    .required("Required"),
+  email: yup.string().email("Invalid email address").required("Required"),
+  profileImage: yup.mixed(),
+});
+
 function readFile(file) {
   return new Promise((resolve) => {
     const reader = new FileReader();
@@ -45,11 +61,29 @@ function ProfilePane(props) {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState();
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(false); // "Crop Image" modal
   // Toggle dropdown on hover
   const [showDropdown, setShowDropdown] = useState(false);
   // Create a reference to the hidden file input element
   const hiddenFileInput = useRef(null);
+  const formRef = useRef(); // Attached to <Formik>
+
+  const editImageButtonStyle = {
+    border: "1px solid" + themeContext.borderColor,
+    background: themeContext.body,
+    color: themeContext.text,
+    position: "absolute",
+    bottom: 0, // 10 for left
+    right: 0, // 140 for left
+    borderRadius: "10%",
+  };
+
+  const defaultUserSettings = {
+    firstName: props.userObject.firstName,
+    lastName: props.userObject.lastName,
+    email: props.userObject.email,
+    profileImage: props.userObject.profileImage,
+  };
 
   const handleFileChange = async (e) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -88,7 +122,8 @@ function ProfilePane(props) {
         croppedAreaPixels
       );
 
-      props.handleChangeImage(croppedImage);
+      // Sets Formik "profileImage" key.
+      formRef.current.setFieldValue("profileImage", croppedImage, false);
     } catch (err) {
       if (err.response?.data?.message) {
         props.setErrorMessage(err.response.data.message);
@@ -103,136 +138,120 @@ function ProfilePane(props) {
     setShowModal(false);
   }
 
-  const editImageButtonStyle = {
-    border: "1px solid" + themeContext.borderColor,
-    background: themeContext.body,
-    color: themeContext.text,
-    position: "absolute",
-    bottom: 0,
-    right: 0,
-    // bottom: 10,
-    // right: 140,
-    borderRadius: "10%",
-  };
-
   return (
     <>
-      <Form
-        onSubmit={
-          !props.isLoading
-            ? (e) => {
-                e.preventDefault();
-                props.handleSubmitUserSettings();
-              }
-            : null
-        }
+      <Formik
+        validationSchema={schema}
+        initialValues={defaultUserSettings}
+        innerRef={formRef}
+        onSubmit={(values, { setSubmitting, resetForm }) => {
+          props.handleSubmitUserSettings(values).then(() => {
+            setSubmitting(false);
+          });
+        }}
       >
-        <Row>
-          <Col xs={{ span: 12, order: 2 }} md={{ span: 7, order: 1 }}>
-            <Input
-              label="First Name"
-              required
-              name="firstName"
-              value={props.userSettings.firstName}
-              handleChange={props.handleChange}
-            />
+        {({
+          handleSubmit,
+          handleChange,
+          isSubmitting,
+          isValid,
+          values,
+          setFieldValue,
+        }) => (
+          <Form noValidate onSubmit={handleSubmit}>
+            <Row>
+              <Col xs={{ span: 12, order: 2 }} md={{ span: 7, order: 1 }}>
+                {/* First Name */}
+                <FormTextField label="First Name" name="firstName" />
 
-            <Input
-              label="Last Name"
-              required
-              name="lastName"
-              value={props.userSettings.lastName}
-              handleChange={props.handleChange}
-            />
+                {/* Last Name */}
+                <FormTextField label="Last Name" name="lastName" />
 
-            <Input
-              label="Email"
-              required
-              name="email"
-              value={props.userSettings.email}
-              handleChange={props.handleChange}
-            />
-          </Col>
-          <Col xs={{ span: 12, order: 1 }} md={{ span: 5, order: 2 }}>
-            <Form.Group>
-              <Form.Label>Profile Image</Form.Label>
-              <div style={{ display: "flex", justifyContent: "center" }}>
-                <Avatar
-                  size={200}
-                  src={props.userSettings.profileImage}
-                  googleId={props.userObject.googleId}
-                  facebookId={props.userObject.facebookId}
-                  name={`${props.userSettings.firstName} ${props.userSettings.lastName}`}
-                  round={true}
-                  className="my-2"
-                  style={{ flex: "0 0 auto" }} // Prevents crushing Avatar circle on shrink.
-                />
-                <Dropdown
-                  show={showDropdown}
-                  onMouseEnter={() => {
-                    setShowDropdown(true);
-                  }}
-                  onMouseLeave={() => {
-                    setShowDropdown(false);
-                  }}
-                >
-                  <Dropdown.Toggle
-                    style={editImageButtonStyle}
-                    bsPrefix="py-0 px-1"
-                  >
-                    <div className="d-flex align-items-center">
-                      <MdEdit className="mr-1" /> Edit
-                    </div>
-                  </Dropdown.Toggle>
-
-                  <Dropdown.Menu>
-                    <Dropdown.Item
-                      onClick={(e) => {
-                        // Programatically click the hidden file input element
-                        // when the Button component is clicked
-                        hiddenFileInput.current.click();
+                {/* Email */}
+                <FormTextField label="Email" name="email" />
+              </Col>
+              <Col xs={{ span: 12, order: 1 }} md={{ span: 5, order: 2 }}>
+                <Form.Group>
+                  <Form.Label>Profile Image</Form.Label>
+                  <div style={{ display: "flex", justifyContent: "center" }}>
+                    <Avatar
+                      size={200}
+                      src={values.profileImage}
+                      googleId={props.userObject.googleId}
+                      facebookId={props.userObject.facebookId}
+                      name={`${props.userObject.firstName} ${props.userObject.lastName}`}
+                      round={true}
+                      className="my-2"
+                      style={{ flex: "0 0 auto" }} // Prevents crushing Avatar circle on shrink.
+                    />
+                    <Dropdown
+                      show={showDropdown}
+                      onMouseEnter={() => {
+                        setShowDropdown(true);
+                      }}
+                      onMouseLeave={() => {
+                        setShowDropdown(false);
                       }}
                     >
-                      Upload a photo
-                    </Dropdown.Item>
-                    <Dropdown.Item
-                      onClick={(e) => {
-                        e.preventDefault();
-                        if (
-                          window.confirm(
-                            "Are you sure you want to reset your current avatar?"
-                          )
-                        ) {
-                          props.handleChangeImage(null);
-                        }
-                      }}
-                    >
-                      Revert to original
-                    </Dropdown.Item>
-                  </Dropdown.Menu>
-                  <Form.File
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    ref={hiddenFileInput}
-                    hidden
-                  />
-                </Dropdown>
-              </div>
-            </Form.Group>
-          </Col>
-        </Row>
-        {/* Save Button */}
-        <StyledButton
-          $primary
-          type="submit"
-          className="mt-2"
-          size="lg"
-          disabled={props.isLoading}
-        >
-          {props.isLoading ? "Loading..." : "Save"}
-        </StyledButton>
-      </Form>
+                      <Dropdown.Toggle
+                        style={editImageButtonStyle}
+                        bsPrefix="py-0 px-1"
+                      >
+                        <div className="d-flex align-items-center">
+                          <MdEdit className="mr-1" /> Edit
+                        </div>
+                      </Dropdown.Toggle>
 
+                      <Dropdown.Menu>
+                        <Dropdown.Item
+                          onClick={(e) => {
+                            // Programatically click the hidden file input element
+                            // when the Button component is clicked
+                            hiddenFileInput.current.click();
+                          }}
+                        >
+                          Upload a photo
+                        </Dropdown.Item>
+                        <Dropdown.Item
+                          onClick={(e) => {
+                            e.preventDefault();
+                            if (
+                              window.confirm(
+                                "Are you sure you want to reset your current avatar?"
+                              )
+                            ) {
+                              setFieldValue("profileImage", null, false);
+                            }
+                          }}
+                        >
+                          Revert to original
+                        </Dropdown.Item>
+                      </Dropdown.Menu>
+                      <Form.File
+                        accept="image/*"
+                        name="profileImage"
+                        onChange={handleFileChange}
+                        ref={hiddenFileInput}
+                        hidden
+                      />
+                    </Dropdown>
+                  </div>
+                </Form.Group>
+              </Col>
+            </Row>
+            {/* Save Button */}
+            <StyledButton
+              $primary
+              type="submit"
+              className="mt-2"
+              size="lg"
+              disabled={!isValid || isSubmitting}
+            >
+              {isSubmitting ? "Loading..." : "Save"}
+            </StyledButton>
+          </Form>
+        )}
+      </Formik>
       {/* Modal - Crop image */}
       <StyledModal show={showModal} onHide={handleCloseModal}>
         <StyledModal.Header closeButton>

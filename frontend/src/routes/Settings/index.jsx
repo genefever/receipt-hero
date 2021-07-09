@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useCallback } from "react";
+import React, { useState, useContext } from "react";
 import Alert from "react-bootstrap/Alert";
 import Col from "react-bootstrap/Col";
 import Nav from "react-bootstrap/Nav";
@@ -19,38 +19,11 @@ function Settings() {
   const { userObject, getAuthenticatedUserObject } = useContext(UserContext);
   const themeContext = useContext(ThemeContext);
 
-  const defaultUserSettings = {
-    firstName: "",
-    lastName: "",
-    email: "",
-    profileImage: null,
-  };
-
-  const [userSettings, setUserSettings] = useState(defaultUserSettings);
-  const [isLoading, setLoading] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(false); // "Successfully Saved" modal
   const [errorMessage, setErrorMessage] = useState();
 
-  // Sets userSettings with userObject values.
-  const initializeUserSettings = useCallback(() => {
-    setUserSettings((prevValue) => {
-      return {
-        ...prevValue,
-        firstName: userObject.firstName,
-        lastName: userObject.lastName,
-        email: userObject.email,
-        profileImage: userObject.profileImage,
-      };
-    });
-  }, [userObject]);
-
-  useEffect(() => {
-    initializeUserSettings();
-  }, [userObject, initializeUserSettings]);
-
   // Saves userSettings to backend.
-  async function handleSubmitUserSettings() {
-    setLoading(true);
+  async function handleSubmitUserSettings(userSettings) {
     try {
       await api.updateUser({ ...userObject, ...userSettings });
       getAuthenticatedUserObject();
@@ -59,7 +32,6 @@ function Settings() {
       if (err.response?.data?.message)
         setErrorMessage(err.response.data.message);
     }
-    setLoading(false);
   }
 
   // Saves new password to backend.
@@ -68,31 +40,15 @@ function Settings() {
       await api.updatePassword(password);
       setShowModal(true);
     } catch (err) {
-      if (err.response?.data?.message)
+      if (err.response?.data?.message) {
         setErrorMessage(err.response.data.message);
+      }
     }
-  }
-
-  // Called when input textfield value changes.
-  function handleChange(event) {
-    const { name, value } = event.target;
-
-    setUserSettings((prevValue) => {
-      return { ...prevValue, [name]: value };
-    });
-  }
-
-  // Called when profile image changes
-  function handleChangeImage(imageUrl) {
-    setUserSettings((prevValue) => {
-      return { ...prevValue, profileImage: imageUrl };
-    });
   }
 
   // Called when a tab is pressed.
   function handleSelect() {
     setErrorMessage(null);
-    initializeUserSettings(); // revert any unsaved changes.
   }
 
   // Closes the "Successfully saved" modal.
@@ -145,11 +101,7 @@ function Settings() {
                   <AlertMessage />
                   <ProfilePane
                     userObject={userObject}
-                    userSettings={userSettings}
-                    handleChange={handleChange}
-                    handleChangeImage={handleChangeImage}
                     setErrorMessage={setErrorMessage}
-                    isLoading={isLoading}
                     handleSubmitUserSettings={handleSubmitUserSettings}
                   />
                 </Tab.Pane>
