@@ -11,7 +11,6 @@ import { StyledButton } from "../../components/Button";
 import Form from "react-bootstrap/Form";
 import { ThemeContext } from "styled-components";
 import { UserContext } from "../../UserContext";
-import * as api from "../../api";
 
 const Calculator = forwardRef((props, ref) => {
   const themeContext = useContext(ThemeContext);
@@ -34,6 +33,7 @@ const Calculator = forwardRef((props, ref) => {
   };
 
   const [receipt, setReceipt] = useState(defaultReceiptState);
+  const [taxRate, setTaxRate] = useState(9.25);
 
   const defaultDeductionState = {
     id: null,
@@ -267,7 +267,6 @@ const Calculator = forwardRef((props, ref) => {
   }
 
   // Tax Rate
-  const [taxRate, setTaxRate] = useState(9.25);
   const { userObject } = useContext(UserContext);
 
   // Set taxRate based on userObject's taxRate or local storage taxRate if available.
@@ -278,35 +277,6 @@ const Calculator = forwardRef((props, ref) => {
       setTaxRate(window.localStorage.getItem("taxRate"));
     }
   }, [userObject]);
-
-  // Called in CalculatorForm when taxRate input changes.
-  const handleTaxRateChange = (event) => {
-    setTaxRate(event.target.value);
-  };
-
-  // Called in CalculatorForm when taxRate input is submitted.
-  const handleTaxRateSubmit = () => {
-    if (userObject) {
-      try {
-        api.updateUser({ ...userObject, taxRate: taxRate });
-      } catch (err) {
-        console.log(err);
-      }
-    } else {
-      window.localStorage.setItem("taxRate", taxRate);
-    }
-
-    // Update the deductions input field with the new tax rate.
-    const dummyEvent = {
-      target: {
-        name: null,
-        value: null,
-        type: "checkbox",
-        checked: deduction.isTaxed,
-      },
-    };
-    handleDeductionInputChange(dummyEvent);
-  };
 
   return (
     <Form
@@ -321,13 +291,13 @@ const Calculator = forwardRef((props, ref) => {
       <CalculatorForm
         receipt={receipt}
         deduction={deduction}
-        taxRate={taxRate}
         onInputChange={handleInputChange}
         onBuyerChange={handleBuyerChange}
         onDeductionInputChange={handleDeductionInputChange}
         onDeductionAdd={handleDeductionAdd}
-        onTaxRateChange={handleTaxRateChange}
-        onTaxRateSubmit={handleTaxRateSubmit}
+        initialTaxRate={taxRate}
+        setTaxRate={setTaxRate}
+        userObject={userObject}
       />
 
       <hr />

@@ -3,15 +3,62 @@ import Col from "react-bootstrap/Col";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Form from "react-bootstrap/Form";
-import FormControl from "react-bootstrap/FormControl";
+import { Formik } from "formik";
+import * as yup from "yup";
+import { FormTextField } from "../../components/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import { StyledButton } from "../Button";
 import { ThemeContext } from "styled-components";
 import { StyledModal } from "../Modal";
+import * as api from "../../api";
+
+// Formik validation schema
+const schema = yup.object({
+  taxRate: yup
+    .number()
+    .test(
+      "validNumberRange",
+      "Number must be between 0 and 100",
+      (value) => 0 < value && value <= 100
+    )
+    .test(
+      "maxDigitsAfterDecimal",
+      "Number must have 2 digits after decimal or less",
+      (number) => /^\d+(\.\d{1,2})?$/.test(number)
+    )
+    .required(),
+});
 
 function CalculatorForm(props) {
+  // Called in CalculatorForm when taxRate input is submitted.
+  const handleTaxRateSubmit = (taxRate) => {
+    if (props.userObject) {
+      try {
+        api.updateUser({ ...props.userObject, taxRate: taxRate });
+      } catch (err) {
+        console.log(err);
+      }
+    } else {
+      window.localStorage.setItem("taxRate", taxRate);
+    }
+
+    handleCloseModal();
+    props.setTaxRate(taxRate);
+
+    // Update the deductions input field with the new tax rate.
+    const dummyEvent = {
+      target: {
+        name: null,
+        value: null,
+        type: "checkbox",
+        checked: props.deduction.isTaxed,
+      },
+    };
+    props.onDeductionInputChange(dummyEvent);
+  };
+
   const themeContext = useContext(ThemeContext);
   const [showModal, setShowModal] = useState(false);
 
@@ -31,7 +78,7 @@ function CalculatorForm(props) {
           <Form.Control
             label="Purchase Date"
             name="purchaseDate"
-            handleChange={(event) => props.onInputChange(event)}
+            onChange={(event) => props.onInputChange(event)}
             value={props.receipt.purchaseDate}
             type="date"
             required
@@ -44,7 +91,7 @@ function CalculatorForm(props) {
           <Form.Control
             label="Store Name"
             name="storeName"
-            handleChange={(event) => props.onInputChange(event)}
+            onChange={(event) => props.onInputChange(event)}
             value={props.receipt.storeName}
             required
             size="sm"
@@ -190,48 +237,45 @@ function CalculatorForm(props) {
           <StyledModal.Title>Edit tax rate</StyledModal.Title>
         </StyledModal.Header>
         <StyledModal.Body>
-          <Form.Label>Tax Rate</Form.Label>
-
-          <InputGroup>
-            <FormControl
-              type="number"
-              required
-              name="taxRate"
-              value={props.taxRate}
-              onChange={(e) => {
-                props.onTaxRateChange(e);
-              }}
-              className="text-right"
-              autoFocus
-              onFocus={(e) => {
-                e.target.select();
-              }}
-              onKeyPress={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  props.onTaxRateSubmit();
-                  handleCloseModal(); // TODO Only close modal if valid input.
-                }
-              }}
-            />
-            <InputGroup.Append>
-              <InputGroup.Text>%</InputGroup.Text>
-            </InputGroup.Append>
-          </InputGroup>
-          <Form.Text className="text-muted">
-            Enter a number between 0 and 100.
-          </Form.Text>
-          <StyledButton
-            variant="secondary"
-            className="mt-4 mb-1 float-right"
-            onClick={(e) => {
-              e.preventDefault();
-              props.onTaxRateSubmit();
-              handleCloseModal(); // TODO only close modal if valid input.
-            }}
+          <Formik
+            validationSchema={schema}
+            initialValues={{ taxRate: props.initialTaxRate }}
+            onSubmit={(values) => handleTaxRateSubmit(values.taxRate)}
           >
-            Done
-          </StyledButton>
+            {({ handleSubmit }) => (
+              <Form noValidate onSubmit={handleSubmit}>
+                <FormTextField
+                  type="number"
+                  name="taxRate"
+                  className="text-right"
+                  autoFocus
+                  onFocus={(e) => {
+                    e.target.select();
+                  }}
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter") {
+                      handleSubmit();
+                    }
+                  }}
+                  inputGroupPrepend={
+                    <InputGroup.Prepend>
+                      <InputGroup.Text>%</InputGroup.Text>
+                    </InputGroup.Prepend>
+                  }
+                />
+
+                <StyledButton
+                  variant="secondary"
+                  className="mt-4 mb-1 float-right"
+                  onClick={(e) => {
+                    handleSubmit();
+                  }}
+                >
+                  Done
+                </StyledButton>
+              </Form>
+            )}
+          </Formik>
         </StyledModal.Body>
       </StyledModal>
     </>
