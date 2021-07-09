@@ -32,7 +32,7 @@ function PasswordPane(props) {
           });
         }}
       >
-        {({ handleSubmit, handleChange, isSubmitting, isValid }) => (
+        {({ handleSubmit, handleChange, isSubmitting }) => (
           <Form noValidate onSubmit={handleSubmit}>
             <Form.Row>
               <FormTextField
@@ -66,7 +66,7 @@ function PasswordPane(props) {
               type="submit"
               className="mt-2"
               size="lg"
-              disabled={!isValid || isSubmitting}
+              disabled={isSubmitting}
             >
               {isSubmitting ? "Loading..." : "Save"}
             </StyledButton>

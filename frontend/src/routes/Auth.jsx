@@ -3,7 +3,9 @@ import Alert from "react-bootstrap/Alert";
 import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
-import Input from "../components/Input";
+import { Formik } from "formik";
+import * as yup from "yup";
+import { FormTextField } from "../components/Form";
 import { Separator } from "../components/Separator";
 import { SignInContainer } from "../components/Container";
 import { StyledCard } from "../components/Card";
@@ -15,10 +17,36 @@ import * as api from "../api";
 import { useHistory } from "react-router-dom";
 import { UserContext } from "../UserContext";
 
+// Formik validation schema
+const schema = yup.object({
+  firstName: yup
+    .string()
+    .max(15, "Must be 15 characters or less")
+    .required("Required"),
+  lastName: yup
+    .string()
+    .max(20, "Must be 20 characters or less")
+    .required("Required"),
+  email: yup.string().email("Invalid email address").required("Required"),
+  password: yup.string().required("Required"),
+  googleId: yup.string(),
+  facebookId: yup.string(),
+});
+
+const defaultFormData = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  password: "",
+  googleId: "",
+  facebookId: "",
+};
+
 function Auth(props) {
   const { setUserObject, getAuthenticatedUserObject } = useContext(UserContext);
 
   const history = useHistory();
+
   const [isSignUp, setIsSignUp] = useState(props.isSignUp);
   const [errorMessage, setErrorMessage] = useState();
 
@@ -27,34 +55,15 @@ function Auth(props) {
     setIsSignUp(props.isSignUp);
   }, [props.isSignUp]);
 
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    username: "",
-    email: "",
-    password: "",
-    googleId: "",
-    facebookId: "",
-  });
-
-  function handleFormDataChange(event) {
-    const { name, value } = event.target;
-    setFormData((prevValue) => {
-      return { ...prevValue, [name]: value };
-    });
-  }
-
-  function handleSubmit(event) {
-    event.preventDefault();
-
+  function handleSubmit(formData) {
     if (isSignUp) {
-      signUp();
+      signUp(formData);
     } else {
-      login();
+      login(formData);
     }
   }
 
-  async function signUp() {
+  async function signUp(formData) {
     try {
       const res = await api.signUp(formData);
       setUserObject(res.data.userObject);
@@ -66,7 +75,7 @@ function Auth(props) {
     }
   }
 
-  async function login() {
+  async function login(formData) {
     try {
       const res = await api.login(formData);
       setUserObject(res.data.userObject);
@@ -79,11 +88,11 @@ function Auth(props) {
   }
 
   function googleLogin() {
-    window.open("http://localhost:4000/auth/google", "_self");
+    window.open("http://localhost:4000/auth/google", "_self"); // TODO update URL
   }
 
   function facebookLogin() {
-    window.open("http://localhost:4000/auth/facebook", "_self");
+    window.open("http://localhost:4000/auth/facebook", "_self"); // TODO update URL
   }
 
   function switchMode() {
@@ -135,66 +144,64 @@ function Auth(props) {
         )}
 
         <StyledCard>
-          <Form onSubmit={(event) => handleSubmit(event)}>
-            {/* Name */}
-            {isSignUp && (
-              <Form.Row>
-                <Input
-                  as={Col}
-                  name="firstName"
-                  value={formData.firstName}
-                  label="First Name"
-                  handleChange={(event) => handleFormDataChange(event)}
-                  controlId={"formBasicFirstName"}
+          <Formik
+            validationSchema={schema}
+            initialValues={defaultFormData}
+            onSubmit={(values, { setSubmitting, resetForm }) => {
+              handleSubmit(values).then(() => {
+                setSubmitting(false);
+              });
+            }}
+          >
+            {({ handleSubmit, handleChange, isSubmitting }) => (
+              <Form noValidate onSubmit={handleSubmit}>
+                {/* Name */}
+                {isSignUp && (
+                  <Form.Row>
+                    <FormTextField
+                      as={Col}
+                      name="firstName"
+                      label="First Name"
+                    />
+
+                    <FormTextField as={Col} name="lastName" label="Last Name" />
+                  </Form.Row>
+                )}
+
+                {/* Email */}
+                <FormTextField name="email" label="Email" type="email" />
+
+                {/* Password */}
+                <FormTextField
+                  name="password"
+                  label="Password"
+                  type="password"
                 />
-
-                <Input
-                  as={Col}
-                  name="lastName"
-                  value={formData.lastName}
-                  label="Last Name"
-                  handleChange={(event) => handleFormDataChange(event)}
-                  controlId={"formBasicLastName"}
-                />
-              </Form.Row>
-            )}
-
-            {/* Email */}
-            <Input
-              name="email"
-              value={formData.email}
-              label="Email"
-              type="email"
-              handleChange={(event) => handleFormDataChange(event)}
-              controlId={"formBasicEmail"}
-            />
-
-            {/* Password */}
-            <Input
-              name="password"
-              value={formData.password}
-              label="Password"
-              type="password"
-              handleChange={(event) => handleFormDataChange(event)}
-              controlId={"formBasicPassword"}
-            />
-            {!isSignUp && (
-              <div className="mb-4">
-                <Link
-                  to={{
-                    pathname: "/forgot",
-                    state: { isResetPassword: false },
-                  }}
+                {!isSignUp && (
+                  <div className="mb-4">
+                    <Link
+                      to={{
+                        pathname: "/forgot",
+                        state: { isResetPassword: false },
+                      }}
+                    >
+                      Forgot password?
+                    </Link>
+                  </div>
+                )}
+                {/* Submit button */}
+                <StyledButton
+                  $primary
+                  type="submit"
+                  size="lg"
+                  block
+                  disabled={isSubmitting}
                 >
-                  Forgot password?
-                </Link>
-              </div>
+                  {isSignUp ? "Sign up" : "Log in"}
+                </StyledButton>
+              </Form>
             )}
-            {/* Submit button */}
-            <StyledButton $primary type="submit" size="lg" block>
-              {isSignUp ? "Sign up" : "Log in"}
-            </StyledButton>
-          </Form>
+          </Formik>
         </StyledCard>
       </Card.Body>
 

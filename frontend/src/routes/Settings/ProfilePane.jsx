@@ -154,7 +154,6 @@ function ProfilePane(props) {
           handleSubmit,
           handleChange,
           isSubmitting,
-          isValid,
           values,
           setFieldValue,
         }) => (
@@ -245,7 +244,7 @@ function ProfilePane(props) {
               type="submit"
               className="mt-2"
               size="lg"
-              disabled={!isValid || isSubmitting}
+              disabled={isSubmitting}
             >
               {isSubmitting ? "Loading..." : "Save"}
             </StyledButton>
