@@ -9,7 +9,6 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import { StyledButton } from "../Button";
 import { ThemeContext } from "styled-components";
-import Input from "../Input";
 import { StyledModal } from "../Modal";
 
 function CalculatorForm(props) {
@@ -28,29 +27,29 @@ function CalculatorForm(props) {
     <>
       <Form.Row>
         {/* Date of Purchase */}
-        <Input
-          as={Col}
-          lg="6"
-          label="Purchase Date"
-          name="purchaseDate"
-          handleChange={(event) => props.onInputChange(event)}
-          value={props.receipt.purchaseDate}
-          type="date"
-          required
-          size="sm"
-        />
+        <Form.Group as={Col} lg="6">
+          <Form.Control
+            label="Purchase Date"
+            name="purchaseDate"
+            handleChange={(event) => props.onInputChange(event)}
+            value={props.receipt.purchaseDate}
+            type="date"
+            required
+            size="sm"
+          />
+        </Form.Group>
 
         {/* Store Name */}
-        <Input
-          as={Col}
-          lg="6"
-          label="Store Name"
-          name="storeName"
-          handleChange={(event) => props.onInputChange(event)}
-          value={props.receipt.storeName}
-          required
-          size="sm"
-        />
+        <Form.Group as={Col} lg="6">
+          <Form.Control
+            label="Store Name"
+            name="storeName"
+            handleChange={(event) => props.onInputChange(event)}
+            value={props.receipt.storeName}
+            required
+            size="sm"
+          />
+        </Form.Group>
       </Form.Row>
 
       <Form.Row>
