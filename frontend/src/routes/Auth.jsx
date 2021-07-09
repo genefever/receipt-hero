@@ -17,29 +17,11 @@ import * as api from "../api";
 import { useHistory } from "react-router-dom";
 import { UserContext } from "../UserContext";
 
-// Formik validation schema
-const schema = yup.object({
-  firstName: yup
-    .string()
-    .max(15, "Must be 15 characters or less")
-    .required("Required"),
-  lastName: yup
-    .string()
-    .max(20, "Must be 20 characters or less")
-    .required("Required"),
-  email: yup.string().email("Invalid email address").required("Required"),
-  password: yup.string().required("Required"),
-  googleId: yup.string(),
-  facebookId: yup.string(),
-});
-
 const defaultFormData = {
   firstName: "",
   lastName: "",
   email: "",
   password: "",
-  googleId: "",
-  facebookId: "",
 };
 
 function Auth(props) {
@@ -49,6 +31,25 @@ function Auth(props) {
 
   const [isSignUp, setIsSignUp] = useState(props.isSignUp);
   const [errorMessage, setErrorMessage] = useState();
+
+  // Formik validation schema
+  const schema = isSignUp
+    ? yup.object({
+        firstName: yup
+          .string()
+          .max(15, "Must be 15 characters or less")
+          .required("Required"),
+        lastName: yup
+          .string()
+          .max(20, "Must be 20 characters or less")
+          .required("Required"),
+        email: yup.string().email("Invalid email address").required("Required"),
+        password: yup.string().required("Required"),
+      })
+    : yup.object({
+        email: yup.string().email("Invalid email address").required("Required"),
+        password: yup.string().required("Required"),
+      });
 
   // Update authentication page based on props.isSignUp change.
   useEffect(() => {
@@ -148,9 +149,8 @@ function Auth(props) {
             validationSchema={schema}
             initialValues={defaultFormData}
             onSubmit={(values, { setSubmitting, resetForm }) => {
-              handleSubmit(values).then(() => {
-                setSubmitting(false);
-              });
+              handleSubmit(values);
+              setSubmitting(false);
             }}
           >
             {({ handleSubmit, handleChange, isSubmitting }) => (
