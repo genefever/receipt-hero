@@ -148,7 +148,7 @@ function Auth(props) {
           <Formik
             validationSchema={schema}
             initialValues={defaultFormData}
-            onSubmit={(values, { setSubmitting, resetForm }) => {
+            onSubmit={(values, { setSubmitting }) => {
               handleSubmit(values);
               setSubmitting(false);
             }}

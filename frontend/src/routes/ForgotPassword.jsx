@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Alert from "react-bootstrap/Alert";
 import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
+import { Formik } from "formik";
+import * as yup from "yup";
+import { FormTextField } from "../components/Form";
 import logo from "../assets/logo.svg";
-import Input from "../components/Input";
 import { IoWarningOutline } from "react-icons/io5";
 import { SignInContainer } from "../components/Container";
 import { StyledButton } from "../components/Button";
@@ -11,18 +13,27 @@ import { StyledCard } from "../components/Card";
 import { Link, useParams, useHistory } from "react-router-dom";
 import * as api from "../api";
 
+const defaultFormData = {
+  email: "",
+  password: "",
+};
+
 function ForgotPassword(props) {
   const [isResetPassword, setIsResetPassword] = useState(props.isResetPassword);
   const [isDone, setIsDone] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
-  const [isLoading, setLoading] = useState(false);
   const { token } = useParams();
   const history = useHistory();
+  const formRef = useRef(); // Attached to <Formik>
 
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  // Formik validation schema
+  const schema = isResetPassword
+    ? yup.object({
+        password: yup.string().required("Required"),
+      })
+    : yup.object({
+        email: yup.string().email("Invalid email address").required("Required"),
+      });
 
   // Update authentication page based on props.isSignUp change.
   useEffect(() => {
@@ -38,44 +49,35 @@ function ForgotPassword(props) {
     }
   }, [history.location]);
 
-  function handleFormDataChange(event) {
-    const { name, value } = event.target;
-    setFormData((prevValue) => {
-      return { ...prevValue, [name]: value };
-    });
-  }
-
-  function handleSubmit() {
+  function handleSubmit(formData) {
     if (isResetPassword) {
-      resetPassword();
+      resetPassword(formData);
     } else {
-      forgotPassword();
+      forgotPassword(formData);
     }
   }
 
-  async function resetPassword() {
+  async function resetPassword(formData) {
     try {
-      setLoading(true);
       await api.resetPassword(formData, token);
-      setLoading(false);
+      formRef.current.setSubmitting(false);
       history.push(`/reset/${token}/done`);
     } catch (err) {
-      if (err.response?.data?.message)
+      if (err.response?.data?.message) {
         setErrorMessage(err.response.data.message);
-      setLoading(false);
+      }
     }
   }
 
-  async function forgotPassword() {
+  async function forgotPassword(formData) {
     try {
-      setLoading(true);
       await api.forgotPassword(formData);
-      setLoading(false);
+      formRef.current.setSubmitting(false);
       history.push("/forgot/done");
     } catch (err) {
-      if (err.response?.data?.message)
+      if (err.response?.data?.message) {
         setErrorMessage(err.response.data.message);
-      setLoading(false);
+      }
     }
   }
 
@@ -126,68 +128,55 @@ function ForgotPassword(props) {
             </p>
           )
         ) : (
-          <Form
-            onSubmit={
-              !isLoading
-                ? (e) => {
-                    e.preventDefault();
-                    handleSubmit();
-                  }
-                : null
-            }
+          <Formik
+            validationSchema={schema}
+            initialValues={defaultFormData}
+            onSubmit={(values, { setSubmitting }) => {
+              handleSubmit(values);
+            }}
+            innerRef={formRef}
           >
-            {/* Email / Password */}
-            {isResetPassword ? (
-              <div>
-                <Input
-                  name="password"
-                  value={formData.password}
-                  label="New password"
-                  type="password"
-                  handleChange={(event) => handleFormDataChange(event)}
-                  controlId={"formBasicPassword"}
-                />
-              </div>
-            ) : (
-              <Input
-                name="email"
-                value={formData.email}
-                label="Email"
-                type="email"
-                handleChange={(e) => handleFormDataChange(e)}
-                controlId={"formBasicEmail"}
-              />
+            {({ handleSubmit, handleChange, isSubmitting }) => (
+              <Form noValidate onSubmit={handleSubmit}>
+                {/* Email / Password */}
+                {isResetPassword ? (
+                  <FormTextField
+                    name="password"
+                    label="New password"
+                    type="password"
+                  />
+                ) : (
+                  <FormTextField name="email" label="Email" />
+                )}
+                {/* Submit button */}
+                <StyledButton
+                  $primary
+                  type="submit"
+                  size="lg"
+                  className="mt-4"
+                  block
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting
+                    ? "Loading..."
+                    : isResetPassword
+                      ? "Update password"
+                      : "Email me a recovery link"}
+                </StyledButton>
+              </Form>
             )}
-            {/* Submit button */}
-            <StyledButton
-              $primary
-              type="submit"
-              size="lg"
-              className="mt-4"
-              block
-              disabled={isLoading}
-            >
-              {isLoading
-                ? "Loading..."
-                : isResetPassword
-                ? "Update password"
-                : "Email me a recovery link"}
-            </StyledButton>
-          </Form>
+          </Formik>
         )}
-
-        {!isLoading && (
-          <Link to="/login">
-            <StyledButton
-              variant={isDone ? "success" : "link"}
-              size="lg"
-              block
-              className={isDone ? "mt-4" : "pb-0 mt-3"}
-            >
-              Back to login
-            </StyledButton>
-          </Link>
-        )}
+        <Link to="/login">
+          <StyledButton
+            variant={isDone ? "success" : "link"}
+            size="lg"
+            block
+            className={isDone ? "mt-4" : "pb-0 mt-3"}
+          >
+            Back to login
+          </StyledButton>
+        </Link>
       </StyledCard>
     </SignInContainer>
   );
