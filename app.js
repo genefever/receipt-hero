@@ -29,7 +29,7 @@ const PORT = process.env.PORT || 4000;
 // Configure redis
 const redisClient = redis.createClient({
   port: process.env.REDIS_PORT,
-  host: "localhost",
+  host: process.env.NODE_ENV === "development" ? "localhost" : "receipthero",
 });
 
 redisClient.on("error", (err) => {
