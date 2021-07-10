@@ -22,6 +22,7 @@ const defaultFormData = {
   lastName: "",
   email: "",
   password: "",
+  confirmPassword: "",
 };
 
 function Auth(props) {
@@ -45,6 +46,11 @@ function Auth(props) {
           .required("Required"),
         email: yup.string().email("Invalid email address").required("Required"),
         password: yup.string().required("Required"),
+        confirmPassword: yup
+          .string()
+          .test("passwords-match", "Passwords must match", function (value) {
+            return this.parent.password === value;
+          }),
       })
     : yup.object({
         email: yup.string().email("Invalid email address").required("Required"),
@@ -176,7 +182,9 @@ function Auth(props) {
                   name="password"
                   label="Password"
                   type="password"
+                  className="mb-3"
                 />
+
                 {!isSignUp && (
                   <div className="mb-4">
                     <Link

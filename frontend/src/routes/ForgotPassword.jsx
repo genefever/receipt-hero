@@ -30,6 +30,11 @@ function ForgotPassword(props) {
   const schema = isResetPassword
     ? yup.object({
         password: yup.string().required("Required"),
+        confirmPassword: yup
+          .string()
+          .test("passwords-match", "Passwords must match", function (value) {
+            return this.parent.password === value;
+          }),
       })
     : yup.object({
         email: yup.string().email("Invalid email address").required("Required"),
@@ -136,15 +141,28 @@ function ForgotPassword(props) {
             }}
             innerRef={formRef}
           >
-            {({ handleSubmit, isSubmitting }) => (
+            {({ handleSubmit, isSubmitting, errors, values }) => (
               <Form noValidate onSubmit={handleSubmit}>
-                {/* Email / Password */}
+                {/* Reset Password or Confirm Email */}
                 {isResetPassword ? (
-                  <FormTextField
-                    name="password"
-                    label="New password"
-                    type="password"
-                  />
+                  <div>
+                    <FormTextField
+                      name="password"
+                      label="New password"
+                      type="password"
+                      isValid={!errors.confirmPassword && values.password}
+                    />
+
+                    <FormTextField
+                      name="confirmPassword"
+                      label="Confirm New Password"
+                      type="password"
+                      className="mb-3"
+                      isValid={
+                        !errors.confirmPassword && values.confirmPassword
+                      }
+                    />
+                  </div>
                 ) : (
                   <FormTextField name="email" label="Email" />
                 )}

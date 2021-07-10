@@ -65,23 +65,23 @@ function EditPeopleModal(props) {
                             <Col xs={2}>
                               {(!props.id ||
                                 (props.isUsersCalculation &&
-                                  props.editMode)) && (
-                                <div className="mt-1 text-right">
-                                  {idx === 0 && (
-                                    <p className="text-muted mr-3 mb-0">{`(You)`}</p>
-                                  )}
-                                  {idx >= 2 && (
-                                    <StyledIconButtonSpan
-                                      $delete
-                                      onClick={() => {
-                                        remove(idx);
-                                      }}
-                                    >
-                                      <FaTrashAlt />
-                                    </StyledIconButtonSpan>
-                                  )}
-                                </div>
-                              )}
+                                props.editMode)) && (
+                                  <div className="mt-1 text-right">
+                                    {idx === 0 && (
+                                      <p className="text-muted mr-3 mb-0">{`(You)`}</p>
+                                    )}
+                                    {idx >= 2 && (
+                                      <StyledIconButtonSpan
+                                        $delete
+                                        onClick={() => {
+                                          remove(idx);
+                                        }}
+                                      >
+                                        <FaTrashAlt />
+                                      </StyledIconButtonSpan>
+                                    )}
+                                  </div>
+                                )}
                             </Col>
                           </Form.Row>
                         </ListGroup.Item>
@@ -99,7 +99,7 @@ function EditPeopleModal(props) {
                         });
                       }}
                     >
-                      Add a person
+                      Add another person
                     </StyledButton>
                   </div>
                 )}
