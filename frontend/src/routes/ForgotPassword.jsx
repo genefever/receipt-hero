@@ -12,6 +12,7 @@ import { StyledButton } from "../components/Button";
 import { StyledCard } from "../components/Card";
 import { Link, useParams, useHistory } from "react-router-dom";
 import * as api from "../api";
+import { useDocumentTitle } from "../hooks";
 
 const defaultFormData = {
   email: "",
@@ -53,6 +54,11 @@ function ForgotPassword(props) {
       setIsDone(false);
     }
   }, [history.location]);
+
+  // Sets the document title
+  useDocumentTitle(
+    `Receipt Hero - ${isResetPassword ? "Reset" : "Forgot"} Password`
+  );
 
   function handleSubmit(formData) {
     if (isResetPassword) {

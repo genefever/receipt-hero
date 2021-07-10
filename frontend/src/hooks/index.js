@@ -30,3 +30,22 @@ export function useStateCallback(initialState) {
 
   return [state, setStateCallback];
 }
+
+// Dynamically sets the document.title for a page.
+export function useDocumentTitle(title, retainOnUnmount = false) {
+  const defaultTitle = useRef(document.title);
+
+  useEffect(() => {
+    document.title = title;
+  }, [title]);
+
+  useEffect(() => {
+    const defaultTitleCurrent = defaultTitle.current;
+    return () => {
+      if (!retainOnUnmount) {
+        document.title = defaultTitleCurrent;
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+}

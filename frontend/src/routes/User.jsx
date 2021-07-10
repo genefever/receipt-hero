@@ -13,11 +13,15 @@ import { FaTrashAlt } from "react-icons/fa";
 import { IoWarningOutline } from "react-icons/io5";
 import { MdEdit } from "react-icons/md";
 import { StyledModal } from "../components/Modal";
+import { useDocumentTitle } from "../hooks";
 import * as api from "../api";
 
 function User(props) {
   const { id } = useParams();
   const [userProfile, setUserProfile] = useState();
+  const [documentTitle, setDocumentTitle] = useState(
+    "Calculations - Receipt Hero"
+  );
   const [calculationIdToDelete, setCalculationIdToDelete] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -30,6 +34,9 @@ function User(props) {
         const res = await api.getUser(id);
         if (res.data) {
           setUserProfile(res.data);
+          setDocumentTitle(
+            `${res.data.firstName}'s Calculations - Receipt Hero`
+          );
         }
         setLoading(false);
       } catch (err) {
@@ -39,6 +46,9 @@ function User(props) {
 
     getUserObject(id);
   }, [id, history]);
+
+  // Set the document title
+  useDocumentTitle(documentTitle);
 
   const handleCloseModal = () => {
     setCalculationIdToDelete(null);

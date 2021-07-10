@@ -16,6 +16,7 @@ import { Link } from "react-router-dom";
 import * as api from "../api";
 import { useHistory } from "react-router-dom";
 import { UserContext } from "../UserContext";
+import { useDocumentTitle } from "../hooks";
 
 const defaultFormData = {
   firstName: "",
@@ -61,6 +62,9 @@ function Auth(props) {
   useEffect(() => {
     setIsSignUp(props.isSignUp);
   }, [props.isSignUp]);
+
+  // Sets the document title
+  useDocumentTitle(`Receipt Hero - ${isSignUp ? "Sign Up" : "Log In"}`);
 
   function handleSubmit(formData) {
     if (isSignUp) {

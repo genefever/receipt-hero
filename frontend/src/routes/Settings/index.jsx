@@ -14,6 +14,7 @@ import { IoWarningOutline } from "react-icons/io5";
 import { FcCheckmark } from "react-icons/fc";
 import { StyledModal } from "../../components/Modal";
 import * as api from "../../api";
+import { useDocumentTitle } from "../../hooks";
 
 function Settings() {
   const { userObject, getAuthenticatedUserObject } = useContext(UserContext);
@@ -21,6 +22,12 @@ function Settings() {
 
   const [showModal, setShowModal] = useState(false); // "Successfully Saved" modal
   const [errorMessage, setErrorMessage] = useState();
+  const [documentTitle, setDocumentTitle] = useState(
+    "Receipt Hero - Edit Profile"
+  );
+
+  // Sets the document title
+  useDocumentTitle(documentTitle);
 
   // Saves userSettings to backend.
   async function handleSubmitUserSettings(userSettings) {
@@ -47,7 +54,8 @@ function Settings() {
   }
 
   // Called when a tab is pressed.
-  function handleSelect() {
+  function handleSelect(eventKey) {
+    setDocumentTitle(`Receipt Hero - ${eventKey}`);
     setErrorMessage(null);
   }
 
@@ -74,7 +82,7 @@ function Settings() {
   return (
     <>
       <StyledCard $main>
-        <Tab.Container defaultActiveKey="Profile">
+        <Tab.Container defaultActiveKey="Edit Profile">
           <Row>
             <Col
               sm={3}
@@ -82,12 +90,12 @@ function Settings() {
             >
               <Nav variant="pills" className="flex-column">
                 <Nav.Item>
-                  <Nav.Link eventKey="Profile" onSelect={handleSelect}>
+                  <Nav.Link eventKey="Edit Profile" onSelect={handleSelect}>
                     Profile
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link eventKey="Password" onSelect={handleSelect}>
+                  <Nav.Link eventKey="Change Password" onSelect={handleSelect}>
                     Password
                   </Nav.Link>
                 </Nav.Item>
@@ -95,7 +103,7 @@ function Settings() {
             </Col>
             <Col sm={9} className="pl-4">
               <Tab.Content>
-                <Tab.Pane eventKey="Profile">
+                <Tab.Pane eventKey="Edit Profile">
                   <h3 className="mb-2">Edit Profile</h3>
                   <hr />
                   <AlertMessage />
@@ -105,7 +113,7 @@ function Settings() {
                     handleSubmitUserSettings={handleSubmitUserSettings}
                   />
                 </Tab.Pane>
-                <Tab.Pane eventKey="Password">
+                <Tab.Pane eventKey="Change Password">
                   <h3 className="mb-2">Change Password</h3>
                   <hr />
                   <AlertMessage />
