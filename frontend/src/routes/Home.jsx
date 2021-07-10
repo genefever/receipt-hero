@@ -227,8 +227,6 @@ function Home(props) {
   // TODO needs to update receipts people
   function updateCalculationPeople(updatedPeople) {
     setCalculationObject((prevCalcObj) => {
-      console.log(prevCalcObj.people);
-      console.log(updatedPeople);
       return {
         ...prevCalcObj,
         people: updatedPeople,
