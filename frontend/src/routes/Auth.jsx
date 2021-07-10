@@ -182,7 +182,6 @@ function Auth(props) {
                   name="password"
                   label="Password"
                   type="password"
-                  className="mb-3"
                 />
 
                 {!isSignUp && (
@@ -204,6 +203,7 @@ function Auth(props) {
                   size="lg"
                   block
                   disabled={isSubmitting}
+                  className="mt-4"
                 >
                   {isSignUp ? "Sign up" : "Log in"}
                 </StyledButton>
