@@ -224,46 +224,58 @@ function Home(props) {
     });
   }
 
-  // Called when a calculationObject person's name changes.
-  function editPersonName(event, personIdx) {
-    const value = event.target.value;
-
-    setCalculationObject(
-      (prevCalcObj) => {
-        // Change the name of the person in calculationObject.people array.
-        let updatedPeople = [...prevCalcObj.people];
-        updatedPeople[personIdx].name = value;
-
-        // Change every occurence of the name in calculationObject's receipts.people.
-        const updatedReceipts = [...prevCalcObj.receipts].map((receipt) => {
-          let updatedReceiptPeople = [...receipt.people];
-          let updatedReceiptBuyer = receipt.buyer;
-
-          updatedReceiptPeople[personIdx].name = value;
-
-          // Update the buyer's name if need be.
-          if (updatedReceiptPeople[personIdx].isBuyer) {
-            updatedReceiptBuyer = value;
-          }
-
-          return {
-            ...receipt,
-            people: updatedReceiptPeople,
-            buyer: updatedReceiptBuyer,
-          };
-        });
-
-        return {
-          ...prevCalcObj,
-          people: updatedPeople,
-          receipts: updatedReceipts,
-        };
-      },
-      (latestCalcObjectState) => {
-        if (id) updateCalculationObject(latestCalcObjectState);
-      }
-    );
+  // TODO needs to update receipts people
+  function updateCalculationPeople(updatedPeople) {
+    setCalculationObject((prevCalcObj) => {
+      console.log(prevCalcObj.people);
+      console.log(updatedPeople);
+      return {
+        ...prevCalcObj,
+        people: updatedPeople,
+      };
+    });
   }
+
+  // Called when a calculationObject person's name changes.
+  // function editPersonName(event, personIdx) {
+  //   const value = event.target.value;
+  //
+  //   setCalculationObject(
+  //     (prevCalcObj) => {
+  //       // Change the name of the person in calculationObject.people array.
+  //       let updatedPeople = [...prevCalcObj.people];
+  //       updatedPeople[personIdx].name = value;
+  //
+  //       // Change every occurence of the name in calculationObject's receipts.people.
+  //       const updatedReceipts = [...prevCalcObj.receipts].map((receipt) => {
+  //         let updatedReceiptPeople = [...receipt.people];
+  //         let updatedReceiptBuyer = receipt.buyer;
+  //
+  //         updatedReceiptPeople[personIdx].name = value;
+  //
+  //         // Update the buyer's name if need be.
+  //         if (updatedReceiptPeople[personIdx].isBuyer) {
+  //           updatedReceiptBuyer = value;
+  //         }
+  //
+  //         return {
+  //           ...receipt,
+  //           people: updatedReceiptPeople,
+  //           buyer: updatedReceiptBuyer,
+  //         };
+  //       });
+  //
+  //       return {
+  //         ...prevCalcObj,
+  //         people: updatedPeople,
+  //         receipts: updatedReceipts,
+  //       };
+  //     },
+  //     (latestCalcObjectState) => {
+  //       if (id) updateCalculationObject(latestCalcObjectState);
+  //     }
+  //   );
+  // }
 
   // Creates and saves a calculation object for the user.
   async function createCalculationObject() {
@@ -374,7 +386,7 @@ function Home(props) {
                   onEditReceipt={editReceipt}
                   onEditCalculationTitle={editCalculationTitle}
                   editMode={editMode}
-                  onChangePersonName={editPersonName}
+                  onUpdatePeople={updateCalculationPeople}
                   onSaveCalculationObject={saveCurrentCalculationObject}
                 />
 

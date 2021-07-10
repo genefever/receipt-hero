@@ -218,8 +218,8 @@ function ReceiptsTable(props) {
                           {toolkitprops.searchProps.searchText
                             ? "No records found."
                             : props.editMode
-                            ? "Add a receipt to begin."
-                            : "No receipts to show."}
+                              ? "Add a receipt to begin."
+                              : "No receipts to show."}
                         </h4>
                         <img
                           className="mx-auto d-block mt-3"
