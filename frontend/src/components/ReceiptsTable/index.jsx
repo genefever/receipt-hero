@@ -171,7 +171,8 @@ function ReceiptsTable(props) {
                     onClick={handleShowPeopleModal}
                   >
                     <div className="d-flex align-items-center">
-                      <BsFillPeopleFill className="mr-1" /> 2 people
+                      <BsFillPeopleFill className="mr-1" />{" "}
+                      {props.calculationObject.people.length} people
                     </div>
                   </StyledButton>
                 </Col>
@@ -218,8 +219,8 @@ function ReceiptsTable(props) {
                           {toolkitprops.searchProps.searchText
                             ? "No records found."
                             : props.editMode
-                              ? "Add a receipt to begin."
-                              : "No receipts to show."}
+                            ? "Add a receipt to begin."
+                            : "No receipts to show."}
                         </h4>
                         <img
                           className="mx-auto d-block mt-3"

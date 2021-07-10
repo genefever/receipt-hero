@@ -54,6 +54,12 @@ function EditPeopleModal(props) {
                               onFocus={(e) => {
                                 e.target.select();
                               }}
+                              onKeyPress={(e) => {
+                                if (e.key === "Enter") {
+                                  handleSubmit();
+                                }
+                              }}
+                              // TODO disabled field needs to be set based on accessibility
                             />
 
                             <Col xs={2}>
@@ -93,7 +99,7 @@ function EditPeopleModal(props) {
                         });
                       }}
                     >
-                      Add Person
+                      Add a person
                     </StyledButton>
                   </div>
                 )}
