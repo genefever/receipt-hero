@@ -41,19 +41,20 @@ app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(
   cors({
-    origin: "http://localhost:3000", // location of the react app we're connecting to. // TODO
+    origin: ["https://receipthero.herokuapp.com", "http://localhost:3000"], // location of the react app we're connecting to.
     credentials: true, // enables HTTP cookies over CORS.
   })
 );
 app.use(
   session({
     name: "_receiptHero",
-    secret: "secretcode",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     store: new redisStore({ client: redisClient }),
     cookie: {
-      secure: false, // TODO: change to true. Only send the cookie back if the connection is secure/encrypted (https).
+      //If true, it only sends the cookie back if the connection is secure/encrypted (https).
+      secure: process.env.IS_HTTPS === "true" ? true : false,
       httpOnly: true, // Prevents client side JS from reading the cookie.
     },
   })

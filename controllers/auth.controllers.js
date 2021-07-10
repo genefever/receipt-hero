@@ -158,7 +158,7 @@ const forgotPassword = (req, res, next) => {
               "Hello,\n\n" +
               "You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n" +
               "Please click on the following link, or paste this into your browser to complete the process:\n\n" +
-              "http://" + // TODO: Change to https
+              `${process.env.HTTP_PROTOCOL}://` +
               req.headers.host + // TODO: check if this will still work
               "/reset/" +
               token +
@@ -361,8 +361,8 @@ const googleAuth = (req, res, next) => {
 
 const googleAuthCallback = (req, res, next) => {
   passport.authenticate("google", {
-    successRedirect: "http://localhost:3000/",
-    failureRedirect: "http://localhost:3000/login", // TODO Change host
+    successRedirect: process.env.REACT_APP_FRONTEND_BASE_URL,
+    failureRedirect: `${process.env.REACT_APP_FRONTEND_BASE_URL}/login`,
   })(req, res, next);
 };
 
@@ -372,8 +372,8 @@ const facebookAuth = (req, res, next) => {
 
 const facebookAuthCallback = (req, res, next) => {
   passport.authenticate("facebook", {
-    successRedirect: "http://localhost:3000/",
-    failureRedirect: "http://localhost:3000/login",
+    successRedirect: process.env.REACT_APP_FRONTEND_BASE_URL,
+    failureRedirect: `${process.env.REACT_APP_FRONTEND_BASE_URL}/login`,
   })(req, res, next);
 };
 

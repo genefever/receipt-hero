@@ -99,11 +99,11 @@ function Auth(props) {
   }
 
   function googleLogin() {
-    window.open("http://localhost:4000/auth/google", "_self"); // TODO update URL
+    window.open(`${process.env.REACT_APP_BASE_URL}/auth/google`, "_self");
   }
 
   function facebookLogin() {
-    window.open("http://localhost:4000/auth/facebook", "_self"); // TODO update URL
+    window.open(`${process.env.REACT_APP_BASE_URL}/auth/facebook`, "_self");
   }
 
   function switchMode() {
