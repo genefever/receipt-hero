@@ -11,7 +11,7 @@ import { StyledButton, StyledIconButtonSpan } from "../../components/Button";
 import { v1 as uuidv1 } from "uuid";
 
 // Formik validation schema
-const schema = yup.object({
+const validationSchema = yup.object({
   people: yup.array().of(
     yup.object({
       name: yup
@@ -31,7 +31,7 @@ function EditPeopleModal(props) {
       <StyledModal.Body>
         <Formik
           initialValues={{ people: props.calculationObject.people }}
-          validationSchema={schema}
+          validationSchema={validationSchema}
           onSubmit={(values) => {
             props.onUpdatePeople(values.people);
             props.onCloseModal();

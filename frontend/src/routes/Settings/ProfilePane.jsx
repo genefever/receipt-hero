@@ -34,7 +34,7 @@ const ORIENTATION_TO_ANGLE = {
 };
 
 // Formik validation schema
-const schema = yup.object({
+const validationSchema = yup.object({
   firstName: yup
     .string()
     .max(15, "Must be 15 characters or less")
@@ -141,7 +141,7 @@ function ProfilePane(props) {
   return (
     <>
       <Formik
-        validationSchema={schema}
+        validationSchema={validationSchema}
         initialValues={defaultUserSettings}
         innerRef={formRef}
         onSubmit={(values, { setSubmitting, resetForm }) => {

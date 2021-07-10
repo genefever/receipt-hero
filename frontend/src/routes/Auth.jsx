@@ -33,7 +33,7 @@ function Auth(props) {
   const [errorMessage, setErrorMessage] = useState();
 
   // Formik validation schema
-  const schema = isSignUp
+  const validationSchema = isSignUp
     ? yup.object({
         firstName: yup
           .string()
@@ -146,7 +146,7 @@ function Auth(props) {
 
         <StyledCard>
           <Formik
-            validationSchema={schema}
+            validationSchema={validationSchema}
             initialValues={defaultFormData}
             onSubmit={(values, { setSubmitting }) => {
               handleSubmit(values);

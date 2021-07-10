@@ -7,10 +7,14 @@ import { FormTextField } from "../../components/Form";
 import { StyledButton } from "../../components/Button";
 
 // Formik validation schema
-const schema = yup.object({
+const validationSchema = yup.object({
   currentPassword: yup.string().required("Required"),
   newPassword: yup.string().required("Required"),
-  confirmNewPassword: yup.string().required("Required"),
+  confirmNewPassword: yup
+    .string()
+    .test("passwords-match", "Passwords must match", function (value) {
+      return this.parent.newPassword === value;
+    }),
 });
 
 const defaultPassword = {
@@ -23,7 +27,7 @@ function PasswordPane(props) {
   return (
     <>
       <Formik
-        validationSchema={schema}
+        validationSchema={validationSchema}
         initialValues={defaultPassword}
         onSubmit={(values, { setSubmitting, resetForm }) => {
           props.handleSubmitPassword(values).then(() => {
@@ -32,7 +36,7 @@ function PasswordPane(props) {
           });
         }}
       >
-        {({ handleSubmit, isSubmitting }) => (
+        {({ handleSubmit, isSubmitting, isValid, errors, values }) => (
           <Form noValidate onSubmit={handleSubmit}>
             <Form.Row>
               <FormTextField
@@ -49,6 +53,7 @@ function PasswordPane(props) {
                 label="New Password"
                 name="newPassword"
                 type="password"
+                isValid={!errors.confirmNewPassword && values.newPassword}
               />
 
               <FormTextField
@@ -57,6 +62,9 @@ function PasswordPane(props) {
                 label="Confirm New Password"
                 name="confirmNewPassword"
                 type="password"
+                isValid={
+                  !errors.confirmNewPassword && values.confirmNewPassword
+                }
               />
             </Form.Row>
 

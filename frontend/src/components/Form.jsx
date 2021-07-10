@@ -25,7 +25,7 @@ export const FormTextField = ({
         {inputGroupPrepend}
         <Form.Control
           {...field}
-          // isValid={meta.touched && !meta.error} //TODO isValid for granular checks (i.e. password match)?
+          // isValid={meta.touched && !meta.error}
           isInvalid={meta.touched && meta.error}
           feedback={meta.error}
           {...props}

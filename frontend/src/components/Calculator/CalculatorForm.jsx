@@ -15,7 +15,7 @@ import { StyledModal } from "../Modal";
 import * as api from "../../api";
 
 // Formik validation schema
-const schema = yup.object({
+const validationSchema = yup.object({
   taxRate: yup
     .number()
     .test(
@@ -238,7 +238,7 @@ function CalculatorForm(props) {
         </StyledModal.Header>
         <StyledModal.Body>
           <Formik
-            validationSchema={schema}
+            validationSchema={validationSchema}
             initialValues={{ taxRate: props.initialTaxRate }}
             onSubmit={(values) => handleTaxRateSubmit(values.taxRate)}
           >
