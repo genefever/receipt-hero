@@ -1,5 +1,7 @@
 # Receipt Hero
 
+## Live Link: https://receipthero.herokuapp.com/
+
 ## Available Scripts
 
 In the project directory, you can run:
