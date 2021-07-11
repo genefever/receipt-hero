@@ -49,21 +49,57 @@ module.exports = function (passport) {
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         callbackURL: "/auth/google/callback",
         proxy: true,
+        passReqToCallback: true,
       },
-      // Called on a successful authentication
-      // Insert into database
-      function (accessToken, refreshToken, profile, done) {
-        User.findOrCreate(
-          { googleId: profile.id },
-          {
-            firstName: profile.name.givenName,
-            lastName: profile.name.familyName,
-            email: profile.emails[0].value,
-          },
-          function (err, user) {
-            return done(err, user);
-          }
-        );
+      // Uses account linking: https://codeburst.io/account-linking-with-passportjs-in-3-minutes-2cb1b09d4a76
+      function (req, accessToken, refreshToken, profile, cb) {
+        const { emails, name, id } = profile._json;
+        // Check if user is authenticated.
+        // If so, user needs to be authorized i.e. granted access to use Google next time.
+        if (req.user) {
+          let user = req.user;
+
+          user.google.id = id;
+          user.google.email = emails[0].value;
+
+          user
+            .save()
+            .then((user) =>
+              cb(null, user, {
+                nextRoute: process.env.REACT_APP_FRONTEND_BASE_URL,
+              })
+            )
+            .catch((err) => cb(err));
+        } else {
+          User.findOne({
+            $or: [{ "google.id": id }, { email: emails[0].value }],
+          }).then((user) => {
+            if (!user) {
+              // User is not auth'd, and not found on db? Then create an account.
+              let newUser = new User();
+
+              newUser.email = emails[0].value;
+              newUser.google.id = id;
+              newUser.google.email = emails[0].value;
+              newUser.firstName = name.givenName;
+              newUser.lastName = name.familyName;
+
+              newUser
+                .save()
+                .then((user) => cb(null, user))
+                .catch((err) => cb(err));
+            } else {
+              // User not auth'd but provider account found? Log the user in.
+              user.google.id = id;
+              user.google.email = emails[0].value;
+
+              user
+                .save()
+                .then((user) => cb(null, user))
+                .catch((err) => cb(err));
+            }
+          });
+        }
       }
     )
   );

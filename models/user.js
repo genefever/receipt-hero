@@ -6,9 +6,21 @@ const userSchema = new mongoose.Schema(
   {
     firstName: String,
     lastName: String,
-    email: { type: String, required: true, lowercase: true }, //, unique: true }, // TODO remove unique for OAuth same email collision?
-    googleId: String,
-    facebookId: String,
+    email: {
+      type: String,
+      required: true,
+      lowercase: true,
+      unique: true,
+      trim: true,
+    },
+    google: {
+      id: String,
+      email: String,
+    },
+    facebook: {
+      id: String,
+      email: String,
+    },
     password: String,
     calculations: [
       { type: mongoose.Schema.Types.ObjectId, ref: "Calculation" },
