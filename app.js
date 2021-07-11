@@ -29,8 +29,8 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 
 // Configure redis
-if (process.env.REDIS_TLS_URL) {
-  const REDIS_URL = process.env.REDIS_TLS_URL;
+if (process.env.REDIS_URL) {
+  const REDIS_URL = process.env.REDIS_URL;
   const redisURI = url.parse(REDIS_URL);
   const redisOptions = REDIS_URL.includes("rediss://")
     ? {
