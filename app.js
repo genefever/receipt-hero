@@ -64,6 +64,7 @@ app.use(
     credentials: true, // enables HTTP cookies over CORS.
   })
 );
+app.enable("trust proxy");
 app.use(
   session({
     name: "_receiptHero",
@@ -71,9 +72,10 @@ app.use(
     resave: false,
     saveUninitialized: false,
     store: new redisStore({ client: redisClient }),
+    proxy: true, // add this when behind a reverse proxy, if you need secure cookies
     cookie: {
       //If true, it only sends the cookie back if the connection is secure/encrypted (https).
-      secure: process.env.IS_HTTPS === "true" ? true : false,
+      secure: process.env.NODE_ENV === "production" ? true : false,
       httpOnly: true, // Prevents client side JS from reading the cookie.
     },
   })
