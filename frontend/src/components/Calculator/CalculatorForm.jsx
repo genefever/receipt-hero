@@ -114,6 +114,7 @@ function CalculatorForm(props) {
               type="number"
               min="0.01"
               required
+              step="any"
               placeholder="0.00"
             />
           </InputGroup>
