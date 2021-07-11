@@ -60,35 +60,37 @@ function Auth(props) {
 
   function handleSubmit(formData, setSubmitting) {
     if (isSignUp) {
-      signUp(formData);
+      signUp(formData, setSubmitting);
     } else {
-      login(formData);
+      login(formData, setSubmitting);
     }
-
-    setSubmitting(false);
   }
 
-  async function signUp(formData) {
+  async function signUp(formData, setSubmitting) {
     try {
       const res = await api.signUp(formData);
       setUserObject(res.data.userObject);
       getAuthenticatedUserObject();
+      setSubmitting(false);
     } catch (err) {
       if (err.response?.data?.message) {
         setErrorMessage(err.response.data.message);
       }
+      setSubmitting(false);
     }
   }
 
-  async function login(formData) {
+  async function login(formData, setSubmitting) {
     try {
       const res = await api.login(formData);
       setUserObject(res.data.userObject);
       getAuthenticatedUserObject();
+      setSubmitting(false);
     } catch (err) {
       if (err.response?.data?.message) {
         setErrorMessage(err.response.data.message);
       }
+      setSubmitting(false);
     }
   }
 

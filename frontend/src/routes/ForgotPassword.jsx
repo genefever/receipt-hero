@@ -62,32 +62,35 @@ function ForgotPassword(props) {
 
   function handleSubmit(formData, setSubmitting) {
     if (isResetPassword) {
-      resetPassword(formData);
+      resetPassword(formData, setSubmitting);
     } else {
-      forgotPassword(formData);
+      forgotPassword(formData, setSubmitting);
     }
-    setSubmitting(false);
   }
 
-  async function resetPassword(formData) {
+  async function resetPassword(formData, setSubmitting) {
     try {
       await api.resetPassword(formData, token);
+      setSubmitting(false);
       history.push(`/reset/${token}/done`);
     } catch (err) {
       if (err.response?.data?.message) {
         setErrorMessage(err.response.data.message);
       }
+      setSubmitting(false);
     }
   }
 
-  async function forgotPassword(formData) {
+  async function forgotPassword(formData, setSubmitting) {
     try {
       await api.forgotPassword(formData);
+      setSubmitting(false);
       history.push("/forgot/done");
     } catch (err) {
       if (err.response?.data?.message) {
         setErrorMessage(err.response.data.message);
       }
+      setSubmitting(false);
     }
   }
 
