@@ -29,7 +29,10 @@ const PORT = process.env.PORT || 4000;
 // Configure redis
 const redisClient = redis.createClient({
   port: process.env.REDIS_PORT,
-  host: process.env.NODE_ENV === "development" ? "localhost" : "receipthero",
+  host:
+    process.env.NODE_ENV === "development"
+      ? "localhost"
+      : "receipthero.herokuapp.com",
 });
 
 redisClient.on("error", (err) => {
