@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import Alert from "react-bootstrap/Alert";
 import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
@@ -66,6 +66,9 @@ function Auth(props) {
   // Sets the document title
   useDocumentTitle(`Receipt Hero - ${isSignUp ? "Sign Up" : "Log In"}`);
 
+  // Attached to <Formik>
+  const formRef = useRef();
+
   function handleSubmit(formData) {
     if (isSignUp) {
       signUp(formData);
@@ -79,10 +82,13 @@ function Auth(props) {
       const res = await api.signUp(formData);
       setUserObject(res.data.userObject);
       getAuthenticatedUserObject();
+      formRef.current.setSubmitting(false);
       history.push("/");
     } catch (err) {
-      if (err.response?.data?.message)
+      if (err.response?.data?.message) {
         setErrorMessage(err.response.data.message);
+      }
+      formRef.current.setSubmitting(false);
     }
   }
 
@@ -91,10 +97,13 @@ function Auth(props) {
       const res = await api.login(formData);
       setUserObject(res.data.userObject);
       getAuthenticatedUserObject();
+      formRef.current.setSubmitting(false);
       history.push("/");
     } catch (err) {
-      if (err.response?.data?.message)
+      if (err.response?.data?.message) {
         setErrorMessage(err.response.data.message);
+      }
+      formRef.current.setSubmitting(false);
     }
   }
 
@@ -158,10 +167,10 @@ function Auth(props) {
           <Formik
             validationSchema={validationSchema}
             initialValues={defaultFormData}
-            onSubmit={(values, { setSubmitting }) => {
+            onSubmit={(values) => {
               handleSubmit(values);
-              setSubmitting(false);
             }}
+            innerRef={formRef}
           >
             {({ handleSubmit, isSubmitting }) => (
               <Form noValidate onSubmit={handleSubmit}>

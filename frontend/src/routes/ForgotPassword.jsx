@@ -77,6 +77,7 @@ function ForgotPassword(props) {
       if (err.response?.data?.message) {
         setErrorMessage(err.response.data.message);
       }
+      formRef.current.setSubmitting(false);
     }
   }
 
@@ -89,6 +90,7 @@ function ForgotPassword(props) {
       if (err.response?.data?.message) {
         setErrorMessage(err.response.data.message);
       }
+      formRef.current.setSubmitting(false);
     }
   }
 
@@ -142,7 +144,7 @@ function ForgotPassword(props) {
           <Formik
             validationSchema={schema}
             initialValues={defaultFormData}
-            onSubmit={(values, { setSubmitting }) => {
+            onSubmit={(values) => {
               handleSubmit(values);
             }}
             innerRef={formRef}
