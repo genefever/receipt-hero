@@ -14,6 +14,7 @@ const userRouter = require("./routes/user.routes");
 const calculationRouter = require("./routes/calculation.routes");
 const path = require("path");
 const fs = require("fs");
+const url = require("url");
 
 //---------------------------- END OF IMPORTS--------------------------------------
 // Connect to Mongo DB
@@ -29,11 +30,20 @@ const PORT = process.env.PORT || 4000;
 
 // Configure redis
 if (process.env.REDIS_URL) {
-  var redisClient = redis.createClient(process.env.REDIS_URL, {
-    tls: {
-      rejectUnauthorized: false,
-    },
-  });
+  const REDIS_URL = process.env.REDIS_URL;
+  const redisURI = url.parse(REDIS_URL);
+  const redisOptions = REDIS_URL.includes("rediss://")
+    ? {
+        port: Number(redisURI.port),
+        host: redisURI.hostname,
+        password: redisURI.auth.split(":")[1],
+        db: 0,
+        tls: {
+          rejectUnauthorized: false,
+        },
+      }
+    : REDIS_URL;
+  var redisClient = redis.createClient(redisOptions);
 } else {
   var redisClient = redis.createClient({
     port: process.env.REDIS_PORT,
