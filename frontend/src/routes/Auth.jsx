@@ -79,7 +79,9 @@ function Auth(props) {
 
   async function signUp(formData) {
     try {
+      console.log("I GET CALLED 1!!!!!!!!!!!!!!!");
       const res = await api.signUp(formData);
+      console.log("I GET CALLED 2!!!!!!!!!!!!!!!");
       setUserObject(res.data.userObject);
       getAuthenticatedUserObject();
       formRef.current.setSubmitting(false);
