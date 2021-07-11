@@ -47,7 +47,8 @@ module.exports = function (passport) {
       {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: "/auth/google/callback",
+        callbackURL: `${process.env.REACT_APP_BASE_URL}/auth/google/callback`,
+        proxy: true, // trust the proxy our request runs through so heroku callbacks to the correct url
       },
       // Called on a successful authentication
       // Insert into database
