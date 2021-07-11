@@ -113,7 +113,7 @@ function ForgotPassword(props) {
           onClose={() => setErrorMessage(null)}
           className="d-flex align-items-center"
         >
-          <IoWarningOutline className="mr-2" />
+          <IoWarningOutline className="mr-3" />
           {errorMessage}
         </Alert>
       )}

@@ -266,8 +266,6 @@ function CalculatorForm(props) {
 
                 <StyledButton
                   type="submit"
-                  // type="button"
-                  // onClick={handleSubmit}
                   variant="secondary"
                   className="mt-4 mb-1 float-right"
                 >

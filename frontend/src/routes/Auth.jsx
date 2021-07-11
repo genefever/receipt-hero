@@ -47,11 +47,6 @@ function Auth(props) {
           .required("Required"),
         email: yup.string().email("Invalid email address").required("Required"),
         password: yup.string().required("Required"),
-        confirmPassword: yup
-          .string()
-          .test("passwords-match", "Passwords must match", function (value) {
-            return this.parent.password === value;
-          }),
       })
     : yup.object({
         email: yup.string().email("Invalid email address").required("Required"),
@@ -79,9 +74,7 @@ function Auth(props) {
 
   async function signUp(formData) {
     try {
-      console.log("I GET CALLED 1!!!!!!!!!!!!!!!");
       const res = await api.signUp(formData);
-      console.log("I GET CALLED 2!!!!!!!!!!!!!!!");
       setUserObject(res.data.userObject);
       getAuthenticatedUserObject();
       formRef.current.setSubmitting(false);
@@ -160,7 +153,7 @@ function Auth(props) {
             dismissible
             className="d-flex align-items-center"
           >
-            <IoWarningOutline className="mr-2" />
+            <IoWarningOutline className="mr-3" />
             {errorMessage}
           </Alert>
         )}
