@@ -16,10 +16,14 @@ const userSchema = new mongoose.Schema(
     google: {
       id: String,
       email: String,
+      firstName: String,
+      lastName: String,
     },
     facebook: {
       id: String,
       email: String,
+      firstName: String,
+      lastName: String,
     },
     password: String,
     calculations: [

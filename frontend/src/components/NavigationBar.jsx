@@ -104,12 +104,12 @@ function NavigationBar(props) {
           {/* Auth Buttons */}
           {userObject ? (
             // User is logged in
-            <NavDropdown
-              title={
-                <Avatar
-                  src={userObject.profileImage}
-                  googleId={userObject.google.id}
-                  facebookId={userObject.facebook.id}
+              <NavDropdown
+                title={
+                  <Avatar
+                    src={userObject.profileImage}
+                    googleId={userObject.google?.id}
+                    facebookId={userObject.facebook?.id}
                   name={`${userObject.firstName} ${userObject.lastName}`}
                   round={true}
                   size="33"

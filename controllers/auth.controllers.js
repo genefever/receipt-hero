@@ -386,10 +386,29 @@ const facebookAuth = (req, res, next) => {
 };
 
 const facebookAuthCallback = (req, res, next) => {
-  passport.authenticate("facebook", {
-    successRedirect: process.env.REACT_APP_FRONTEND_BASE_URL,
-    failureRedirect: `${process.env.REACT_APP_FRONTEND_BASE_URL}/login`,
+  passport.authenticate("facebook", (err, user, { nextRoute } = {}) => {
+    if (err) {
+      return next(err);
+    }
+
+    if (nextRoute) {
+      // If we have a nextRoute, then user is already authenticated and only
+      // need to add provider details to the user account.
+      return res.redirect(nextRoute);
+    } else {
+      // Else authenticate and give the user a cookie.
+      req.logIn(user, (err) => {
+        if (err) {
+          return next(err);
+        }
+        return res.redirect(process.env.REACT_APP_FRONTEND_BASE_URL);
+      });
+    }
   })(req, res, next);
+  // passport.authenticate("facebook", {
+  //   successRedirect: process.env.REACT_APP_FRONTEND_BASE_URL,
+  //   failureRedirect: `${process.env.REACT_APP_FRONTEND_BASE_URL}/login`,
+  // })(req, res, next);
 };
 
 module.exports = {

@@ -170,8 +170,8 @@ function ProfilePane(props) {
                     <Avatar
                       size={200}
                       src={values.profileImage}
-                      googleId={props.userObject.googleId}
-                      facebookId={props.userObject.facebookId}
+                      googleId={props.userObject.google?.id}
+                      facebookId={props.userObject.facebook?.id}
                       name={`${props.userObject.firstName} ${props.userObject.lastName}`}
                       round={true}
                       className="my-2"

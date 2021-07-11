@@ -27,6 +27,11 @@ module.exports = function (passport) {
         if (!user) {
           return done(null, false);
         }
+        if (!user.password) {
+          return done(null, false, {
+            message: "Account exists with OAuth2 but password is not set.",
+          });
+        }
 
         bcrypt.compare(password, user.password, (err, result) => {
           if (err) {
@@ -53,7 +58,7 @@ module.exports = function (passport) {
       },
       // Uses account linking: https://codeburst.io/account-linking-with-passportjs-in-3-minutes-2cb1b09d4a76
       function (req, accessToken, refreshToken, profile, cb) {
-        const { emails, name, id } = profile._json;
+        const { emails, name, id } = profile;
         // Check if user is authenticated.
         // If so, user needs to be authorized i.e. granted access to use Google next time.
         if (req.user) {
@@ -61,6 +66,8 @@ module.exports = function (passport) {
 
           user.google.id = id;
           user.google.email = emails[0].value;
+          user.google.firstName = name.givenName;
+          user.google.lastName = name.familyName;
 
           user
             .save()
@@ -81,6 +88,8 @@ module.exports = function (passport) {
               newUser.email = emails[0].value;
               newUser.google.id = id;
               newUser.google.email = emails[0].value;
+              newUser.google.firstName = name.givenName;
+              newUser.google.lastName = name.familyName;
               newUser.firstName = name.givenName;
               newUser.lastName = name.familyName;
 
@@ -92,6 +101,8 @@ module.exports = function (passport) {
               // User not auth'd but provider account found? Log the user in.
               user.google.id = id;
               user.google.email = emails[0].value;
+              user.google.firstName = name.givenName;
+              user.google.lastName = name.familyName;
 
               user
                 .save()
@@ -113,18 +124,60 @@ module.exports = function (passport) {
         proxy: true,
         profileFields: ["id", "email", "name"],
       },
-      function (accessToken, refreshToken, profile, done) {
-        User.findOrCreate(
-          { facebookId: profile.id },
-          {
-            firstName: profile.name.givenName,
-            lastName: profile.name.familyName,
-            email: profile.emails[0].value,
-          },
-          function (err, user) {
-            done(err, user);
-          }
-        );
+      function (req, accessToken, refreshToken, profile, cb) {
+        const { emails, name, id } = profile;
+        // Check if user is authenticated.
+        // If so, user needs to be authorized i.e. granted access to use FB next time.
+        if (req.user) {
+          let user = req.user;
+
+          user.facebook.id = id;
+          user.facebook.email = emails[0].value;
+          user.facebook.firstName = name.givenName;
+          user.facebook.lastName = name.familyName;
+
+          user
+            .save()
+            .then((user) =>
+              cb(null, user, {
+                nextRoute: process.env.REACT_APP_FRONTEND_BASE_URL,
+              })
+            )
+            .catch((err) => cb(err));
+        } else {
+          User.findOne({
+            $or: [{ "facebook.id": id }, { email: emails[0].value }],
+          }).then((user) => {
+            if (!user) {
+              // User is not auth'd, and not found on db? Then create an account.
+              let newUser = new User();
+
+              newUser.email = emails[0].value;
+              newUser.facebook.id = id;
+              newUser.facebook.email = emails[0].value;
+              newUser.facebook.firstName = name.givenName;
+              newUser.facebook.lastName = name.familyName;
+              newUser.firstName = name.givenName;
+              newUser.lastName = name.familyName;
+
+              newUser
+                .save()
+                .then((user) => cb(null, user))
+                .catch((err) => cb(err));
+            } else {
+              // User not auth'd but provider account found? Log the user in.
+              user.facebook.id = id;
+              user.facebook.email = emails[0].value;
+              user.facebook.firstName = name.givenName;
+              user.facebook.lastName = name.familyName;
+
+              user
+                .save()
+                .then((user) => cb(null, user))
+                .catch((err) => cb(err));
+            }
+          });
+        }
       }
     )
   );
