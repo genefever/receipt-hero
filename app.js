@@ -13,7 +13,6 @@ const authRouter = require("./routes/auth.routes");
 const userRouter = require("./routes/user.routes");
 const calculationRouter = require("./routes/calculation.routes");
 const path = require("path");
-const fs = require("fs");
 const url = require("url");
 
 //---------------------------- END OF IMPORTS--------------------------------------
@@ -60,7 +59,11 @@ app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(
   cors({
-    origin: ["https://receipthero.herokuapp.com", "http://localhost:3000"], // location of the react app we're connecting to.
+    origin: [
+      "https://receipthero.herokuapp.com",
+      "http://receipthero.herokuapp.com",
+      "http://localhost:3000",
+    ], // location of the react app we're connecting to.
     credentials: true, // enables HTTP cookies over CORS.
   })
 );
@@ -98,7 +101,6 @@ if (process.env.NODE_ENV === "production") {
 
   // AFTER defining routes:
   // Anything that doesn't match what's above, send back index.html;
-  // (the beginning slash ('/') in the string is important!)
   app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "frontend", "build", "index.html"));
   });

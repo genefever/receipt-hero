@@ -14,7 +14,8 @@ const validationSchema = yup.object({
     .string()
     .test("passwords-match", "Passwords must match", function (value) {
       return this.parent.newPassword === value;
-    }),
+    })
+    .required("Required"),
 });
 
 const defaultPassword = {

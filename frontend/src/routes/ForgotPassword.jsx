@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Alert from "react-bootstrap/Alert";
 import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
@@ -25,7 +25,6 @@ function ForgotPassword(props) {
   const [errorMessage, setErrorMessage] = useState();
   const { token } = useParams();
   const history = useHistory();
-  const formRef = useRef(); // Attached to <Formik>
 
   // Formik validation schema
   const schema = isResetPassword
@@ -35,7 +34,8 @@ function ForgotPassword(props) {
           .string()
           .test("passwords-match", "Passwords must match", function (value) {
             return this.parent.password === value;
-          }),
+          })
+          .required("Required"),
       })
     : yup.object({
         email: yup.string().email("Invalid email address").required("Required"),
@@ -60,37 +60,34 @@ function ForgotPassword(props) {
     `Receipt Hero - ${isResetPassword ? "Reset" : "Forgot"} Password`
   );
 
-  function handleSubmit(formData) {
+  function handleSubmit(formData, setSubmitting) {
     if (isResetPassword) {
       resetPassword(formData);
     } else {
       forgotPassword(formData);
     }
+    setSubmitting(false);
   }
 
   async function resetPassword(formData) {
     try {
       await api.resetPassword(formData, token);
-      formRef.current.setSubmitting(false);
       history.push(`/reset/${token}/done`);
     } catch (err) {
       if (err.response?.data?.message) {
         setErrorMessage(err.response.data.message);
       }
-      formRef.current.setSubmitting(false);
     }
   }
 
   async function forgotPassword(formData) {
     try {
       await api.forgotPassword(formData);
-      formRef.current.setSubmitting(false);
       history.push("/forgot/done");
     } catch (err) {
       if (err.response?.data?.message) {
         setErrorMessage(err.response.data.message);
       }
-      formRef.current.setSubmitting(false);
     }
   }
 
@@ -144,10 +141,9 @@ function ForgotPassword(props) {
           <Formik
             validationSchema={schema}
             initialValues={defaultFormData}
-            onSubmit={(values) => {
-              handleSubmit(values);
+            onSubmit={(values, { setSubmitting }) => {
+              handleSubmit(values, setSubmitting);
             }}
-            innerRef={formRef}
           >
             {({ handleSubmit, isSubmitting, errors, values }) => (
               <Form noValidate onSubmit={handleSubmit}>

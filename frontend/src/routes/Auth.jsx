@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Alert from "react-bootstrap/Alert";
 import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
@@ -14,7 +14,6 @@ import logo from "../assets/logo.svg";
 import { IoWarningOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import * as api from "../api";
-import { useHistory } from "react-router-dom";
 import { UserContext } from "../UserContext";
 import { useDocumentTitle } from "../hooks";
 
@@ -28,8 +27,6 @@ const defaultFormData = {
 
 function Auth(props) {
   const { setUserObject, getAuthenticatedUserObject } = useContext(UserContext);
-
-  const history = useHistory();
 
   const [isSignUp, setIsSignUp] = useState(props.isSignUp);
   const [errorMessage, setErrorMessage] = useState();
@@ -61,15 +58,14 @@ function Auth(props) {
   // Sets the document title
   useDocumentTitle(`Receipt Hero - ${isSignUp ? "Sign Up" : "Log In"}`);
 
-  // Attached to <Formik>
-  const formRef = useRef();
-
-  function handleSubmit(formData) {
+  function handleSubmit(formData, setSubmitting) {
     if (isSignUp) {
       signUp(formData);
     } else {
       login(formData);
     }
+
+    setSubmitting(false);
   }
 
   async function signUp(formData) {
@@ -77,13 +73,10 @@ function Auth(props) {
       const res = await api.signUp(formData);
       setUserObject(res.data.userObject);
       getAuthenticatedUserObject();
-      formRef.current.setSubmitting(false);
-      history.push("/");
     } catch (err) {
       if (err.response?.data?.message) {
         setErrorMessage(err.response.data.message);
       }
-      formRef.current.setSubmitting(false);
     }
   }
 
@@ -92,13 +85,10 @@ function Auth(props) {
       const res = await api.login(formData);
       setUserObject(res.data.userObject);
       getAuthenticatedUserObject();
-      formRef.current.setSubmitting(false);
-      history.push("/");
     } catch (err) {
       if (err.response?.data?.message) {
         setErrorMessage(err.response.data.message);
       }
-      formRef.current.setSubmitting(false);
     }
   }
 
@@ -162,10 +152,9 @@ function Auth(props) {
           <Formik
             validationSchema={validationSchema}
             initialValues={defaultFormData}
-            onSubmit={(values) => {
-              handleSubmit(values);
+            onSubmit={(values, { setSubmitting }) => {
+              handleSubmit(values, setSubmitting);
             }}
-            innerRef={formRef}
           >
             {({ handleSubmit, isSubmitting }) => (
               <Form noValidate onSubmit={handleSubmit}>

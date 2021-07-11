@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema(
   {
     firstName: String,
     lastName: String,
-    email: { type: String, required: true, lowercase: true, unique: true },
+    email: { type: String, required: true, lowercase: true }, //, unique: true }, // TODO remove unique for OAuth same email collision?
     googleId: String,
     facebookId: String,
     password: String,
