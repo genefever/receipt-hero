@@ -27,13 +27,22 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 
 // Configure redis
-const redisClient = redis.createClient({
-  port: process.env.REDIS_PORT,
-  host:
-    process.env.NODE_ENV === "development"
-      ? "localhost"
-      : "receipthero.herokuapp.com",
-});
+if (process.env.REDIS_URL) {
+  const redisURL = require("url").parse(process.env.REDIS_URL);
+  var redisClient = redis.createClient({
+    port: redisURL.port,
+    host: redisURL.hostname,
+  });
+} else {
+  var redisClient = redis.createClient({
+    port: process.env.REDIS_PORT,
+    host: "localhost",
+  });
+}
+// const redisClient = redis.createClient({
+//   port: process.env.REDIS_PORT,
+//   host: process.env.REDIS_URL ? process.env.REDIS_URL : "localhost",
+// });
 
 redisClient.on("error", (err) => {
   console.log("Redis error: ", err);
