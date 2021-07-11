@@ -75,6 +75,7 @@ module.exports = function (passport) {
         clientID: process.env.FACEBOOK_APP_ID,
         clientSecret: process.env.FACEBOOK_APP_SECRET,
         callbackURL: "/auth/facebook/callback",
+        proxy: true,
         profileFields: ["id", "email", "name"],
       },
       function (accessToken, refreshToken, profile, done) {
