@@ -4,7 +4,7 @@
 
 ### Project Link: https://receipthero.herokuapp.com/
 
-![Screenshot](./frontend/src/assets/receipthero-screenshot.png)
+![Settings Window](https://raw.github.com/genefever/receipt-hero/master/frontend/src/assets/receipthero-screenshot.png)
 
 ## Dev
 
