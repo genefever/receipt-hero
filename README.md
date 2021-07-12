@@ -2,6 +2,8 @@
 
 ### Project Link: https://receipthero.herokuapp.com/
 
+![Screenshot](receipthero-screenshot.png)
+
 Receipt Hero is an easy way for people to calculate and track shared expenses and stop worrying about "who owes who".
 
 ## Dev
